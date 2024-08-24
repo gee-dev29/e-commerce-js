@@ -1,1 +1,3 @@
-import express from 'express';
+import { router } from "../utils/routerExport";
+
+router
