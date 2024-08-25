@@ -6,6 +6,7 @@ import {
     adminRegisterField,
     loginField,
     registerField,
+    updateField,
 } from "../utils/inputFields.js";
 
 export const registerUser = async (req, res) => {
@@ -165,6 +166,36 @@ export const toggleSuspendUser = async (req, res) => {
         await entity.updateDataById(req.params.id, payload, userModel);
         return res.status(200).json({
             message: "user activated successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+//update user
+export const updateUser = async (req, res) => {
+    try {
+        const user = req.user;
+        const { phone, address, profilePicture } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            updateField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const payload = {
+            phone: phone,
+            address: address,
+            profilePicture: profilePicture,
+        };
+        await entity.updateDataById(user._id, payload, userModel);
+        return res.status(200).json({
+            message: "user updated successfully",
         });
     } catch (error) {
         return res.status(500).json({

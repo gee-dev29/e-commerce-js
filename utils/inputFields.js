@@ -1,4 +1,5 @@
 const registerField = ["firstName", "lastName", "email", "password"];
+const updateField = ["phone", "address", "profilePicture"];
 const adminRegisterField = [
     "firstName",
     "lastName",
@@ -36,4 +37,5 @@ export {
     orderField,
     loginField,
     adminRegisterField,
+    updateField,
 };
