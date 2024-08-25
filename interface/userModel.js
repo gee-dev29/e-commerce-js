@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Role = require("../enums/role");
+const { UserStatus } = require("../enums/statusEnum");
 
 const userSchema = new mongoose.Schema(
     {
@@ -47,6 +48,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             enums: [, Role.ADMIN, Role.SUPER_ADMIN, Role.USER],
             default: Role.USER,
+        },
+        isSuspended: {
+            type: Boolean,
+            enum: [UserStatus.ACTIVE, UserStatus.SUSPENDED, UserStatus.DELETED],
+            default: UserStatus.ACTIVE,
         },
     },
     { timestamps: true }

@@ -54,6 +54,14 @@ const decryptPassword = (password, user) => {
   });
 };
 
+//validate login input
+const userLogin = async (body) => {
+  const { email, password } = body;
+  if (email == "" || password == "") {
+    return null;
+  }
+  return body;
+};
 // Document upload
 const checkUploadDoc = async (body) => {
   const { file } = body;
@@ -107,4 +115,5 @@ module.exports = {
   encryptData,
   decryptData,
   generateOtp,
+  userLogin
 };
