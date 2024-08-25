@@ -1,5 +1,5 @@
 import { wishListModel } from "../interface/wishListModel.js";
-import { wishListField } from "../utils/inputFields.js";
+import { cartField, wishListField } from "../utils/inputFields.js";
 
 const addItemToWishList = async (req, res) => {
     try {
@@ -35,7 +35,7 @@ const updateWishList = async (req, res) => {
     try {
         const { wishListId, quantity } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
-            ["cartId", "quantity"],
+            ["quantity", "wishListId"],
             req.body
         );
         if (!checkFields.result) {
@@ -44,27 +44,31 @@ const updateWishList = async (req, res) => {
             });
         }
 
-        const cart = await cartModel.findById(cartId);
-        if (!cart) {
+        const wishList = await wishListModel.findById(wishListId);
+        if (!wishList) {
             return res.status(404).json({
-                message: "Cart not found",
+                message: "wish list not found",
             });
         }
         const payload = {
             quantity: quantity,
         };
-        await entity.updateDataById(cartId, payload, cartModel);
+        await entity.updateDataById(wishListId, payload, wishListModel);
         return res.status(200).json({
-            message: "Cart updated successfully",
+            message: "wish List updated successfully",
         });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        })
+    }
 };
 
-const deleteCart = async (req, res) => {
+const deleteWishList = async (req, res) => {
     try {
-        const { cartId } = req.body;
+        const { wishListId } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
-            ["cartId"],
+            ["wishListId"],
             req.body
         );
         if (!checkFields.result) {
@@ -86,4 +90,4 @@ const deleteCart = async (req, res) => {
     } catch (error) {}
 };
 
-export { updateWishList, addItemToWishList };
+export { updateWishList, addItemToWishList, deleteWishList };

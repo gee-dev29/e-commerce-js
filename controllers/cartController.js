@@ -22,7 +22,7 @@ const addItemToCart = async (req, res) => {
         });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -31,7 +31,7 @@ const updateCart = async (req, res) => {
     try {
         const { cartId, quantity } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
-            ["cartId", "quantity"],
+            cartField,
             req.body
         );
         if (!checkFields.result) {
@@ -53,7 +53,11 @@ const updateCart = async (req, res) => {
         return res.status(200).json({
             message: "Cart updated successfully",
         });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
 };
 
 const deleteCart = async (req, res) => {
@@ -79,7 +83,11 @@ const deleteCart = async (req, res) => {
         return res.status(200).json({
             message: "Cart deleted successfully",
         });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
 };
 
 export { addItemToCart, updateCart };
