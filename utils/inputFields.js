@@ -13,12 +13,10 @@ const productField = [
     "productTitle",
     "productDescription",
     "productPrice",
-    "productDiscount",
     "productCategory",
     "productColors",
-    "productSizes",
+    "productSize",
     "productImages",
-    "productQuantity",
 ];
 
 const shippingFeild = [
@@ -29,6 +27,9 @@ const shippingFeild = [
 ];
 
 const orderField = ["paymentMethod", "paymentStatus"];
+const cartField = ["productId", "quantity"];
+const wishListField = ["productId", "quantity"];
+// const emailField = ["productId", "quantity"];
 
 export {
     registerField,
@@ -38,4 +39,6 @@ export {
     loginField,
     adminRegisterField,
     updateField,
+    cartField,
+    wishListField,
 };

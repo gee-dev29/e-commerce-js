@@ -8,6 +8,7 @@ import {
     registerField,
     updateField,
 } from "../utils/inputFields.js";
+import resetPasswordTemplate from "../emailService/template/template.js";
 
 export const registerUser = async (req, res) => {
     try {
@@ -201,5 +202,26 @@ export const updateUser = async (req, res) => {
         return res.status(500).json({
             message: "Internal server error",
         });
+    }
+};
+// forgot password
+export const forgotPassword = async (req, res) => {
+    try {
+        const user = req.user;
+        const { email } = req.body;
+        const token = jwtSign(user._id);
+        const encrypedToken = encryptData(token, process.env.ENCRYPTION_KEY);
+        const text = resetPasswordTemplate(encrypedToken, user.fullName);
+        const emailMessage = {
+            recieverEmail: email,
+            subject: "Forgot Password verification",
+            text: text,
+        };
+        sendEmail(emailMessage);
+        res.status(200).json({
+            message: "An email has been sent to your mailbox",
+        });
+    } catch (error) {
+        return errorHandler(error, res);
     }
 };

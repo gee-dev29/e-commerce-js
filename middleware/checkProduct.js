@@ -1,16 +1,22 @@
-module.exports.checkProduct = async (req, res, next) => {
+export const checkProduct = async (req, res, next) => {
     try {
-        const productId = req.params.id;
-        if(!productId){
-            return res.status(404).json({ message: "Product Id is required" });
+        let productId;
+        if (req.body.productId) {
+            productId = req.body.productId;
+        } else {
+            productId = req.params.productId;
+        }
+
+        if (!productId) {
+            return res.status(400).json({ message: "Product Id is required" });
         }
         const product = await productModel.findById(productId);
-        if(!product){
+        if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
         req.product = product;
         next();
     } catch (error) {
-        
+        return res.status(500).json({ message: "Internal server error" });
     }
-}
+};

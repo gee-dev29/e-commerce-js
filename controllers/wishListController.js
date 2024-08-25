@@ -1,24 +1,28 @@
-import { cartField } from "../utils/inputFields.js";
+import { wishListModel } from "../interface/wishListModel.js";
+import { wishListField } from "../utils/inputFields.js";
 
-const addItemToCart = async (req, res) => {
+const addItemToWishList = async (req, res) => {
     try {
         const userId = req.id;
         const product = req.product;
         const { quantity } = req.body;
-        const checkFields = entity.checkMissingFieldsInput(cartField, req.body);
+        const checkFields = entity.checkMissingFieldsInput(
+            wishListField,
+            req.body
+        );
         if (!checkFields.result) {
             return res.status(400).json({
                 message: checkFields.message,
             });
         }
-        const cart = new cartModel({
+        const wishList = new wishListModel({
             creatorId: userId,
             product: product._id,
             quantity: quantity,
         });
-        await cart.save();
+        await wishList.save();
         return res.status(201).json({
-            message: "product added to cart",
+            message: "item added to wish list",
         });
     } catch (error) {
         return res.status(500).json({
@@ -27,9 +31,9 @@ const addItemToCart = async (req, res) => {
     }
 };
 
-const updateCart = async (req, res) => {
+const updateWishList = async (req, res) => {
     try {
-        const { cartId, quantity } = req.body;
+        const { wishListId, quantity } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             ["cartId", "quantity"],
             req.body
@@ -82,4 +86,4 @@ const deleteCart = async (req, res) => {
     } catch (error) {}
 };
 
-export { addItemToCart, updateCart };
+export { updateWishList, addItemToWishList };

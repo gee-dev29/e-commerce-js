@@ -1,6 +1,9 @@
+import { productModel } from "../interface/productModel.js";
+import { entity } from "../utils/entity.js";
+import { productField } from "../utils/inputFields.js";
+
 export const addProduct = async (req, res) => {
     try {
-        // const product = req.product;
         const {
             productTitle,
             productDescription,
@@ -10,7 +13,7 @@ export const addProduct = async (req, res) => {
             productColors,
             productSizes,
             productImages,
-            productQuantity,
+            productStock,
         } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             productField,
@@ -22,6 +25,7 @@ export const addProduct = async (req, res) => {
             });
         }
         const product = new productModel({
+            creatorId: req.id,
             productTitle: productTitle,
             productDescription: productDescription,
             productPrice: productPrice,
@@ -29,14 +33,16 @@ export const addProduct = async (req, res) => {
             productCategory: productCategory,
             productColors: productColors,
             productSizes: productSizes,
+            productStock: productStock,
             productImages: productImages,
-            productQuantity: productQuantity,
         });
         await product.save();
         return res.status(201).json({
             message: "product created successfuly",
         });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 //get all products

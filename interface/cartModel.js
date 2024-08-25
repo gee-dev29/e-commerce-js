@@ -12,8 +12,12 @@ const cartSchema = new mongoose.Schema(
             ref: "product",
             required: true,
         },
+        quantity: {
+            type: Number,
+            required: true,
+        },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("cart", cartSchema)
+export const cartModel = mongoose.model("cart", cartSchema);

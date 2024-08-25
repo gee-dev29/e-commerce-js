@@ -1,11 +1,12 @@
-import { checkUser } from "../middleware/checkUser";
-import { jwtVerify } from "../middleware/jwtAuthentication";
-import { router } from "../utils/routerExport";
+import { addItemToCart } from "../controllers/cartController.js";
+import { checkProduct } from "../middleware/checkProduct.js";
+import { jwtVerify } from "../middleware/jwtAuthentication.js";
 
-const applyMiddleware = [jwtVerify, checkUser];
-router.route("/")
-    .get(applyMiddleware)
-    .post(applyMiddleware)
+import express from "express";
+const router = express.Router();
 
-router.route(":id")
-    .delete(applyMiddleware);
+router.route("/").get(jwtVerify).post(jwtVerify, checkProduct, addItemToCart);
+
+router.route(":id").delete(jwtVerify);
+
+export default router;
