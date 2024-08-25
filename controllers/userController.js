@@ -2,26 +2,34 @@ import { UserStatus } from "../enums/statusEnum.js";
 import { entity } from "../utils/entity.js";
 import { Role } from "../enums/role.js";
 import { userModel } from "../interface/userModel.js";
+import { userField } from "../utils/inputFields.js";
 
 export const registerUser = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
-        entity.checkMissingFieldsInput([firstName, lastName, email, password]);
-        // const otp = entity.generateOtp();
-        // const user = new userModel({
-        //     firstName: firstName,
-        //     lastName: lastName,
-        //     email: email,
-        //     password: entity.encryptPassword(password),
-        //     otp: otp,
-        // });
-        // await user.save();
-        // return res.status(201).json({
-        //     message: "user created successfuly",
-        // });
+
+        const checkFields = entity.checkMissingFieldsInput(userField, req.body);
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const otp = entity.generateOtp();
+        const hashPassword = await entity.encryptPassword(password);
+        const user = new userModel({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: hashPassword,
+            otp: otp,
+        });
+        await user.save();
+        return res.status(201).json({
+            message: "user created successfuly",
+        });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -29,10 +37,10 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const userDetails = await entity.userLogin(req.body);
-        if (!userDetails) {
+        const checkFields = entity.checkMissingFieldsInput(userField, req.body);
+        if (!checkFields.result) {
             return res.status(400).json({
-                message: "Invalid credentials",
+                message: checkFields.message,
             });
         }
         entity.decryptData(password, userModel);

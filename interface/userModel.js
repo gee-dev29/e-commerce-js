@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
             default: Role.USER,
         },
         isSuspended: {
-            type: Boolean,
+            type: String,
             enum: [UserStatus.ACTIVE, UserStatus.SUSPENDED, UserStatus.DELETED],
             default: UserStatus.ACTIVE,
         },

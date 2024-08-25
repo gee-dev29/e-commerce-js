@@ -101,10 +101,33 @@ const getAllFilteredData = async (model, filter) => {
     return data;
 };
 
-const checkMissingFieldsInput = (body) => {
-    Object.values(body).forEach((item) => {
-        console.log(item);
+const checkMissingFieldsInput = (requiredFields, requestBody) => {
+    const missingOrEmptyFields = [];
+
+    requiredFields.forEach((field) => {
+        const value = requestBody[field];
+        if (
+            !requestBody.hasOwnProperty(field) ||
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            missingOrEmptyFields.push(field);
+        }
     });
+
+    if (missingOrEmptyFields.length > 0) {
+        return {
+            result: false,
+            message: `Missing required fields: ${missingOrEmptyFields.join(
+                ", "
+            )}`,
+        };
+    }
+
+    return {
+        result: true,
+    };
 };
 
 export const entity = {
