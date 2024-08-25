@@ -1,7 +1,7 @@
-module.exports.addProduct = async (req, res) => {
+export const addProduct = async (req, res) => {
     try {
         const product = req.product;
-        const {  
+        const {
             productTitle,
             productDescription,
             productPrice,
@@ -10,9 +10,7 @@ module.exports.addProduct = async (req, res) => {
             productColors,
             productSize,
             productImages,
-            productstock
+            productstock,
         } = req.body;
-        
-    } catch (error) {
-        
-    }
+    } catch (error) {}
+};

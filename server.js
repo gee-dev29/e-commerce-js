@@ -1,10 +1,13 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const { success, error } = require("consola");
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import consola from "consola";
+import dotenv from "dotenv";
+import authRoute from "./route/authRoute.js";
+
 const app = express();
 
-require("dotenv").config();
+dotenv.config();
 
 // middleware
 app.use(cors());
@@ -17,8 +20,10 @@ app.use(
 );
 app.use(bodyParser.json({ limit: "50mb" }));
 
+// combineRoute();
+app.use("/api/v1/auth", authRoute);
 app.listen(process.env.PORT, () => {
-    success({
+    consola.success({
         message: `Server started on port ${process.env.PORT}`,
         badge: true,
     });

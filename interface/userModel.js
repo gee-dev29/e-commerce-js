@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const Role = require("../enums/role");
-const { UserStatus } = require("../enums/statusEnum");
+import mongoose from "mongoose";
+import { UserStatus } from "../enums/statusEnum.js";
+import { Role } from "../enums/role.js";
 
 const userSchema = new mongoose.Schema(
     {
@@ -58,4 +58,4 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("user", userSchema);
+export const userModel = mongoose.model("user", userSchema);
