@@ -1,25 +1,25 @@
-const Role = require("../enums/role");
-
-module.exports.admin = async (req, res, next) => {
-  try {
-    const user = req.data;
-    if (user.role !== Role.ADMIN) {
-    //   return ('', res);
+import { Role } from "../enums/role.js";
+const adminRoleCheck = async (req, res, next) => {
+    try {
+        const user = req.data;
+        if (user.role !== Role.ADMIN) {
+            //   return ('', res);
+        }
+        next();
+    } catch (error) {
+        next(err);
     }
-    next();
-  } catch (error) {
-    next(err);
-  }
 };
 
-module.exports.superAdmin = async (req, res, next) => {
-  try {
-    const user = req.data;
-    if (user.role !== Role.SUPER_ADMIN) {
-    //   return errorHandler('', res);
+const superAdminRoleCheck = async (req, res, next) => {
+    try {
+        const user = req.data;
+        if (user.role !== Role.SUPER_ADMIN) {
+        }
+        next();
+    } catch (error) {
+        next(err);
     }
-    next();
-  } catch (error) {
-    next(err);
-  }
 };
+
+export { adminRoleCheck, superAdminRoleCheck };

@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import consola from "consola";
 import dotenv from "dotenv";
 import authRoute from "./route/authRoute.js";
+import userRoute from "./route/userRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 // combineRoute();
 dbConnection();
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
 app.listen(process.env.PORT, () => {
     consola.success({
         message: `Server started on port ${process.env.PORT}`,

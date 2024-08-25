@@ -1,4 +1,12 @@
-const userField = ["firstName", "lastName", "email", "password"];
+const registerField = ["firstName", "lastName", "email", "password"];
+const adminRegisterField = [
+    "firstName",
+    "lastName",
+    "email",
+    "password",
+    "role",
+];
+const loginField = ["email", "password"];
 
 const productField = [
     "productTitle",
@@ -21,4 +29,11 @@ const shippingFeild = [
 
 const orderField = ["paymentMethod", "paymentStatus"];
 
-export { userField, productField, shippingFeild, orderField };
+export {
+    registerField,
+    productField,
+    shippingFeild,
+    orderField,
+    loginField,
+    adminRegisterField,
+};

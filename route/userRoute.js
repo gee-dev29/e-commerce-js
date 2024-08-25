@@ -1,8 +1,21 @@
-const { registerUser, viewAllUsers } = require("../controllers/userController");
-const { router } = require("../utils/routerExport");
+import {
+    deleteUser,
+    viewAllUsers,
+    viewSingleUser,
+} from "../controllers/userController.js";
+import express from "express";
+import { checkUser } from "../middleware/checkUser.js";
+import { jwtVerify } from "../middleware/jwtAuthentication.js";
+import { superAdminRoleCheck } from "../middleware/checkRole.js";
+const router = express.Router();
+router
+    .route("/")
+    .get(jwtVerify, checkUser, viewSingleUser)
+    .get(jwtVerify, superAdminRoleCheck, viewAllUsers);
 
-router.route("/").get(viewAllUsers).post(checkUser, registerUser);
 router
     .route("/:id")
-    .get(checkUser, viewSingleUser)
-    .delete(checkUser, deleteUser);
+    .get(jwtVerify, checkUser, viewSingleUser)
+    .delete(jwtVerify, superAdminRoleCheck, deleteUser);
+
+export default router;

@@ -52,16 +52,9 @@ const decryptPassword = (password, user) => {
             decrypted = result;
         }
     });
+    return decrypted;
 };
 
-//validate login input
-const userLogin = async (body) => {
-    const { email, password } = body;
-    if (email == "" || password == "") {
-        return null;
-    }
-    return body;
-};
 // Document upload
 const checkUploadDoc = async (body) => {
     const { file } = body;
@@ -103,6 +96,7 @@ const getAllFilteredData = async (model, filter) => {
 
 const checkMissingFieldsInput = (requiredFields, requestBody) => {
     const missingOrEmptyFields = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     requiredFields.forEach((field) => {
         const value = requestBody[field];
@@ -113,6 +107,8 @@ const checkMissingFieldsInput = (requiredFields, requestBody) => {
             value === ""
         ) {
             missingOrEmptyFields.push(field);
+        } else if (field === "email" && !emailRegex.test(value)) {
+            missingOrEmptyFields.push(`${field} (invalid email)`);
         }
     });
 
@@ -144,5 +140,4 @@ export const entity = {
     encryptData,
     decryptData,
     generateOtp,
-    userLogin,
 };
