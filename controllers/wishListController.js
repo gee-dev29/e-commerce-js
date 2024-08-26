@@ -1,5 +1,5 @@
 import { wishListModel } from "../interface/wishListModel.js";
-import { cartField, wishListField } from "../utils/inputFields.js";
+import { wishListField } from "../utils/inputFields.js";
 
 const addItemToWishList = async (req, res) => {
     try {
@@ -60,7 +60,7 @@ const updateWishList = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: error.message,
-        })
+        });
     }
 };
 
@@ -76,16 +76,16 @@ const deleteWishList = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const cart = await cartModel.findById(cartId);
-        if (!cart) {
+        const wishList = await cartModel.findById(wishListId);
+        if (!wishList) {
             return res.status(404).json({
-                message: "Cart not found",
+                message: "wish list not found",
             });
         }
 
         await entity.deleteDataById(cartId, cartModel);
         return res.status(200).json({
-            message: "Cart deleted successfully",
+            message: "wish list deleted successfully",
         });
     } catch (error) {}
 };
