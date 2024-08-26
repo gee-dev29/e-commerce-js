@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
         orderedItems: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: [productModel],
+                ref: "Product",
             },
         ],
 
