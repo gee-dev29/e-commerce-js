@@ -27,6 +27,10 @@ const shippingSchema = new mongoose.Schema(
         shippingNote: {
             type: String,
         },
+        totalAmount: {
+            type: Number,
+            required: true,
+        },
     },
     { timestamps: true }
 );

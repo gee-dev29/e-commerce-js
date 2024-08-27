@@ -25,9 +25,6 @@ export const orderItem = async (req, res) => {
                 message: orderDetails.message,
             });
         }
-        const orders = order.array.forEach(element => {
-            
-        });
 
         let totalAmount = 0.0;
         const products = productModel.find()
