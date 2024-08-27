@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const { Order } = require("../enums/orderEnum");
-const { productModel } = require("./productModel");
-const { shippingModel } = require("./shippingModel");
+import mongoose from "mongoose";
+import { Order } from "../enums/orderEnum";
+import { shippingModel } from "./shippingModel";
 
 const orderSchema = new mongoose.Schema(
     {
@@ -10,20 +9,16 @@ const orderSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        shippingId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "shipping",
-            required: true,
-        },
-        orderStatus: {
-            type: String,
-            default: Order.PROCESSING,
-        },
-
+        // shippingId: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "shipping",
+        //     required: true,
+        // },
         orderedItems: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product",
+                required: true
             },
         ],
 
@@ -32,7 +27,7 @@ const orderSchema = new mongoose.Schema(
         paymentMethod: {
             type: String,
             required: true,
-        }, // e.g.,
+        },
 
         totalAmount: {
             type: Number,
@@ -52,4 +47,4 @@ const orderSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("order", orderSchema);
+export const orderModel = mongoose.model("order", orderSchema);

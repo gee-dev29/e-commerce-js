@@ -18,6 +18,13 @@ const productField = [
     "productSize",
     "productImages",
 ];
+const orderField = [
+    "orderedItems",
+    "shippingInfo",
+    "paymentMethod",
+    "totalAmount",
+    "orderStatus",
+];
 
 const shippingFeild = [
     "shippingTrackingNumber",
@@ -26,7 +33,6 @@ const shippingFeild = [
     "shippingNote",
 ];
 
-const orderField = ["paymentMethod", "paymentStatus"];
 const cartField = ["productId", "quantity"];
 const wishListField = ["productId", "quantity"];
 // const emailField = ["productId", "quantity"];

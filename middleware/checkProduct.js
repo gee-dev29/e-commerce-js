@@ -17,6 +17,6 @@ export const checkProduct = async (req, res, next) => {
         req.product = product;
         next();
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };

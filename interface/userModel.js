@@ -49,10 +49,14 @@ const userSchema = new mongoose.Schema(
             enums: [, Role.ADMIN, Role.SUPER_ADMIN, Role.USER],
             default: Role.USER,
         },
-        isSuspended: {
+        UserStatus: {
             type: String,
             enum: [UserStatus.ACTIVE, UserStatus.SUSPENDED, UserStatus.DELETED],
             default: UserStatus.ACTIVE,
+        },
+        isSuspended: {
+            type: Boolean,
+            default: false,
         },
     },
     { timestamps: true }
