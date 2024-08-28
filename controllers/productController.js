@@ -2,8 +2,9 @@ import { productModel } from "../interface/productModel.js";
 import { entity } from "../utils/entity.js";
 import { productField } from "../utils/inputFields.js";
 
-export const addProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
     try {
+        const creatorId = req.params.id;
         const {
             productTitle,
             productDescription,
@@ -25,7 +26,8 @@ export const addProduct = async (req, res) => {
             });
         }
         const product = new productModel({
-            creatorId: req.id,
+            // id: req.params.id,
+            creatorId: creatorId,
             productTitle: productTitle,
             productDescription: productDescription,
             productPrice: productPrice,

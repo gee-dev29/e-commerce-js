@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
     {
+        // productId: {
+        //     type: String,
+        //     required: true,
+        //     unique: true,
+        //     default: () => uuidv4() // Generate UUID as default value
+        // },
         creatorId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "user",

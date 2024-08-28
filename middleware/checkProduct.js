@@ -1,3 +1,5 @@
+import { productModel } from "../interface/productModel.js";
+
 export const checkProduct = async (req, res, next) => {
     try {
         let productId;
@@ -14,6 +16,7 @@ export const checkProduct = async (req, res, next) => {
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
+        req.productId = productId;
         req.product = product;
         next();
     } catch (error) {

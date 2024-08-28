@@ -1,35 +1,44 @@
+import { cartModel } from "../interface/cartModel.js";
+import { productModel } from "../interface/productModel.js";
+import { entity } from "../utils/entity.js";
 import { cartField } from "../utils/inputFields.js";
 
 const addProductToCart = async (req, res) => {
     try {
         const userId = req.id;
         const user = req.user;
-        const productId = req.params.productId;
-        const { quantity } = req.body;
+        // const productId = req.params.productId;
+        // const product = req.params.product;
+        const { quantity, productId } = req.body;
         const checkFields = entity.checkMissingFieldsInput(cartField, req.body);
         if (!checkFields.result) {
             return res.status(400).json({
                 message: checkFields.message,
             });
         }
-
-        // Check if the product already exists in the cart
-        const existingProduct = user.cart.productIds.findIndex(
-            (id) => id.toString() === productId.toString()
-        );
-
-        if (existingProduct < 1) {
-            // If the product already exists in the cart, update the quantity
-            user.cart[existingProduct].quantity += quantity;
-        } else {
-            // If the product does not exist in the cart, add it with the specified quantity
-            user.cart.productIds.push(productId);
-            user.cart.quantity = quantity;
+        // check if the product is already in the cart
+        const existingProduct = await cartModel.findById(userId, {
+            productIds: { $in: [productId] },
+        });
+        // if the product id already exist in the cart, just increase the quantity
+        if (existingProduct && existingProduct.productIds.includes(productId)) {
+            //increase the quantity
+            existingProduct.quantity += quantity;
+            await existingProduct.save();
+            return res.status(200).json({
+                message: "Cart updated successfully",
+            });
         }
+        const product = await productModel.findById(productId);
+        const totalAmount = quantity * product.productPrice;
+        const newCart = new cartModel({
+            userId: userId,
+            productIds: [productId],
+            quantity: quantity,
+            totalAmount: totalAmount,
+        });
 
-        // Save the updated user document
-        await user.save();
-
+        await newCart.save();
         return res.status(200).json({
             message: "product added to cart",
         });

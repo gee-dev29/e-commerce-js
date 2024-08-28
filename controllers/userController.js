@@ -31,7 +31,6 @@ export const registerUser = async (req, res) => {
             email: email,
             password: hashPassword,
             otp: otp,
-            cart: { productIds: [], quantity: 0 },
         });
         await user.save();
         return res.status(201).json({
