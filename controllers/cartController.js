@@ -6,9 +6,6 @@ import { cartField } from "../utils/inputFields.js";
 const addProductToCart = async (req, res) => {
     try {
         const userId = req.id;
-        const user = req.user;
-        // const productId = req.params.productId;
-        // const product = req.params.product;
         const { quantity, productId } = req.body;
         const checkFields = entity.checkMissingFieldsInput(cartField, req.body);
         if (!checkFields.result) {
@@ -59,12 +56,6 @@ const updateCart = async (req, res) => {
             });
         }
 
-        const cart = await cartModel.findById(cartId);
-        if (!cart) {
-            return res.status(404).json({
-                message: "Cart not found",
-            });
-        }
         const payload = {
             quantity: quantity,
         };
@@ -89,12 +80,6 @@ const deleteCart = async (req, res) => {
         if (!checkFields.result) {
             return res.status(400).json({
                 message: checkFields.message,
-            });
-        }
-        const cart = await cartModel.findById(cartId);
-        if (!cart) {
-            return res.status(404).json({
-                message: "Cart not found",
             });
         }
 
