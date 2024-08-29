@@ -17,14 +17,14 @@ const addProductToCart = async (req, res) => {
             });
         }
         // check if the product is already in the cart
-        const existingProduct = await cartModel.findById(userId, {
+        const cart = await cartModel.findById(userId, {
             productIds: { $in: [productId] },
         });
         // if the product id already exist in the cart, just increase the quantity
-        if (existingProduct && existingProduct.productIds.includes(productId)) {
+        if (cart && cart.productIds.includes(productId)) {
             //increase the quantity
-            existingProduct.quantity += quantity;
-            await existingProduct.save();
+            cart.quantity += quantity;
+            await cart.save();
             return res.status(200).json({
                 message: "Cart updated successfully",
             });
