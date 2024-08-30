@@ -1,6 +1,5 @@
 import { Order } from "../enums/orderEnum";
 import { orderModel } from "../interface/orderModel";
-import { productModel } from "../interface/productModel";
 import { entity } from "../utils/entity";
 import { orderField } from "../utils/inputFields";
 
@@ -26,17 +25,7 @@ export const orderItem = async (req, res) => {
             });
         }
 
-        let totalAmount = 0.0;
-        const products = productModel.find()
-        if(!product){
-            return res.status(404).json({
-                message: "product not found"
-            })
-        }
-        // loop through the products
-        product.forEach(product => {
-            
-        })
+        
         const newOrder = new orderModel({
             creatorId: userId,
             orderedItems: orderedItems,
