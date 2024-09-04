@@ -41,6 +41,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/product", productRoute);
+
 app.listen(process.env.PORT || 8920, () => {
   consola.success({
     message: `Server started on port ${process.env.PORT || 8920}`,

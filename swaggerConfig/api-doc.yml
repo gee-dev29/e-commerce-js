@@ -17,7 +17,7 @@ tags:
   - name: products
     description: Apis for the products
 
-path:
+paths:
   /login:
     post:
       tags:
