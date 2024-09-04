@@ -16,13 +16,12 @@ const swaggerOptions = {
       securitySchemes: {
         bearerAuth: {
           type: "apiKey",
-          name: "token",
+          name: "Authorization",
           bearerFormat: "JWT",
           in: "header",
         },
       },
     },
-
     security: [
       {
         bearerAuth: [],
@@ -35,13 +34,13 @@ const swaggerOptions = {
       },
     ],
   },
-  // Path to the API docs
-  apis: ["./swaggerConfig/*.yml"], // Adjust the path as needed to your route files
+  apis: ["./swaggerConfig/*.yml"], 
 };
 
-const swaggeDocs = swaggerJSDoc(swaggerOptions);
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
 const swaggerApi = (app) => {
-  return app.use("/api-docs", SwaggerUi.serveWithOptions({}), SwaggerUi.serve, SwaggerUi.setup(swaggeDocs));
+  app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocs));
 };
 
-export {swaggerApi}
+export {swaggerApi};
