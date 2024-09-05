@@ -9,11 +9,11 @@ const orderSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        // shippingId: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "shipping",
-        //     required: true,
-        // },
+        shippingId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "shipping",
+            required: true,
+        },
         orderedItems: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -39,6 +39,7 @@ const orderSchema = new mongoose.Schema(
             enums: [Order.PROCESSING, Order.SHIPPED, Order.DELIVERED],
             default: Order.PROCESSING,
         },
+        
         orderDate: {
             type: Date,
             default: Date.now,

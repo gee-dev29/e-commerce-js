@@ -47,41 +47,51 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check for missing or invalid fields
+        // Validate input fields
         const checkFields = entity.checkMissingFieldsInput(
             loginField,
             req.body
         );
+
         if (!checkFields.result) {
             return res.status(400).json({
                 message: checkFields.message,
             });
         }
+
         // Find the user by email
-        const user = await userModel.findOne({ email: email });
+        const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(404).json({
                 message: "User not found",
             });
         }
 
-        // Decrypt the password (if applicable)
-        const decryptedPassword = entity.decryptPassword(password, user);
-        if (!decryptedPassword) {
-            return res.status(400).json({
+        // Compare the provided password with the stored hashed password
+        const isPasswordValid = await entity.decryptPassword(password, user);
+        if (!isPasswordValid) {
+            return res.status(401).json({
                 message: "Invalid credentials",
             });
         }
+
+        // Generate JWT token for authenticated user
         const payload = {
             id: user._id,
             role: user.role,
         };
         const token = entity.jwtSign(payload);
-        // Successful login
+        // return the token in the HTTP Header
+        res.setHeader("Authorization", `Bearer ${token}`);
+
+        // Successful login response
         return res.status(200).json({
-            token: token,
-            message: "Login successful",
-            payload: user,
+            message: "User login successful",
+            payload: {
+                id: user._id,
+                email: user.email,
+                role: user.role,
+            },
         });
     } catch (error) {
         console.error("Login error:", error);

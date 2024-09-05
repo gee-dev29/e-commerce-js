@@ -23,6 +23,7 @@ export const checkUser = async (req, res, next) => {
     }
 
     // Assign user to request object
+
     req.userId = userId;
     req.user = user;
     next();

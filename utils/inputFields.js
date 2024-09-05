@@ -15,7 +15,9 @@ const productField = [
     "productPrice",
     "productCategory",
     "productColors",
+    "productStock",
     "productSize",
+    "productDiscount",
     "productImages",
 ];
 const orderField = [
@@ -34,7 +36,7 @@ const shippingFeild = [
 ];
 
 const cartField = ["productId", "quantity"];
-const wishListField = ["productId", "quantity"];
+const wishListField = ["productId"];
 // const emailField = ["productId", "quantity"];
 
 export {

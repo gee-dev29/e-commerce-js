@@ -1,10 +1,11 @@
+import { EntityManager } from "typeorm";
 import { productModel } from "../interface/productModel.js";
 import { entity } from "../utils/entity.js";
 import { productField } from "../utils/inputFields.js";
 
 export const createProduct = async (req, res) => {
     try {
-        const creatorId = req.params.id;
+        const creatorId = req.id;
         const {
             productTitle,
             productDescription,
@@ -12,9 +13,9 @@ export const createProduct = async (req, res) => {
             productDiscount,
             productCategory,
             productColors,
-            productSizes,
-            productImages,
+            productSize,
             productStock,
+            productImages,
         } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             productField,
@@ -25,8 +26,7 @@ export const createProduct = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const product = new productModel({
-            // id: req.params.id,
+        const newProduct = new productModel({
             creatorId: creatorId,
             productTitle: productTitle,
             productDescription: productDescription,
@@ -34,11 +34,11 @@ export const createProduct = async (req, res) => {
             productDiscount: productDiscount,
             productCategory: productCategory,
             productColors: productColors,
-            productSizes: productSizes,
+            productSize: productSize,
             productStock: productStock,
             productImages: productImages,
         });
-        await product.save();
+        await newProduct.save();
         return res.status(201).json({
             message: "product created successfuly",
         });

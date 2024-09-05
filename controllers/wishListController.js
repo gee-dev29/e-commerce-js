@@ -4,8 +4,7 @@ import { wishListField } from "../utils/inputFields.js";
 const addItemToWishList = async (req, res) => {
     try {
         const userId = req.id;
-        const product = req.product;
-        const { quantity } = req.body;
+        const { productId } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             wishListField,
             req.body
@@ -15,12 +14,17 @@ const addItemToWishList = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const wishList = new wishListModel({
+        const wishList = await wishListModel.findOne({ productId: productId });
+        if (wishList) {
+            return res.status(400).json({
+                message: "Item already in wish list",
+            });
+        }
+        const newWishList = new wishListModel({
             creatorId: userId,
-            product: product._id,
-            quantity: quantity,
+            productId: productId,
         });
-        await wishList.save();
+        await newWishList.save();
         return res.status(201).json({
             message: "item added to wish list",
         });

@@ -45,14 +45,8 @@ const encryptPassword = async (password) => {
 };
 
 // decrypt password
-const decryptPassword = (password, user) => {
-    let decrypted;
-    bcrypt.compare(password, user.password, (err, result) => {
-        if (result) {
-            decrypted = result;
-        }
-    });
-    return decrypted;
+const decryptPassword = async (password, user) => {
+    return await bcrypt.compare(password, user.password);
 };
 
 // Document upload
