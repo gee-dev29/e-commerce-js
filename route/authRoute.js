@@ -1,8 +1,8 @@
 import express from "express";
 import {
-    loginUser,
-    registerUser,
-    viewSingleUser,
+  loginUser,
+  registerUser,
+  viewSingleUser,
 } from "../controllers/userController.js";
 import { checkUser } from "../middleware/checkUser.js";
 
