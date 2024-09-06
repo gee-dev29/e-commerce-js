@@ -24,6 +24,7 @@ export const registerUser = async (req, res) => {
             });
         }
         const otp = entity.generateOtp();
+        console.log(otp);
         const hashPassword = await entity.encryptPassword(password);
         const user = new userModel({
             firstName: firstName,
@@ -32,6 +33,7 @@ export const registerUser = async (req, res) => {
             password: hashPassword,
             otp: otp,
         });
+        console.log(otp);
         await user.save();
         return res.status(201).json({
             message: "user created successfuly",

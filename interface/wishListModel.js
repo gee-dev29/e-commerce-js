@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import  mongoose  from "mongoose";
 
 const wishListSchema = new mongoose.Schema(
     {
@@ -7,15 +7,13 @@ const wishListSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        productId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "product",
-            required: true,
-        },
-        quantity: {
-            type: Number,
-            required: true,
-        },
+        productIds: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "product",
+                required: true,
+            },
+        ],
     },
     { timestamps: true }
 );

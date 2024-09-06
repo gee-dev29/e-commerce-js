@@ -1,11 +1,6 @@
 const registerField = ["firstName", "lastName", "email", "password"];
 const updateField = ["phone", "address", "profilePicture"];
-const adminRegisterField = [
-    "fullName",
-    "email",
-    "password",
-    "role",
-];
+const adminRegisterField = ["fullName", "email", "password", "role"];
 const loginField = ["email", "password"];
 
 const productField = [
@@ -27,25 +22,41 @@ const orderField = [
     "orderStatus",
 ];
 
-const shippingFeild = [
+const shippingField = [
     "shippingTrackingNumber",
-    "shippingAddress",
+    "zipCode",
+    "state",
+    "city",
+    "street",
     "shippingCountry",
     "shippingNote",
+    "shippingFee",
+    "currency",
+];
+const updateShippingField = [
+    "zipCode",
+    "state",
+    "city",
+    "street",
+    "shippingCountry",
+    "shippingNote",
+    "shippingFee",
+    "currency",
 ];
 
 const cartField = ["productId", "quantity"];
+
 const wishListField = ["productId"];
-// const emailField = ["productId", "quantity"];
 
 export {
     registerField,
     productField,
-    shippingFeild,
+    shippingField,
     orderField,
     loginField,
     adminRegisterField,
     updateField,
     cartField,
     wishListField,
+    updateShippingField
 };

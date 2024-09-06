@@ -1,6 +1,6 @@
+import { orderStatus } from "../enums/orderEnum.js";
 import mongoose from "mongoose";
-import { Order } from "../enums/orderEnum";
-import { shippingModel } from "./shippingModel";
+import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 
 const orderSchema = new mongoose.Schema(
     {
@@ -18,14 +18,13 @@ const orderSchema = new mongoose.Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product",
-                required: true
+                required: true,
             },
         ],
 
-        shippingInfo: shippingModel.schema,
-
         paymentMethod: {
             type: String,
+            enums: [PaymentMethod.CASH, PaymentMethod.CREDIT_CARD, PaymentMethod.PAYPAL, PaymentMethod.STRIPE],
             required: true,
         },
 
@@ -36,10 +35,14 @@ const orderSchema = new mongoose.Schema(
 
         orderStatus: {
             type: String,
-            enums: [Order.PROCESSING, Order.SHIPPED, Order.DELIVERED],
-            default: Order.PROCESSING,
+            enums: [
+                orderStatus.PROCESSING,
+                orderStatus.SHIPPED,
+                orderStatus.DELIVERED,
+            ],
+            default: orderStatus.PROCESSING,
         },
-        
+
         orderDate: {
             type: Date,
             default: Date.now,

@@ -35,13 +35,13 @@ const userSchema = new mongoose.Schema(
             default: false,
         },
         otp: {
-            type: {
-                code: {
-                    type: String,
-                },
-                expiresIn: {
-                    type: Date,
-                },
+            otp: {
+                type: String, // ensure this is set to 'String' if the OTP is alphanumeric
+                required: true,
+            },
+            expiresIn: {
+                type: Date,
+                required: true,
             },
         },
         role: {

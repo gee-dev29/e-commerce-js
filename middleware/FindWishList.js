@@ -1,21 +1,15 @@
-import { wishListModel } from "../interface/wishListModel";
+import { wishListModel } from "../interface/wishListModel.js";
 
 export const findWishList = async (req, res, next) => {
     try {
-        const wishListId = req.params.wishListId;
+        const userId = req.id;
         const productId = req.body.productId;
-        if (!wishListId) {
-            return res.status(400).json({
-                message: "WishList Id is required",
+        const wishList = await wishListModel.findOne({ creatorId: userId });
+        if (wishList.productIds.includes(productId)) {
+            return res.status(409).json({
+                message: "Product already added to wish list",
             });
         }
-        const wishList = await wishListModel.findOne({ productId: productId });
-        if (wishList) {
-            return res.status(400).json({
-                message: "Item already in wish List",
-            });
-        }
-        req.wishList = wishList;
         next();
     } catch (error) {
         return res.status(500).json({

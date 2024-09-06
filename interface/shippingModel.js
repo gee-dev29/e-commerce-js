@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { currency } from "../utils/currency.js";
 
 const shippingSchema = new mongoose.Schema(
     {
@@ -7,19 +8,30 @@ const shippingSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        productId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "product",
-            required: true,
-        },
         shippingTrackingNumber: {
             type: String,
             required: true,
         },
-        shippingAddress: {
-            type: String,
-            required: true,
-        },
+        shippingAddress: [
+            {
+                street: {
+                    type: String,
+                    required: true,
+                },
+                city: {
+                    type: String,
+                    required: true,
+                },
+                state: {
+                    type: String,
+                    required: true,
+                },
+                zipCode: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
         shippingCountry: {
             type: String,
             required: true,
@@ -27,9 +39,18 @@ const shippingSchema = new mongoose.Schema(
         shippingNote: {
             type: String,
         },
-        totalAmount: {
+        shippingFee: {
             type: Number,
             required: true,
+        },
+        currency: {
+            type: String,
+            required: true,
+            enum: [currency.USD, currency.EUR, currency.NGN],
+        },
+        freeDelivery: {
+            type: Boolean,
+            default: false,
         },
     },
     { timestamps: true }

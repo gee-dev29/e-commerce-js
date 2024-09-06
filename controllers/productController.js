@@ -48,7 +48,7 @@ export const createProduct = async (req, res) => {
 };
 
 //get all products
-export const getAllProducts = async (req, res) => {
+export const viewProducts = async (req, res) => {
     try {
         const products = await entity.getAllFilteredData(productModel, {});
         return res.status(200).json({ payload: products });
@@ -58,7 +58,7 @@ export const getAllProducts = async (req, res) => {
 };
 
 //get single product
-export const getSingleProduct = async (req, res) => {
+export const viewProduct = async (req, res) => {
     try {
         return res.status(200).json({ payload: req.product });
     } catch (error) {
@@ -69,7 +69,7 @@ export const getSingleProduct = async (req, res) => {
 //update product
 export const updateProduct = async (req, res) => {
     try {
-        const product = req.product;
+        const productId = req.productId;
         const {
             productTitle,
             productDescription,
@@ -101,7 +101,7 @@ export const updateProduct = async (req, res) => {
             productImages: productImages,
             productQuantity: productQuantity,
         };
-        await entity.updateDataById(req.params.id, payload, productModel);
+        await entity.updateDataById(productId, payload, productModel);
         return res.status(200).json({
             message: "product updated successfuly",
         });
@@ -113,8 +113,8 @@ export const updateProduct = async (req, res) => {
 //delete product
 export const deleteProduct = async (req, res) => {
     try {
-        const id = req.params.id;
-        await entity.deleteDataById(id, productModel);
+        const productId = req.productId;
+        await entity.deleteDataById(productId, productModel);
         return res.status(200).json({
             message: "product deleted successfuly",
         });

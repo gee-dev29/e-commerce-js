@@ -75,12 +75,8 @@ const jwtSign = (id) => {
 
 const generateOtp = () => {
     const value = Math.random().toString().substr(2, 4);
-    const expiresIn = moment().add(15, "minute");
-    const payload = {
-        value,
-        expiresIn,
-    };
-    return payload;
+    const expiresIn = new Date(Date.now() + 10 * 60 * 1000);
+    return { otp: value, expiresIn: expiresIn };
 };
 
 const getAllFilteredData = async (model, filter) => {

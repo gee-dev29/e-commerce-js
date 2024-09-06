@@ -40,7 +40,6 @@ const updateCart = async (req, res) => {
     try {
         const product = req.product;
         console.log(product);
-        const cartId = req.cartId;
         const cart = req.cart;
         const { productId, quantity } = req.body;
         const checkFields = entity.checkMissingFieldsInput(cartField, req.body);
@@ -49,20 +48,7 @@ const updateCart = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const payload = {
-            productId: productId,
-            quantity: quantity,
-        };
-        // if(cart.productIds.includes(productId)){
-        //     payload.productIds = [...cart.productIds, productId];
-        // }else{
-        //     payload.productIds = cart.productIds;
-        // }
-        // check if the product is already in the cart
-
-        // if the product id already exist in the cart, just increase the quantity
-        if (cart && cart.productIds.includes(productId)) {
-            //increase the quantity
+        if (cart.productIds.includes(productId)) {
             cart.quantity += quantity;
             cart.totalAmount = cart.quantity * product.productPrice;
             await cart.save();
@@ -70,7 +56,10 @@ const updateCart = async (req, res) => {
                 message: "Cart updated successfully",
             });
         }
-        await entity.updateDataById(cartId, payload, cartModel);
+        cart.productIds.push(productId);
+        cart.quantity += quantity;
+        cart.totalAmount = cart.quantity * product.productPrice;
+        await cart.save();
         return res.status(200).json({
             message: "Cart updated successfully",
         });
@@ -83,10 +72,15 @@ const updateCart = async (req, res) => {
 // get cart
 export const getCart = async (req, res) => {
     try {
+        let count = 0;
         const cartId = req.cartId;
-        const cart = await cartModel.findOne({ _id: cartId })
+        const cart = await cartModel
+            .findOne({ _id: cartId })
             .populate("productIds");
-        return res.status(200).json({ payload: cart });
+        return res.status(200).json({
+            // totalRecords: count(cart),
+            data: cart,
+        });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
     }

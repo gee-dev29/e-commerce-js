@@ -1,7 +1,8 @@
 import { wishListModel } from "../interface/wishListModel.js";
+import { entity } from "../utils/entity.js";
 import { wishListField } from "../utils/inputFields.js";
 
-const addItemToWishList = async (req, res) => {
+export const addItemToWishList = async (req, res) => {
     try {
         const userId = req.id;
         const { productId } = req.body;
@@ -14,20 +15,17 @@ const addItemToWishList = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const wishList = await wishListModel.findOne({ productId: productId });
-        if (wishList) {
-            return res.status(400).json({
-                message: "Item already in wish list",
+        const wishList = await wishListModel.findById(userId);
+        if (!wishList) {
+            const newWishList = new wishListModel({
+                creatorId: userId,
+                productIds: [productId],
+            });
+            await newWishList.save();
+            return res.status(200).json({
+                message: "product added to wish list",
             });
         }
-        const newWishList = new wishListModel({
-            creatorId: userId,
-            productId: productId,
-        });
-        await newWishList.save();
-        return res.status(201).json({
-            message: "item added to wish list",
-        });
     } catch (error) {
         return res.status(500).json({
             message: "Internal server error",
@@ -35,11 +33,13 @@ const addItemToWishList = async (req, res) => {
     }
 };
 
-const updateWishList = async (req, res) => {
+export const updateWishList = async (req, res) => {
     try {
-        const { wishListId, quantity } = req.body;
+        const { productId } = req.body;
+        console.log(productId);
+        const wishListId = req.wishListId;
         const checkFields = entity.checkMissingFieldsInput(
-            ["quantity", "wishListId"],
+            wishListField,
             req.body
         );
         if (!checkFields.result) {
@@ -49,15 +49,13 @@ const updateWishList = async (req, res) => {
         }
 
         const wishList = await wishListModel.findById(wishListId);
-        if (!wishList) {
+        if (wishList && wishList.productIds.includes(productId)) {
             return res.status(404).json({
-                message: "wish list not found",
+                message: "product already added to wish list",
             });
         }
-        const payload = {
-            quantity: quantity,
-        };
-        await entity.updateDataById(wishListId, payload, wishListModel);
+        wishList.productIds.push(productId);
+        await wishList.save();
         return res.status(200).json({
             message: "wish List updated successfully",
         });
@@ -68,30 +66,28 @@ const updateWishList = async (req, res) => {
     }
 };
 
-const deleteWishList = async (req, res) => {
+export const deleteWishList = async (req, res) => {
     try {
-        const { wishListId } = req.body;
-        const checkFields = entity.checkMissingFieldsInput(
-            ["wishListId"],
-            req.body
-        );
-        if (!checkFields.result) {
-            return res.status(400).json({
-                message: checkFields.message,
-            });
-        }
-        const wishList = await cartModel.findById(wishListId);
-        if (!wishList) {
-            return res.status(404).json({
-                message: "wish list not found",
-            });
-        }
-
-        await entity.deleteDataById(cartId, cartModel);
+        const wishListId = req.wishListId;
+        await entity.deleteDataById(wishListId, wishListModel);
         return res.status(200).json({
             message: "wish list deleted successfully",
         });
     } catch (error) {}
 };
 
-export { updateWishList, addItemToWishList, deleteWishList };
+export const viewWishList = async (req, res) => {
+    try {
+        let count = 0;
+        const wishListId = req.wishListId;
+        const wishList = await wishListModel
+            .findOne({ _id: wishListId })
+            .populate("productIds");
+        return res.status(200).json({
+            // totalRecords: count(wishList),
+            data: wishList,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
