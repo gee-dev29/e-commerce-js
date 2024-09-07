@@ -22,6 +22,12 @@ const orderSchema = new mongoose.Schema(
             },
         ],
 
+        orderTrackingNumber: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        
         paymentMethod: {
             type: String,
             enums: [PaymentMethod.CASH, PaymentMethod.CREDIT_CARD, PaymentMethod.PAYPAL, PaymentMethod.STRIPE],

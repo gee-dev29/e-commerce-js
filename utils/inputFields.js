@@ -45,6 +45,7 @@ const updateShippingField = [
 ];
 
 const cartField = ["productId", "quantity"];
+const verifyOTPField = ["otp", "email"];
 
 const wishListField = ["productId"];
 
@@ -58,5 +59,6 @@ export {
     updateField,
     cartField,
     wishListField,
-    updateShippingField
+    updateShippingField,
+    verifyOTPField,
 };

@@ -7,8 +7,11 @@ import {
     loginField,
     registerField,
     updateField,
+    verifyOTPField,
 } from "../utils/inputFields.js";
 import resetPasswordTemplate from "../emailService/template/template.js";
+import { messages } from "./message/messageEnum.js";
+import { sendEmail } from "../emailService/email.js";
 
 export const registerUser = async (req, res) => {
     try {
@@ -24,7 +27,6 @@ export const registerUser = async (req, res) => {
             });
         }
         const otp = entity.generateOtp();
-        console.log(otp);
         const hashPassword = await entity.encryptPassword(password);
         const user = new userModel({
             firstName: firstName,
@@ -33,7 +35,8 @@ export const registerUser = async (req, res) => {
             password: hashPassword,
             otp: otp,
         });
-        console.log(otp);
+
+        sendRegistrationEmails(email, firstName, otp);
         await user.save();
         return res.status(201).json({
             message: "user created successfuly",
@@ -86,6 +89,19 @@ export const loginUser = async (req, res) => {
         // return the token in the HTTP Header
         res.setHeader("Authorization", `Bearer ${token}`);
 
+        const otp = entity.generateOtp();
+        const otpPayload = {
+            otp: otp,
+        };
+        const _doc = req.user;
+        await entity.updateUserByEmail(email, otpPayload, userModel);
+        const otpMessage = {
+            recieverEmail: email,
+            subject: "Verify Otp",
+            text: `Hello ${_doc.firstName}. ${_doc.lastName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
+        };
+        console.log(otpMessage);
+        sendEmail(otpMessage);
         // Successful login response
         return res.status(200).json({
             message: "User login successful",
@@ -98,7 +114,7 @@ export const loginUser = async (req, res) => {
     } catch (error) {
         console.error("Login error:", error);
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -131,7 +147,7 @@ export const registerAdmin = async (req, res) => {
         });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -139,6 +155,7 @@ export const registerAdmin = async (req, res) => {
 //get user
 export const viewSingleUser = async (req, res) => {
     try {
+        // const user = req.user
         return res.status(200).json({ payload: req.user });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
@@ -155,7 +172,8 @@ export const viewAllUsers = async (req, res) => {
 //delete User
 export const deleteUser = async (req, res) => {
     try {
-        await entity.deleteDataById(req.params.id, userModel);
+        const userId = req.userId;
+        await entity.deleteDataById(userId, userModel);
         return res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {}
 };
@@ -163,12 +181,12 @@ export const deleteUser = async (req, res) => {
 //suspend a user
 export const toggleSuspendUser = async (req, res) => {
     try {
-        const user = req.user;
+        const userId = req.userId;
         if (user.status == UserStatus.ACTIVE) {
             const payload = {
                 status: UserStatus.SUSPENDED,
             };
-            await entity.updateDataById(req.params.id, payload, userModel);
+            await entity.updateDataById(userId, payload, userModel);
             return res.status(200).json({
                 message: "user suspended successfully",
             });
@@ -176,13 +194,13 @@ export const toggleSuspendUser = async (req, res) => {
         const payload = {
             status: UserStatus.ACTIVE,
         };
-        await entity.updateDataById(req.params.id, payload, userModel);
+        await entity.updateDataById(userId, payload, userModel);
         return res.status(200).json({
             message: "user activated successfully",
         });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -212,7 +230,7 @@ export const updateUser = async (req, res) => {
         });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -236,4 +254,62 @@ export const forgotPassword = async (req, res) => {
     } catch (error) {
         return errorHandler(error, res);
     }
+};
+
+export const verifyOTP = async (req, res) => {
+    try {
+        const { otp, email } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            verifyOTPField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const _doc = req.user;
+        if (otp !== _doc.otp.otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        } else {
+            const updateData = {
+                isVerified: true,
+            };
+            await entity
+                .updateDataById(_doc._id, updateData, userModel)
+                .then(() => {
+                    const emailMessage = {
+                        recieverEmail: email,
+                        subject: "Account verification successful",
+                        text: `Hello ${_doc.firstName}. ${_doc.lastName} ${messages.VERIFIED_OTP}`,
+                    };
+                    sendEmail(emailMessage);
+                    return res.status(200).json({
+                        message: "OTP verification successful",
+                    });
+                });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};
+export const sendRegistrationEmails = (email, fullName, otp) => {
+    const otpMessage = {
+        recieverEmail: email,
+        subject: "Verify Otp",
+        text: `Hello ${fullName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
+    };
+
+    const emailMessage = {
+        recieverEmail: email,
+        subject: "New Registration",
+        text: `Hello ${fullName}. ${messages.REGISTRATION}`,
+    };
+
+    sendEmail(emailMessage);
+    sendEmail(otpMessage);
 };

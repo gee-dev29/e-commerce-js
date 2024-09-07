@@ -54,3 +54,23 @@ export const orderItem = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+export const viewOrders = async (req, res) => {
+    try {
+        const order = await entity.getAllFilteredData(orderModel);
+        return res.status(200).json({ data: order });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const viewOrder = async (req, res) => {
+    try {
+        const order = req.order;
+        // console.log(order)
+        // const orderItem = await orderModel.findById(orderId);
+        return res.status(200).json({ data: order });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};

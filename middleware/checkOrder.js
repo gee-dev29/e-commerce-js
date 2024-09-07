@@ -1,6 +1,6 @@
-import { orderModel } from "../interface/orderModel";
+import { orderModel } from "../interface/orderModel.js";
 
-export const checkProduct = async (req, res, next) => {
+export const checkOrder = async (req, res, next) => {
     try {
         let orderId;
         if (req.body.orderId) {
