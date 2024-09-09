@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
         },
         otp: {
             otp: {
-                type: String, // ensure this is set to 'String' if the OTP is alphanumeric
+                type: String,
                 required: true,
             },
             expiresIn: {
