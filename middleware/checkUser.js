@@ -1,4 +1,4 @@
-import { userModel } from "../interface/userModel.js";
+import { userModel } from "../model/userModel.js";
 
 export const checkUser = async (req, res, next) => {
     // Check if user ID exists in params or body

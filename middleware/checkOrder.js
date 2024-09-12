@@ -1,4 +1,4 @@
-import { orderModel } from "../interface/orderModel.js";
+import { orderModel } from "../model/orderModel.js";
 
 export const checkOrder = async (req, res, next) => {
     try {

@@ -1,7 +1,7 @@
 import { orderStatus } from "../enums/orderEnum.js";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
-import { orderModel } from "../interface/orderModel.js";
-import { productModel } from "../interface/productModel.js";
+import { orderModel } from "../model/orderModel.js";
+import { productModel } from "../model/productModel.js";
 import { checkShippingInfo } from "../middleware/checkShippingInfo.js";
 import { entity } from "../utils/entity.js";
 import { orderField } from "../utils/inputFields.js";

@@ -1,4 +1,4 @@
-import { shippingModel } from "../interface/shippingModel.js";
+import { shippingModel } from "../model/shippingModel.js";
 import { entity } from "../utils/entity.js";
 import { shippingField, updateShippingField } from "../utils/inputFields.js";
 

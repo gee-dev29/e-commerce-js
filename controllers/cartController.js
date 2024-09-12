@@ -1,5 +1,5 @@
-import { cartModel } from "../interface/cartModel.js";
-import { productModel } from "../interface/productModel.js";
+import { cartModel } from "../model/cartModel.js";
+import { productModel } from "../model/productModel.js";
 import { entity } from "../utils/entity.js";
 import { cartField } from "../utils/inputFields.js";
 

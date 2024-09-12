@@ -1,4 +1,4 @@
-import { wishListModel } from "../interface/wishListModel.js";
+import { wishListModel } from "../model/wishListModel.js";
 import { entity } from "../utils/entity.js";
 import { wishListField } from "../utils/inputFields.js";
 

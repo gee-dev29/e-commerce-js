@@ -1,7 +1,7 @@
 import { UserStatus } from "../enums/statusEnum.js";
 import { entity } from "../utils/entity.js";
 import { Role } from "../enums/role.js";
-import { userModel } from "../interface/userModel.js";
+import { userModel } from "../model/userModel.js";
 import {
     adminRegisterField,
     loginField,
@@ -100,7 +100,6 @@ export const loginUser = async (req, res) => {
             subject: "Verify Otp",
             text: `Hello ${_doc.firstName}. ${_doc.lastName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
         };
-        console.log(otpMessage);
         sendEmail(otpMessage);
         // Successful login response
         return res.status(200).json({

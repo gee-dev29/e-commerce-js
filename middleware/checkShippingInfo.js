@@ -1,4 +1,4 @@
-import { shippingModel } from "../interface/shippingModel.js";
+import { shippingModel } from "../model/shippingModel.js";
 
 export const checkShippingInfo = async (req, res, next) => {
     try {

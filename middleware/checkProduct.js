@@ -1,4 +1,4 @@
-import { productModel } from "../interface/productModel.js";
+import { productModel } from "../model/productModel.js";
 
 export const checkProduct = async (req, res, next) => {
     // Check if product ID exists in params or body

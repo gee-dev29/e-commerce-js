@@ -1,5 +1,4 @@
-import { EntityManager } from "typeorm";
-import { productModel } from "../interface/productModel.js";
+import { productModel } from "../model/productModel.js";
 import { entity } from "../utils/entity.js";
 import { productField } from "../utils/inputFields.js";
 
