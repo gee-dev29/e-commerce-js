@@ -5,11 +5,12 @@ import {
     verifyOTP,
 } from "../controllers/userController.js";
 import { checkUser } from "../middleware/checkUser.js";
+import { findUserByEmail } from "../middleware/findUserByEmail.js";
 
 const router = express.Router();
 
 router.route("/register").post(registerUser);
-router.route("/:id/login").post(checkUser, loginUser);
-router.route("/:id/verify-otp").post(checkUser, verifyOTP);
+router.route("/login").post(findUserByEmail, loginUser);
+router.route("/verify-otp").post(findUserByEmail, verifyOTP);
 
 export default router;

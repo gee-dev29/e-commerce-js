@@ -33,7 +33,7 @@ export const orderItem = async (req, res) => {
 
         const newOrder = new orderModel({
             creatorId: userId,
-            orderedItems: products.map((product) => product._id), // Store product IDs in orderedItems
+            orderedItems: products.map((product) => product._id),
             shippingId: shippingId,
             paymentMethod: paymentMethod,
             orderStatus: orderStatus.PROCESSING,

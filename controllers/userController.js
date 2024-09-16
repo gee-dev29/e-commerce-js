@@ -1,6 +1,5 @@
 import { UserStatus } from "../enums/statusEnum.js";
 import { entity } from "../utils/entity.js";
-import { Role } from "../enums/role.js";
 import { userModel } from "../model/userModel.js";
 import {
     adminRegisterField,
@@ -47,12 +46,10 @@ export const registerUser = async (req, res) => {
         });
     }
 };
-//login user
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validate input fields
         const checkFields = entity.checkMissingFieldsInput(
             loginField,
             req.body
@@ -63,30 +60,13 @@ export const loginUser = async (req, res) => {
                 message: checkFields.message,
             });
         }
-
-        // Find the user by email
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found",
-            });
-        }
-
-        // Compare the provided password with the stored hashed password
+        const user = req.user;
         const isPasswordValid = await entity.decryptPassword(password, user);
         if (!isPasswordValid) {
             return res.status(401).json({
                 message: "Invalid credentials",
             });
         }
-
-        // Generate JWT token for authenticated user
-        const payload = {
-            id: user._id,
-            role: user.role,
-        };
-        const token = entity.jwtSign(payload);
-        res.setHeader("Authorization", `Bearer ${token}`);
 
         const otp = entity.generateOtp();
         const otpPayload = {
@@ -100,7 +80,6 @@ export const loginUser = async (req, res) => {
             text: `Hello ${_doc.firstName}. ${_doc.lastName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
         };
         sendEmail(otpMessage);
-        // Successful login response
         return res.status(200).json({
             message: "User login successful",
             payload: {
@@ -268,6 +247,7 @@ export const verifyOTP = async (req, res) => {
             });
         }
         const _doc = req.user;
+        console.log(_doc)
         if (otp !== _doc.otp.otp) {
             return res.status(400).json({
                 message: "Invalid OTP",
@@ -282,8 +262,14 @@ export const verifyOTP = async (req, res) => {
                     const emailMessage = {
                         recieverEmail: email,
                         subject: "Account verification successful",
-                        text: `Hello ${_doc.firstName}. ${_doc.lastName} ${messages.VERIFIED_OTP}`,
+                        text: `Hello ${_doc.fullName}. ${messages.VERIFIED_OTP}`,
                     };
+                    const payload = {
+                        id: _doc._id,
+                        role: _doc.role,
+                    };
+                    const token = entity.jwtSign(payload);
+                    res.setHeader("Authorization", `Bearer ${token}`);
                     sendEmail(emailMessage);
                     return res.status(200).json({
                         message: "OTP verification successful",
@@ -296,6 +282,7 @@ export const verifyOTP = async (req, res) => {
         });
     }
 };
+
 export const sendRegistrationEmails = (email, fullName, otp) => {
     const otpMessage = {
         recieverEmail: email,

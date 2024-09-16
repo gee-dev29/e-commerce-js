@@ -9,6 +9,10 @@ const orderSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
+        shippingTrackingNumber: {
+            type: String,
+            required: true,
+        },
         shippingId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "shipping",

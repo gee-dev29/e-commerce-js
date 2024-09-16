@@ -13,10 +13,9 @@ const addProductToCart = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        // get the cart model of the user
-        const cart = await cartModel.findById(userId);
+        const cart = await cartModel.findOne({ creatorId: userId });
+        const product = await productModel.findById(productId);
         if (!cart) {
-            const product = await productModel.findById(productId);
             const totalAmount = quantity * product.productPrice;
             const newCart = new cartModel({
                 creatorId: userId,
@@ -25,10 +24,25 @@ const addProductToCart = async (req, res) => {
                 totalAmount: totalAmount,
             });
             await newCart.save();
-            return res.status(200).json({
-                message: "product added to cart",
+            return res.status(201).json({
+                message: "Cart created and product added",
             });
         }
+        if (cart.productIds.includes(productId)) {
+            cart.quantity += quantity;
+            cart.totalAmount = cart.quantity * product.productPrice;
+            await cart.save();
+            return res.status(200).json({
+                message: "Cart updated successfully",
+            });
+        }
+        cart.productIds.push(productId);
+        cart.quantity += quantity;
+        cart.totalAmount = cart.quantity * product.productPrice;
+        await cart.save();
+        return res.status(200).json({
+            message: "Cart updated successfully",
+        });
     } catch (error) {
         return res.status(500).json({
             message: error.message,
@@ -39,7 +53,6 @@ const addProductToCart = async (req, res) => {
 const updateCart = async (req, res) => {
     try {
         const product = req.product;
-        console.log(product);
         const cart = req.cart;
         const { productId, quantity } = req.body;
         const checkFields = entity.checkMissingFieldsInput(cartField, req.body);
@@ -78,11 +91,10 @@ export const getCart = async (req, res) => {
             .findOne({ _id: cartId })
             .populate("productIds");
         return res.status(200).json({
-            // totalRecords: count(cart),
             data: cart,
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };
 
