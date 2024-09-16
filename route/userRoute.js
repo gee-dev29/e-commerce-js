@@ -16,7 +16,7 @@ router
 
 router
     .route("/:id")
-    .get(jwtVerify, checkUser, viewSingleUser)
+    .get(jwtVerify, superAdminRoleCheck, viewSingleUser)
     .delete(jwtVerify, superAdminRoleCheck, deleteUser);
     
 router
