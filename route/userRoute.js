@@ -19,8 +19,4 @@ router
     .get(jwtVerify, superAdminRoleCheck, viewSingleUser)
     .delete(jwtVerify, superAdminRoleCheck, deleteUser);
     
-router
-    .route("/:productId")
-    .patch(jwtVerify, checkUser, checkProduct, superAdminRoleCheck)
-
 export default router;
