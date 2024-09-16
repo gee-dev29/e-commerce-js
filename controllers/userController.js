@@ -10,8 +10,8 @@ import {
     verifyOTPField,
 } from "../utils/inputFields.js";
 import resetPasswordTemplate from "../emailService/template/template.js";
-import { messages } from "./message/messageEnum.js";
 import { sendEmail } from "../emailService/email.js";
+import { messages } from "../message/messageEnum.js";
 
 export const registerUser = async (req, res) => {
     try {
@@ -86,7 +86,6 @@ export const loginUser = async (req, res) => {
             role: user.role,
         };
         const token = entity.jwtSign(payload);
-        // return the token in the HTTP Header
         res.setHeader("Authorization", `Bearer ${token}`);
 
         const otp = entity.generateOtp();
@@ -140,6 +139,7 @@ export const registerAdmin = async (req, res) => {
             otp: otp,
             role: role,
         });
+        sendRegistrationEmails(email, firstName, otp);
         await user.save();
         return res.status(201).json({
             message: "Admin created successfuly",

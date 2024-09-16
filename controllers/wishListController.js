@@ -36,7 +36,6 @@ export const addItemToWishList = async (req, res) => {
 export const updateWishList = async (req, res) => {
     try {
         const { productId } = req.body;
-        console.log(productId);
         const wishListId = req.wishListId;
         const checkFields = entity.checkMissingFieldsInput(
             wishListField,
@@ -73,7 +72,9 @@ export const deleteWishList = async (req, res) => {
         return res.status(200).json({
             message: "wish list deleted successfully",
         });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 export const viewWishList = async (req, res) => {

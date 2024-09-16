@@ -24,7 +24,6 @@ export const orderItem = async (req, res) => {
             });
         }
 
-        // Fetch products from the database using the product IDs in the cart
         const products = await productModel.find({ _id: { $in: productIds } });
         if (!products || products.length === 0) {
             return res.status(404).json({
@@ -32,18 +31,15 @@ export const orderItem = async (req, res) => {
             });
         }
 
-        // Create the new order
         const newOrder = new orderModel({
             creatorId: userId,
             orderedItems: products.map((product) => product._id), // Store product IDs in orderedItems
             shippingId: shippingId,
             paymentMethod: paymentMethod,
-            orderStatus: orderStatus.PROCESSING, // default status
+            orderStatus: orderStatus.PROCESSING,
             totalAmount: cart.totalAmount,
         });
 
-        // console.log(newOrder);
-        // Save the new order to the database
         await newOrder.save();
 
         return res.status(201).json({
