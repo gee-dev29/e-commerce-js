@@ -46,7 +46,7 @@ const encryptPassword = async (password) => {
 
 // decrypt password
 const decryptPassword = async (password, user) => {
-    return await bcrypt.compare(password, user.password);
+    return await bcrypt.compare(password, user);
 };
 
 // Document upload
