@@ -57,7 +57,7 @@ export const uploadProfilePicture = async (req, res) => {
 // work in progress...
 export const getProfilePic = async (req, res) => {
     try {
-        const creatorId  = req.id;
+        const creatorId = req.id;
 
         const filter = {
             creatorId: creatorId,
@@ -76,6 +76,47 @@ export const getProfilePic = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({
+            error: error.message,
+        });
+    }
+};
+
+export const deleteProfilePic = async (req, res) => {
+    try {
+        const creatorId = req.id;
+
+        const filter = {
+            creatorId: creatorId,
+            documentType: uploadEnum.PROFILE_PICTURE,
+        };
+        const profilePic = await entity.getAllFilteredData(uploadModel, filter);
+        if (!profilePic || profilePic.length === 0) {
+            return res.status(404).json({
+                message: "No profile picture found for this user",
+            });
+        }
+        const publicId = profilePic[0].documentLink
+            .split("/")
+            .pop()
+            .split(".")[0];
+        await cloudinary.uploader.destroy(publicId, (error, result) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    message: "Error deleting the image from Cloudinary",
+                    error: error.message,
+                });
+            }
+            uploadModel.findByIdAndDelete(profilePic[0]._id).then(() => {
+                return res.status(200).json({
+                    message: "Profile picture deleted successfully",
+                });
+            });
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
             error: error.message,
         });
     }
