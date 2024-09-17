@@ -10,6 +10,7 @@ import wishListRoute from "./route/wishListRoute.js";
 import shippingRoute from "./route/shippingRoute.js";
 import productRoute from "./route/productRoute.js";
 import orderRoute from "./route/orderRoute.js";
+import uploadRoute from "./route/uploadRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
@@ -44,6 +45,7 @@ app.use("/api/v1/product", productRoute);
 app.use("/api/v1/wishList", wishListRoute);
 app.use("/api/v1/shipping", shippingRoute);
 app.use("/api/v1/order", orderRoute);
+app.use("/api/v1/upload", uploadRoute);
 app.listen(process.env.PORT || 8920, () => {
     consola.success({
         message: `Server started on port ${process.env.PORT || 8920}`,

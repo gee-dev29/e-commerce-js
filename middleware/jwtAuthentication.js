@@ -14,6 +14,7 @@ export const jwtVerify = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid token" });
         }
         req.id = decoded.userId.id;
+        console.log(req.id);
         req.role = decoded.role;
         next();
     } catch (error) {
