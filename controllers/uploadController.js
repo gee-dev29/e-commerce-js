@@ -1,123 +1,31 @@
-import { uploadEnum } from "../enums/uploadEnum.js";
 import { cloudinary } from "../middleware/uploadMiddleware.js";
-import { uploadModel } from "../model/uploadModel.js";
-import { entity } from "../utils/entity.js";
+import {entity} from "../utils/entity.js";
 
-export const uploadProfilePicture = async (req, res) => {
-    try {
-        const creatorId = req.id;
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({
-                message: "No file uploaded. Please upload a file.",
-            });
-        }
-        const result = await cloudinary.uploader.upload_stream(
-            { upload_preset: "documents" },
-            (error, result) => {
-                if (error) {
-                    return res.status(500).json({
-                        message: error.message,
-                    });
-                }
+export const uploadDocument = async (file, documentType) => {
+  if (!file) {
+    return;
+  }
+  const result = await cloudinary.uploader.upload(file, {
+    upload_preset: "charis",
+    resource_type: "auto",
+  });
 
-                const uploadFile = new uploadModel({
-                    creatorId: creatorId,
-                    documentLink: result.secure_url,
-                    fileSize: result.bytes,
-                    documentType: uploadEnum.PROFILE_PICTURE,
-                    fileType: result.format,
-                });
+  const uploadFile = {
+    documentLink: result.secure_url,
+    fileSize: result.bytes,
+    documentType: documentType ?? "",
+    fileType: result.format,
+  };
 
-                uploadFile
-                    .save()
-                    .then(() => {
-                        return res.status(200).json({
-                            message: "File uploaded successfully",
-                            data: {
-                                url: result.secure_url,
-                                size: result.bytes,
-                                type: result.format,
-                            },
-                        });
-                    })
-                    .catch((dbError) => {
-                        return res
-                            .status(500)
-                            .json({ message: dbError.message });
-                    });
-            }
-        );
-        result.end(file.buffer);
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
+  return uploadFile;
 };
 
-// work in progress...
-export const getProfilePic = async (req, res) => {
-    try {
-        const creatorId = req.id;
-
-        const filter = {
-            creatorId: creatorId,
-            documentType: uploadEnum.PROFILE_PICTURE,
-        };
-        const profilePic = await entity.getAllFilteredData(uploadModel, filter);
-        if (!profilePic || profilePic.length === 0) {
-            return res.status(404).json({
-                message: "No profile picture found for this user",
-            });
-        }
-        return res.status(200).json({
-            message: "Profile picture retrieved successfully",
-            profilePicture: profilePic,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            error: error.message,
-        });
-    }
-};
-
-export const deleteProfilePic = async (req, res) => {
-    try {
-        const creatorId = req.id;
-
-        const filter = {
-            creatorId: creatorId,
-            documentType: uploadEnum.PROFILE_PICTURE,
-        };
-        const profilePic = await entity.getAllFilteredData(uploadModel, filter);
-        if (!profilePic || profilePic.length === 0) {
-            return res.status(404).json({
-                message: "No profile picture found for this user",
-            });
-        }
-        const publicId = profilePic[0].documentLink
-            .split("/")
-            .pop()
-            .split(".")[0];
-        await cloudinary.uploader.destroy(publicId, (error, result) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    message: "Error deleting the image from Cloudinary",
-                    error: error.message,
-                });
-            }
-            uploadModel.findByIdAndDelete(profilePic[0]._id).then(() => {
-                return res.status(200).json({
-                    message: "Profile picture deleted successfully",
-                });
-            });
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message,
-        });
-    }
+export const getProfilePic = async (id) => {
+  try {
+    const filter = {
+      creatorId: id,
+    };
+    const profilePic = await entity.getAllFilteredData(documentModel, filter);
+    return profilePic;
+  } catch (error) {}
 };
