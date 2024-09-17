@@ -67,25 +67,12 @@ export const loginUser = async (req, res) => {
                 message: "Invalid credentials",
             });
         }
-
-        const otp = entity.generateOtp();
-        const otpPayload = {
-            otp: otp,
-        };
-        const _doc = req.user;
-        await entity.updateUserByEmail(email, otpPayload, userModel);
-        const otpMessage = {
-            recieverEmail: email,
-            subject: "Verify Otp",
-            text: `Hello ${_doc.firstName}. ${_doc.lastName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
-        };
-        sendEmail(otpMessage);
+        const token = entity.jwtSign(user._id)
         return res.status(200).json({
             message: "User login successful",
             payload: {
-                id: user._id,
-                email: user.email,
-                role: user.role,
+                token: token,
+                data: user
             },
         });
     } catch (error) {
