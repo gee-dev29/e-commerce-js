@@ -57,7 +57,7 @@ export const uploadProfilePicture = async (req, res) => {
 // work in progress...
 export const getProfilePic = async (req, res) => {
     try {
-        const { id: creatorId } = req.user;
+        const creatorId  = req.id;
 
         const filter = {
             creatorId: creatorId,
