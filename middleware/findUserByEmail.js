@@ -1,6 +1,5 @@
 import { userModel } from "../model/userModel.js";
 import { entity } from "../utils/entity.js";
-import { loginField } from "../utils/inputFields.js";
 
 export const findUserByEmail = async (req, res, next) => {
     try {
