@@ -10,7 +10,8 @@ import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { checkProduct } from "../middleware/checkProduct.js";
 const router = express.Router();
 
-router.route("/").post(jwtVerify, createProduct).get(jwtVerify, viewProducts);
+router.route("/").post(jwtVerify, createProduct)
+                .get(jwtVerify, viewProducts);
 
 router
     .route("/:productId")

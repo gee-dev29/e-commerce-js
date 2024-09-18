@@ -23,11 +23,12 @@ export const createProduct = async (req, res) => {
         message: checkFields.message,
       });
     }
-    const allImages = [];
-    productImages.forEach(async (data) => {
-      const image = await uploadDocument(data.image, data.documentType);
-      allImages.push(image.documentLink);
-    });
+    const allImages = await Promise.all(
+        productImages.map(async (data) => {
+          const image = await uploadDocument(data, '');
+          return image ? image.documentLink : null;
+        })
+      );
 
     const newProduct = new productModel({
       creatorId: creatorId,
