@@ -1,5 +1,5 @@
-import { categoryModel } from "../model/categoryModel";
-import { entity } from "../utils/entity";
+import { categoryModel } from "../model/categoryModel.js";
+import { entity } from "../utils/entity.js";
 
 export const addCategory = async (req, res) => {
   try {
