@@ -22,7 +22,7 @@ export const addCategory = async (req, res) => {
 
 export const getAllCategories = async (req, res) => {
   try {
-    const result = entity.getAllFilteredData(categoryModel, {});
+    const result = await entity.getAllFilteredData(categoryModel, {});
     return res.status(200).json({
       payload: result,
     });

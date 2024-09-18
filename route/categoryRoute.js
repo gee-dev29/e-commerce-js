@@ -9,7 +9,7 @@ const router = express.Router();
 
 router
   .route("/")
+  .get(getAllCategories)
   .post(jwtVerify, superAdminRoleCheck, addCategory)
-  .get(getAllCategories);
 
 export default router;

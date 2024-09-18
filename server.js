@@ -46,6 +46,7 @@ app.use("/api/v1/wishList", wishListRoute);
 app.use("/api/v1/shipping", shippingRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/category", categoryRoute);
+
 app.listen(process.env.PORT || 8920, () => {
     consola.success({
         message: `Server started on port ${process.env.PORT || 8920}`,
