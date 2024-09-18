@@ -1,4 +1,5 @@
 import { categoryModel } from "../model/categoryModel.js";
+import { colorModel } from "../model/colorsModel.js";
 import { entity } from "../utils/entity.js";
 
 export const addCategory = async (req, res) => {
@@ -32,7 +33,7 @@ export const getAllCategories = async (req, res) => {
 
 export const getAllColors = async (req, res) => {
   try {
-    const result = await entity.getAllFilteredData(categoryModel, {});
+    const result = await entity.getAllFilteredData(colorModel, {});
     return res.status(200).json({
       payload: result,
     });
