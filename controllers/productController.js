@@ -23,6 +23,7 @@ export const createProduct = async (req, res) => {
         message: checkFields.message,
       });
     }
+    
     const allImages = await Promise.all(
         productImages.map(async (data) => {
           const image = await uploadDocument(data, '');
@@ -99,6 +100,7 @@ export const updateProduct = async (req, res) => {
       productCategory: productCategory,
       productColors: productColors,
       productSizes: productSizes,
+      productStock: productStock,
       productImages: productImages,
       productQuantity: productQuantity,
     };

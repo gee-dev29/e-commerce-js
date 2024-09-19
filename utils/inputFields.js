@@ -1,6 +1,6 @@
 const registerField = ["firstName", "lastName", "email", "password"];
 const updateField = ["phone", "address", "profilePicture"];
-const adminRegisterField = ["fullName", "email", "password", "role"];
+const adminRegisterField = ["firstName", "lastName", "email", "password", "role"];
 const loginField = ["email", "password"];
 const uploadField = ["file"];
 

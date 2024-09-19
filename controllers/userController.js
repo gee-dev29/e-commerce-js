@@ -11,6 +11,7 @@ import {
 import resetPasswordTemplate from "../emailService/template/template.js";
 import { sendEmail } from "../emailService/email.js";
 import { messages } from "../message/messageEnum.js";
+import { Role } from "../enums/role.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -43,6 +44,7 @@ export const registerUser = async (req, res) => {
     });
   }
 };
+
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,6 +81,49 @@ export const loginUser = async (req, res) => {
     });
   }
 };
+
+export const loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const checkFields = entity.checkMissingFieldsInput(loginField, req.body);
+
+    if (!checkFields.result) {
+      return res.status(400).json({
+        message: checkFields.message,
+      });
+    }
+    const user = req.user;
+    const isPasswordValid = await entity.decryptPassword(
+      password,
+      req.password
+    );
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+    if(user.role === Role.USER){
+        return res.status(401).json({
+            message: "Not Authorized"
+        })
+    }
+    const token = entity.jwtSign(user._id);
+    return res.status(200).json({
+      message: "User login successful",
+      payload: {
+        token: token,
+        data: user,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // register Admin
 export const registerAdmin = async (req, res) => {
   try {
@@ -92,6 +137,11 @@ export const registerAdmin = async (req, res) => {
         message: checkFields.message,
       });
     }
+    if(req.user.email == email){
+        return res.status(400).json({
+            message: 'User already exists'
+        })
+    }
     const hashPassword = await entity.encryptPassword(password);
     const user = new userModel({
       firstName: firstName,
@@ -100,7 +150,7 @@ export const registerAdmin = async (req, res) => {
       password: hashPassword,
       role: role,
     });
-    sendRegistrationEmails(email, firstName);
+    // sendRegistrationEmails(email, firstName);
     await user.save();
     return res.status(201).json({
       message: "Admin created successfuly",
@@ -121,14 +171,18 @@ export const viewSingleUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const viewAllUsers = async (req, res) => {
   try {
-    const users = await entity.getAllFilteredData(userModel, {});
+    const users = await entity.getAllFilteredData(userModel, {
+      role: req.query.role,
+    });
     return res.status(200).json({ payload: users });
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+    console.log(error);
   }
 };
+
 //delete User
 export const deleteUser = async (req, res) => {
   try {

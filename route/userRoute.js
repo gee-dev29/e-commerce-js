@@ -1,22 +1,20 @@
 import {
-    deleteUser,
-    viewAllUsers,
-    viewSingleUser,
+  deleteUser,
+  viewAllUsers,
+  viewSingleUser,
 } from "../controllers/userController.js";
 import express from "express";
 import { checkUser } from "../middleware/checkUser.js";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { superAdminRoleCheck } from "../middleware/checkRole.js";
-import { checkProduct } from "../middleware/checkProduct.js";
 const router = express.Router();
-router
-    .route("/")
-    .get(jwtVerify, checkUser, viewSingleUser)
-    .get(jwtVerify, superAdminRoleCheck, viewAllUsers);
+router.route("/").get(jwtVerify, checkUser, viewSingleUser);
+
+router.route('/all').get(jwtVerify, checkUser, superAdminRoleCheck, viewAllUsers);
 
 router
-    .route("/:id")
-    .get(jwtVerify, superAdminRoleCheck, viewSingleUser)
-    .delete(jwtVerify, superAdminRoleCheck, deleteUser);
-    
+  .route("/:id")
+  .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser)
+  .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteUser);
+
 export default router;

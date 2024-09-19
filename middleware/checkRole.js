@@ -17,8 +17,8 @@ const superAdminRoleCheck = async (req, res, next) => {
     try {
         const userRole = req.role;
         if (userRole !== Role.SUPER_ADMIN) {
-            return res.status(403).json({
-                message: "Only a Super Admin can perform this action.",
+            return res.status(401).json({
+                message: "Not authorized",
             });
         }
         next();
