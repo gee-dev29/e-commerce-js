@@ -312,11 +312,11 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-export const sendRegistrationEmails = (email, fullName, otp) => {
+export const sendRegistrationEmails = (email, fullName) => {
   const otpMessage = {
     recieverEmail: email,
     subject: "Verify Otp",
-    text: `Hello ${fullName}. Your OTP is ${otp.otp}. ${messages.OTP}`,
+    text: `Hello ${fullName}. ${messages.VERIFIED_OTP}`,
   };
 
   const emailMessage = {
