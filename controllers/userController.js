@@ -23,17 +23,15 @@ export const registerUser = async (req, res) => {
         message: checkFields.message,
       });
     }
-    const otp = entity.generateOtp();
     const hashPassword = await entity.encryptPassword(password);
     const user = new userModel({
       firstName: firstName,
       lastName: lastName,
       email: email,
       password: hashPassword,
-      otp: otp,
     });
 
-    sendRegistrationEmails(email, firstName, otp);
+    sendRegistrationEmails(email, firstName);
     await user.save();
     return res.status(201).json({
       message: "user created successfuly",
