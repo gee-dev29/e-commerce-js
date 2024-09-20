@@ -1,21 +1,21 @@
 import express from "express";
 import {
-    createProduct,
-    deleteProduct,
-    updateProduct,
-    viewProduct,
-    viewProducts,
+  createProduct,
+  deleteProduct,
+  updateProduct,
+  viewProduct,
+  viewProducts,
 } from "../controllers/productController.js";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { checkProduct } from "../middleware/checkProduct.js";
+import { superAdminRoleCheck } from "../middleware/checkRole.js";
 const router = express.Router();
 
-router.route("/").post(jwtVerify, createProduct)
-                .get(jwtVerify, viewProducts);
+router.route("/").post(jwtVerify, createProduct).get(viewProducts);
 
 router
-    .route("/:productId")
-    .get(jwtVerify, checkProduct, viewProduct)
-    .delete(jwtVerify, checkProduct, deleteProduct)
-    .patch(jwtVerify, checkProduct, updateProduct);
+  .route("/:productId")
+  .get(checkProduct, viewProduct)
+  .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct)
+  .patch(jwtVerify, superAdminRoleCheck, checkProduct, updateProduct);
 export default router;
