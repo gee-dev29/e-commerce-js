@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import moment from "moment";
+import mongoose from "mongoose";
 // this function checks if the user data is correct
 
 // Encrypt function
@@ -117,9 +118,15 @@ const checkMissingFieldsInput = (requiredFields, requestBody) => {
 };
 
 const isValidUUID = (id) => {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(id);
-  };
+};
+
+const isValidObjectId = (id) => {
+    const isValid = mongoose.Types.ObjectId.isValid({ id: id });
+    return isValid;
+};
 
 export const entity = {
     encryptPassword,
@@ -135,5 +142,6 @@ export const entity = {
     encryptData,
     decryptData,
     generateOtp,
-    isValidUUID
+    isValidUUID,
+    isValidObjectId,
 };

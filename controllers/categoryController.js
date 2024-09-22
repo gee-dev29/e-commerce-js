@@ -1,6 +1,7 @@
 import { categoryModel } from "../model/categoryModel.js";
 import { colorModel } from "../model/colorsModel.js";
 import { entity } from "../utils/entity.js";
+import { uploadDocument } from "./uploadController.js";
 
 export const addCategory = async (req, res) => {
   try {
@@ -10,15 +11,19 @@ export const addCategory = async (req, res) => {
         message: checkFields.message,
       });
     }
+    const image =  await uploadDocument(req.body.image, '')
     const category = new categoryModel({
-        name: req.body.name
+        name: req.body.name,
+        image: image
     })
     await category.save()
 
     return res.status(200).json({
       message: 'successful',
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
 };
 
 export const getAllCategories = async (req, res) => {

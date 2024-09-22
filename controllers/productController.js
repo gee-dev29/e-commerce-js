@@ -3,125 +3,110 @@ import { entity } from "../utils/entity.js";
 import { productField } from "../utils/inputFields.js";
 import { uploadDocument } from "./uploadController.js";
 
+// create product and update product
 export const createProduct = async (req, res) => {
-  try {
-    const creatorId = req.id;
-    const {
-      productTitle,
-      productDescription,
-      productPrice,
-      productDiscount,
-      productCategory,
-      productColors,
-      productSize,
-      productStock,
-      productImages,
-    } = req.body;
-    const checkFields = entity.checkMissingFieldsInput(productField, req.body);
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
-    }
-    
-    const allImages = await Promise.all(
-        productImages.map(async (data) => {
-          const image = await uploadDocument(data, '');
-          return image ? image.documentLink : null;
-        })
-      );
+    try {
+        const creatorId = req.id;
+        const {
+            productId,
+            productTitle,
+            productDescription,
+            productPrice,
+            productDiscount,
+            productCategory,
+            productColors,
+            productSize,
+            productStock,
+            productImages,
+        } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            productField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
 
-    const newProduct = new productModel({
-      creatorId: creatorId,
-      productTitle: productTitle,
-      productDescription: productDescription,
-      productPrice: productPrice,
-      productDiscount: productDiscount,
-      productCategory: productCategory,
-      productColors: productColors,
-      productSize: productSize,
-      productStock: productStock,
-      productImages: allImages,
-    });
-    await newProduct.save();
-    return res.status(201).json({
-      message: "product created successfuly",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+        if (productId) {
+            const images = [];
+            const { productImages, ...others } = req.body;
+            await Promise.all(
+                productImages.map(async (data) => {
+                    if (data.includes("https")) {
+                        images.push(data);
+                    } else {
+                        const image = await uploadDocument(data, "");
+                        images.push(image.documentLink);
+                    }
+                })
+            );
+            const payload = {
+                ...others,
+                productImages: images,
+            };
+            await entity.updateDataById(productId, payload, productModel);
+            return res.status(200).json({
+                message: "product updated successfuly",
+            });
+        }
+        const allImages = await Promise.all(
+            productImages.map(async (data) => {
+                const image = await uploadDocument(data, "");
+                return image ? image.documentLink : null;
+            })
+        );
+
+        const newProduct = new productModel({
+            creatorId: creatorId,
+            productTitle: productTitle,
+            productDescription: productDescription,
+            productPrice: productPrice,
+            productDiscount: productDiscount,
+            productCategory: productCategory,
+            productColors: productColors,
+            productSize: productSize,
+            productStock: productStock,
+            productImages: allImages,
+        });
+        await newProduct.save();
+        return res.status(201).json({
+            message: "product created successfuly",
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 //get all products
 export const viewProducts = async (req, res) => {
-  try {
-    const products = await entity.getAllFilteredData(productModel, {});
-    return res.status(200).json({ payload: products });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
+    try {
+        const products = await entity.getAllFilteredData(productModel, {});
+        return res.status(200).json({ payload: products });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 //get single product
 export const viewProduct = async (req, res) => {
-  try {
-    return res.status(200).json({ payload: req.product });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-//update product
-export const updateProduct = async (req, res) => {
-  try {
-    const productId = req.productId;
-    const {
-      productTitle,
-      productDescription,
-      productPrice,
-      productDiscount,
-      productCategory,
-      productColors,
-      productSizes,
-      productImages,
-      productQuantity,
-    } = req.body;
-    const checkFields = entity.checkMissingFieldsInput(productField, req.body);
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
+    try {
+        return res.status(200).json({ payload: req.product });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
     }
-    const payload = {
-      productTitle: productTitle,
-      productDescription: productDescription,
-      productPrice: productPrice,
-      productDiscount: productDiscount,
-      productCategory: productCategory,
-      productColors: productColors,
-      productSizes: productSizes,
-      productStock: productStock,
-      productImages: productImages,
-      productQuantity: productQuantity,
-    };
-    await entity.updateDataById(productId, payload, productModel);
-    return res.status(200).json({
-      message: "product updated successfuly",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
 };
 
 //delete product
 export const deleteProduct = async (req, res) => {
-  try {
-    const productId = req.productId;
-    await entity.deleteDataById(productId, productModel);
-    return res.status(200).json({
-      message: "product deleted successfuly",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
+    try {
+        const productId = req.productId;
+        await entity.deleteDataById(productId, productModel);
+        return res.status(200).json({
+            message: "product deleted successfuly",
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };

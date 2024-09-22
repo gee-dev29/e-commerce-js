@@ -2,7 +2,6 @@ import express from "express";
 import {
   createProduct,
   deleteProduct,
-  updateProduct,
   viewProduct,
   viewProducts,
 } from "../controllers/productController.js";
@@ -17,5 +16,4 @@ router
   .route("/:productId")
   .get(checkProduct, viewProduct)
   .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct)
-  .patch(jwtVerify, superAdminRoleCheck, checkProduct, updateProduct);
 export default router;

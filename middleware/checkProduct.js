@@ -10,7 +10,7 @@ export const checkProduct = async (req, res, next) => {
   // }
 
 
-  if (!entity.isValidUUID(productId)) {
+  if (!entity.isValidObjectId(productId)) {
     return res.status(400).json({ message: "Product Id is required" });
   }
   const product = await entity.getAllFilteredData(productModel, {

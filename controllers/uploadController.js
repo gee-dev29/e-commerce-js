@@ -6,7 +6,7 @@ export const uploadDocument = async (file, documentType) => {
     return;
   }
   const result = await cloudinary.uploader.upload(file, {
-    upload_preset: "charis",
+    upload_preset: "ecommerce",
     resource_type: "auto",
   });
 
