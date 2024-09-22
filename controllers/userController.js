@@ -137,7 +137,7 @@ export const loginAdmin = async (req, res) => {
 // register Admin
 export const registerAdmin = async (req, res) => {
     try {
-        const { id, firstName, lastName, email, password, role } = req.body;
+        const { _id, firstName, lastName, email, password, role } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             adminRegisterField,
             req.body
@@ -147,8 +147,8 @@ export const registerAdmin = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        if (isValidObjectId(id)) {
-            entity.updateDataById(id, req.body, userModel);
+        if (isValidObjectId(_id)) {
+            entity.updateDataById(_id, req.body, userModel);
             return res
                 .status(200)
                 .json({ message: "user updated successfully" });
