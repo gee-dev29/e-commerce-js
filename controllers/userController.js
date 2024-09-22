@@ -12,6 +12,7 @@ import resetPasswordTemplate from "../emailService/template/template.js";
 import { sendEmail } from "../emailService/email.js";
 import { messages } from "../message/messageEnum.js";
 import { Role } from "../enums/role.js";
+import { isValidObjectId } from "mongoose";
 
 export const registerUser = async (req, res) => {
     try {
@@ -136,7 +137,7 @@ export const loginAdmin = async (req, res) => {
 // register Admin
 export const registerAdmin = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, role } = req.body;
+        const { id, firstName, lastName, email, password, role } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             adminRegisterField,
             req.body
@@ -145,6 +146,12 @@ export const registerAdmin = async (req, res) => {
             return res.status(400).json({
                 message: checkFields.message,
             });
+        }
+        if (isValidObjectId(id)) {
+            entity.updateDataById(id, req.body, userModel);
+            return res
+                .status(200)
+                .json({ message: "user updated successfully" });
         }
         if (req.user.email == email) {
             return res.status(400).json({
@@ -177,7 +184,7 @@ export const viewSingleUser = async (req, res) => {
         // const user = req.user
         return res.status(200).json({ payload: req.user });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };
 

@@ -32,7 +32,7 @@ app.use(
         parameterLimit: 50000,
     })
 );
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: "100mb" }));
 
 // combineRoute();
 dbConnection();

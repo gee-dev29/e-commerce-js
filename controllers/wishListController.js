@@ -28,7 +28,7 @@ export const addItemToWishList = async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error",
+            message: error.message,
         });
     }
 };
@@ -89,6 +89,6 @@ export const viewWishList = async (req, res) => {
             data: wishList,
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };

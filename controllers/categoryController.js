@@ -5,7 +5,7 @@ import { uploadDocument } from "./uploadController.js";
 
 export const addCategory = async (req, res) => {
   try {
-    const checkFields = entity.checkMissingFieldsInput("name", req.body);
+    const checkFields = entity.checkMissingFieldsInput(["name"], req.body);
     if (!checkFields.result) {
       return res.status(400).json({
         message: checkFields.message,
@@ -19,7 +19,7 @@ export const addCategory = async (req, res) => {
     await category.save()
 
     return res.status(200).json({
-      message: 'successful',
+      message: 'category added successfully',
     });
   } catch (error) {
     return res.status(500).json({message: error.message})
@@ -32,7 +32,9 @@ export const getAllCategories = async (req, res) => {
     return res.status(200).json({
       payload: result,
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
 };
 
 
@@ -42,5 +44,16 @@ export const getAllColors = async (req, res) => {
     return res.status(200).json({
       payload: result,
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
 };
+
+export const deleteCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId
+    await entity.deleteDataById(categoryId, categoryModel)
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}

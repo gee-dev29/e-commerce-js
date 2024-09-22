@@ -6,13 +6,15 @@ import {
   getAllCategories,
   getAllColors,
 } from "../controllers/categoryController.js";
+import { checkUser } from "../middleware/checkUser.js";
 const router = express.Router();
 
 router
   .route("/")
   .get(getAllCategories)
-  .post(jwtVerify, superAdminRoleCheck, addCategory);
+  .post(jwtVerify, checkUser, superAdminRoleCheck, addCategory);
 
 router.route("/colors").get(getAllColors);
+router.route
 
 export default router;

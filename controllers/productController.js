@@ -85,7 +85,7 @@ export const viewProducts = async (req, res) => {
         const products = await entity.getAllFilteredData(productModel, {});
         return res.status(200).json({ payload: products });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -94,7 +94,7 @@ export const viewProduct = async (req, res) => {
     try {
         return res.status(200).json({ payload: req.product });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -107,6 +107,6 @@ export const deleteProduct = async (req, res) => {
             message: "product deleted successfuly",
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: error.message });
     }
 };
