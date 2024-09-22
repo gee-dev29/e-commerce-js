@@ -11,7 +11,7 @@ import shippingRoute from "./route/shippingRoute.js";
 import productRoute from "./route/productRoute.js";
 import categoryRoute from "./route/categoryRoute.js";
 import orderRoute from "./route/orderRoute.js";
-import heroRoute from "./route/orderRoute.js";
+import heroRoute from "./route/heroRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
