@@ -10,7 +10,7 @@ import { checkUser } from "../middleware/checkUser.js";
 const router = express.Router();
 
 router
-  .route("/")
+  .route("/:id?")
   .get(getAllCategories)
   .post(jwtVerify, checkUser, superAdminRoleCheck, addCategory);
 

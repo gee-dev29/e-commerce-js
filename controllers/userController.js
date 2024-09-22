@@ -148,7 +148,18 @@ export const registerAdmin = async (req, res) => {
             });
         }
         if (isValidObjectId(_id)) {
-            entity.updateDataById(_id, req.body, userModel);
+            const { password, ...others } = req.body;
+            let result;
+            if (password) {
+                const hashPassword = await entity.encryptPassword(password);
+                result = {
+                    ...others,
+                    password: hashPassword,
+                };
+            } else {
+                result = others;
+            }
+            entity.updateDataById(_id, result, userModel);
             return res
                 .status(200)
                 .json({ message: "user updated successfully" });
