@@ -53,19 +53,25 @@ const addProductToCart = async (req, res) => {
 const addProductsToCart = async (req, res) => {
     try {
         const userId = req.id;
-        const allProducts = req.products; 
+        const allProducts = req.products;
         let cart = await cartModel.findOne({ creatorId: userId });
         if (!cart) {
-            const totalAmount = allProducts.reduce((sum, item) => sum + (item.quantity * item.productPrice), 0);
+            const totalAmount = allProducts.reduce(
+                (sum, item) => sum + item.quantity * item.productPrice,
+                0
+            );
             const productIds = allProducts
-                .map(item => item.productId || item._id) 
-                .filter(productId => productId); 
+                .map((item) => item.productId || item._id)
+                .filter((productId) => productId);
             if (productIds.length !== allProducts.length) {
                 return res.status(400).json({
                     message: "Some products have missing product IDs",
                 });
             }
-            const quantity = allProducts.reduce((sum, item) => sum + item.quantity, 0);
+            const quantity = allProducts.reduce(
+                (sum, item) => sum + item.quantity,
+                0
+            );
             const newCart = new cartModel({
                 creatorId: userId,
                 productIds: productIds,
@@ -81,7 +87,9 @@ const addProductsToCart = async (req, res) => {
             const productId = item.productId || item._id;
             if (!productId) {
                 return res.status(400).json({
-                    message: `Product with missing productId: ${JSON.stringify(item)}`,
+                    message: `Product with missing productId: ${JSON.stringify(
+                        item
+                    )}`,
                 });
             }
             if (cart.productIds.includes(productId)) {
@@ -139,10 +147,9 @@ const updateCart = async (req, res) => {
 // get cart
 export const getCart = async (req, res) => {
     try {
-        let count = 0;
-        const cartId = req.cartId;
+        const userId = req.id;
         const cart = await cartModel
-            .findOne({ _id: cartId })
+            .findOne({ creatorId: userId })
             .populate("productIds");
         return res.status(200).json({
             data: cart,
