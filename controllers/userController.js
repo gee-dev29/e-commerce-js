@@ -27,12 +27,14 @@ export const registerUser = async (req, res) => {
                 message: checkFields.message,
             });
         }
+
+        const formattedEmail = email.toLowerCase()
         const otp = entity.generateOtp();
         const hashPassword = await entity.encryptPassword(password);
         const user = new userModel({
             firstName: firstName,
             lastName: lastName,
-            email: email,
+            email: formattedEmail,
             password: hashPassword,
             otp: otp,
         });

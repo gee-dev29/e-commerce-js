@@ -14,7 +14,6 @@ router
   .get(getAllCategories)
   .post(jwtVerify, checkUser, superAdminRoleCheck, addCategory);
 
-router.route("/colors").get(getAllColors);
 router.route
 
 export default router;

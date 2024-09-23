@@ -12,6 +12,7 @@ import productRoute from "./route/productRoute.js";
 import categoryRoute from "./route/categoryRoute.js";
 import orderRoute from "./route/orderRoute.js";
 import heroRoute from "./route/heroRoute.js";
+import colorsRoute from "./route/colorsRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
@@ -48,6 +49,10 @@ app.use("/api/v1/shipping", shippingRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/hero", heroRoute);
+app.use("/api/v1/colors", colorsRoute);
+app.use("/api/v1/ping", (req, res)=> {
+    res.send('welcome to kncloset')
+});
 
 app.listen(process.env.PORT || 8920, () => {
     consola.success({
