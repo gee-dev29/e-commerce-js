@@ -1,6 +1,7 @@
 import { orderStatus } from "../enums/orderEnum.js";
 import mongoose from "mongoose";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
+import { currency } from "../utils/currency.js";
 
 const orderSchema = new mongoose.Schema(
     {
@@ -9,20 +10,29 @@ const orderSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        shippingTrackingNumber: {
-            type: String,
-            required: true,
-        },
-        shippingId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "shipping",
-            required: true,
-        },
         orderedItems: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Product",
+                ref: "product",
                 required: true,
+            },
+            {
+                quantity: {
+                    type: Number,
+                    required: true,
+                },
+            },
+            {
+                color: {
+                    type: String,
+                    required: true,
+                },
+            },
+            {
+                size: {
+                    type: String,
+                    required: true,
+                },
             },
         ],
 
@@ -31,10 +41,15 @@ const orderSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        
+
         paymentMethod: {
             type: String,
-            enums: [PaymentMethod.CASH, PaymentMethod.CREDIT_CARD, PaymentMethod.PAYPAL, PaymentMethod.STRIPE],
+            enums: [
+                PaymentMethod.CASH,
+                PaymentMethod.CREDIT_CARD,
+                PaymentMethod.PAYPAL,
+                PaymentMethod.STRIPE,
+            ],
             required: true,
         },
 
@@ -52,10 +67,29 @@ const orderSchema = new mongoose.Schema(
             ],
             default: orderStatus.PROCESSING,
         },
-
-        orderDate: {
-            type: Date,
-            default: Date.now,
+        shippingAddress: {
+            street: {
+                type: String,
+                required: true,
+            },
+            city: {
+                type: String,
+                required: true,
+            },
+            state: {
+                type: String,
+                required: true,
+            },
+            zipCode: {
+                type: String,
+                required: true,
+            },
+        },
+        currency: {
+            type: String,
+            required: true,
+            default: currency.USD,
+            enum: [currency.USD, currency.EUR, currency.NGN],
         },
     },
     { timestamps: true }
