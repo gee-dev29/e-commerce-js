@@ -25,7 +25,7 @@ export const addHero = async (req, res) => {
                 const payload = {
                     title: req.body.title,
                     image: result.documentLink,
-                    text:req.body.text
+                    text: req.body.text,
                 };
                 entity.updateDataById(_id, payload, heroModel);
                 return res.status(200).json({
@@ -51,6 +51,21 @@ export const getHeros = async (req, res) => {
     try {
         const data = await entity.getAllFilteredData(heroModel, {});
         return res.status(200).json({ payload: data });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const deleteHero = async (req, res) => {
+    try {
+        const id = req.body._id;
+        if (isValidObjectId(id)) {
+            await entity.deleteDataById(id, heroModel);
+            return res
+                .status(200)
+                .json({ message: "hero deleted successfully" });
+        }
+        return;
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

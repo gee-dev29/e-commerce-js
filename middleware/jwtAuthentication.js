@@ -9,11 +9,12 @@ export const jwtVerify = async (req, res, next) => {
                 message: "User is not Authorized",
             });
         }
-        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded) {
             return res.status(400).json({ message: "Invalid token" });
         }
         req.id = decoded.userId;
+        console.log("hi");
         next();
     } catch (error) {
         return res.status(500).json({ message: error.message });

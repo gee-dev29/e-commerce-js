@@ -110,3 +110,14 @@ export const deleteProduct = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+export const getProductByCategory = async (req, res) => {
+    try {
+        const data = await entity.getAllFilteredData(productModel, {
+            productCategory: req.body.productCategory,
+        });
+        return res.status(200).json({ payload: data });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};

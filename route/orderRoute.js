@@ -3,19 +3,24 @@ import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { checkCart } from "../middleware/checkCart.js";
 import { checkShippingInfo } from "../middleware/checkShippingInfo.js";
 import {
+    adminViewOrders,
     orderItem,
     viewOrder,
     viewOrders,
 } from "../controllers/orderController.js";
 import { checkOrder } from "../middleware/checkOrder.js";
+import { checkUser } from "../middleware/checkUser.js";
+import { superAdminRoleCheck } from "../middleware/checkRole.js";
 const router = express.Router();
 
 router
     .route("/:cartId/:shippingId")
-    .post(jwtVerify, checkCart, checkShippingInfo, orderItem)
-    
-    router.route("/:orderId").get(jwtVerify, checkOrder, viewOrder);
+    .post(jwtVerify, checkCart, checkShippingInfo, orderItem);
+
+router.route("/:orderId").get(jwtVerify, checkOrder, viewOrder);
 
 router.route("/").get(jwtVerify, viewOrders);
+
+router.route("/admin").get(adminViewOrders);
 
 export default router;
