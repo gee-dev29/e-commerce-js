@@ -166,7 +166,9 @@ export const registerAdmin = async (req, res) => {
                 .status(200)
                 .json({ message: "user updated successfully" });
         }
-        if (req.user.email == email) {
+        const formattedEmail = email.toLowerCase()
+
+        if (req.user.email == formattedEmail) {
             return res.status(400).json({
                 message: "User already exists",
             });
@@ -175,7 +177,7 @@ export const registerAdmin = async (req, res) => {
         const user = new userModel({
             firstName: firstName,
             lastName: lastName,
-            email: email,
+            email: formattedEmail,
             password: hashPassword,
             role: role,
         });

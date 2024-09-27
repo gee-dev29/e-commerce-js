@@ -13,14 +13,14 @@ import { checkUser } from "../middleware/checkUser.js";
 import { superAdminRoleCheck } from "../middleware/checkRole.js";
 const router = express.Router();
 
-router
-    .route("/:cartId/:shippingId")
-    .post(jwtVerify, checkCart, checkShippingInfo, orderItem);
-
-router.route("/:orderId").get(jwtVerify, checkOrder, viewOrder);
-
 router.route("/").get(jwtVerify, viewOrders);
+router.route("/admin").get(jwtVerify, checkUser, superAdminRoleCheck,  adminViewOrders);
+// router
+//     .route("/:cartId/:shippingId")
+//     .post(jwtVerify, checkCart, checkShippingInfo, orderItem);
 
-router.route("/admin").get(adminViewOrders);
+router.route("/view/:orderId").get(jwtVerify, checkOrder, viewOrder);
+
+
 
 export default router;
