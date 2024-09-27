@@ -18,6 +18,7 @@ export const createProduct = async (req, res) => {
             productSize,
             productStock,
             productImages,
+            productShortDescription
         } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             productField,
@@ -64,6 +65,7 @@ export const createProduct = async (req, res) => {
             productDescription: productDescription,
             productPrice: productPrice,
             productDiscount: productDiscount,
+            productShortDescription: productShortDescription,
             productCategory: productCategory,
             productColors: productColors,
             productSize: productSize,
