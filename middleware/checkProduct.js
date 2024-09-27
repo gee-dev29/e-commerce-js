@@ -26,6 +26,7 @@ export const checkProduct = async (req, res, next) => {
     req.product = product[0];
     next();
 };
+
 export const checkProducts = async (req, res, next) => {
     let productIds = req.body;
     const allProduct = [];
