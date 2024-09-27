@@ -124,11 +124,7 @@ const addProductsToCart = async (req, res) => {
         if (!cart) {
             const productIds = allProducts.map((item) => {
                 const productId = item.productId || item._id;
-                if (!productId) {
-                    throw new Error(
-                        `Missing productId for item: ${JSON.stringify(item)}`
-                    );
-                }
+              
                 return {
                     product: productId,
                     items: {
