@@ -68,3 +68,17 @@ export const createStripeSession = async (req, res) => {
     });
   }
 };
+
+export const createPaypalSession = async (req, res) => {
+  try {
+    const { products } = req.body;
+    const purchase = products.map((item) => {
+      return { currency_code: "USD", value: item.product.productPrice };
+    });
+    let lineItems = {
+      purchase_units: purchase,
+      intent: "CAPTURE "
+    };
+    console.log(lineItems);
+  } catch (error) {}
+};
