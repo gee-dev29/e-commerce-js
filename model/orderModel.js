@@ -10,6 +10,10 @@ const orderSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
+        fullName: {
+            type: String,
+            required: true,
+        },
         orderedItems: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -80,14 +84,24 @@ const orderSchema = new mongoose.Schema(
                 type: String,
                 required: true,
             },
+            country: {
+                type: String,
+                required: true,
+            },
+            phone: {
+                type: String,
+                required: true,
+            },
             zipCode: {
                 type: String,
                 required: true,
             },
+            orderNote: {
+                type: String,
+            },
         },
         currency: {
             type: String,
-            required: true,
             default: currency.USD,
             enum: [currency.USD, currency.EUR, currency.NGN],
         },
