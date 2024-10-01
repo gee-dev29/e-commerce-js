@@ -16,6 +16,8 @@ import stripeRoute from "./route/stripeRoute.js";
 import colorsRoute from "./route/colorsRoute.js";
 import countriesRoute from "./route/countryRoute.js";
 import dbConnection from "./connection/dbConnection.js";
+import passport from "passport";
+import * as passportMain from "./passportSetup.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
 const app = express();
@@ -41,7 +43,7 @@ app.use(bodyParser.json({ limit: "100mb" }));
 dbConnection();
 
 // swaggerApi(app)
-
+app.use(passport.initialize());
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/cart", cartRoute);
