@@ -14,7 +14,7 @@ const router = express.Router();
 
 router
     .route("/")
-    .post(jwtVerify, checkProducts, addProductsToCart)
+    .post(jwtVerify, checkProducts, addProductToCart)
     .get(jwtVerify, getCart);
 
 router

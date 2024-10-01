@@ -45,7 +45,7 @@ const updateShippingField = [
     "currency",
 ];
 
-const cartField = ["productId", "quantity"];
+const cartField = ["productId"];
 const heroField = ["image", "text", "title"];
 const categoryField = ["image", "name"];
 const verifyOTPField = ["otp", "email"];

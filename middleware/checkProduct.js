@@ -30,22 +30,23 @@ export const checkProduct = async (req, res, next) => {
 export const checkProducts = async (req, res, next) => {
   let productIds = req.body;
   const allProduct = [];
-  await Promise.all(
-    productIds.map(async (item) => {
-      if (!entity.isValidObjectId(item.product._id)) {
-        return res.status(400).json({ message: "Product Id is required" });
-      }
 
-      allProduct.push({
-        product: item.product,
-        items: {
-          quantity: item.quantity,
-          color: item.color,
-          size: item.size,
-        },
-      });
-    })
-  );
-  req.products = allProduct;
+//   await Promise.all(
+//     productIds.map(async (item) => {
+//       if (!entity.isValidObjectId(item.product._id)) {
+//         return res.status(400).json({ message: "Product Id is required" });
+//       }
+
+//       allProduct.push({
+//         product: item.product,
+//         items: {
+//           quantity: item.quantity,
+//           color: item.color,
+//           size: item.size,
+//         },
+//       });
+//     })
+//   );
+  req.products = productIds;
   next();
 };
