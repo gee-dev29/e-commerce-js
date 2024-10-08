@@ -7,40 +7,84 @@ import { entity } from "../utils/entity.js";
 import { orderField } from "../utils/inputFields.js";
 import mongoose from "mongoose";
 
+import { orderModel } from "./path-to-order-model";
+import { productModel } from "./path-to-product-model"; // Ensure the path is correct
+import { v4 as uuidv4 } from "uuid"; // For generating unique tracking numbers
+import { orderStatus } from "../enums/orderEnum.js";
+import { PaymentMethod } from "../enums/paymentMethodEnums.js";
+import { currency } from "../utils/currency.js";
+
 export const orderItem = async (req, res) => {
     try {
-        const cart = req.cart;
-        const productIds = cart.productIds;
-        const userId = req.id;
-        const shippingId = req.shippingId;
-        const { paymentMethod } = req.body;
+        const userId = req.id; // Assuming req.id holds the authenticated user's ID
+        const {
+            paymentMethod,
+            fullName,
+            orderedItems,
+            street,
+            city,
+            state,
+            country,
+            zipCode,
+            phone,
+            orderNote,
+        } = req.body;
 
-        const orderDetails = entity.checkMissingFieldsInput(
+        const missingFields = entity.checkMissingFieldsInput(
             orderField,
             req.body
         );
-        if (!orderDetails) {
+        if (missingFields) {
             return res.status(400).json({
-                message: orderDetails.message,
+                message: `Missing fields: ${missingFields.join(", ")}`,
             });
         }
 
+        if (!Object.values(PaymentMethod).includes(paymentMethod)) {
+            return res.status(400).json({
+                message: "Invalid payment method",
+            });
+        }
+
+        const productIds = orderedItems.map((item) => item.productId);
         const products = await productModel.find({ _id: { $in: productIds } });
+
         if (!products || products.length === 0) {
             return res.status(404).json({
-                message: "No products found in the cart",
+                message: "No products found for the given items",
             });
         }
-
+        let totalAmount = 0;
+        orderedItems.forEach((item) => {
+            const product = products.find(
+                (p) => p._id.toString() === item.productId
+            );
+            if (product) {
+                totalAmount += product.price * item.quantity;
+            }
+        });
         const newOrder = new orderModel({
             creatorId: userId,
-            orderedItems: products.map((product) => product._id),
-            shippingId: shippingId,
+            fullName: fullName,
+            orderedItems: orderedItems.map((item) => ({
+                product: item.productId,
+                quantity: item.quantity,
+                color: item.color,
+                size: item.size,
+            })),
+            orderTrackingNumber: uuidv4(), 
             paymentMethod: paymentMethod,
+            totalAmount: totalAmount,
             orderStatus: orderStatus.PROCESSING,
-            totalAmount: cart.totalAmount,
+            street: street,
+            city: city,
+            state: state,
+            country: country,
+            zipCode: zipCode,
+            phone: phone,
+            orderNote: orderNote || "", 
+            currency: currency.USD, 
         });
-
         await newOrder.save();
 
         return res.status(201).json({
@@ -48,7 +92,9 @@ export const orderItem = async (req, res) => {
             orderId: newOrder._id,
         });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({
+            message: error.message,
+        });
     }
 };
 

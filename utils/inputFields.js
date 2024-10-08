@@ -1,6 +1,12 @@
 const registerField = ["firstName", "lastName", "email", "password"];
 const updateField = ["phone", "address", "profilePicture"];
-const adminRegisterField = ["firstName", "lastName", "email", "password", "role"];
+const adminRegisterField = [
+    "firstName",
+    "lastName",
+    "email",
+    "password",
+    "role",
+];
 const loginField = ["email", "password"];
 const uploadField = ["file"];
 
@@ -16,11 +22,15 @@ const productField = [
     "productImages",
 ];
 const orderField = [
-    "orderedItems",
-    "shippingInfo",
     "paymentMethod",
-    "totalAmount",
-    "orderStatus",
+    "orderedItems",
+    "street",
+    "city",
+    "state",
+    "country",
+    "zipCode",
+    "phone",
+    "fullName",
 ];
 
 const shippingField = [
@@ -66,5 +76,5 @@ export {
     verifyOTPField,
     uploadField,
     heroField,
-    categoryField
+    categoryField,
 };

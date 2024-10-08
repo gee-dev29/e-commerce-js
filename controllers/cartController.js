@@ -18,11 +18,9 @@ const addProductToCart = async (req, res) => {
                 productIds: [
                     {
                         product: productId,
-                        items: {
-                            quantity: quantity,
-                            color: color,
-                            size: size,
-                        },
+                        quantity: quantity,
+                        color: color,
+                        size: size,
                     },
                 ],
             });
@@ -34,22 +32,20 @@ const addProductToCart = async (req, res) => {
         const existingProduct = cart.productIds.find(
             (p) =>
                 p.product.toString() === productId &&
-                p.items.color === color &&
-                p.items.size === size
+                p.color === color &&
+                p.size === size
         );
 
         if (existingProduct) {
             // Update the quantity of the existing product
-            existingProduct.items.quantity += quantity;
+            existingProduct.quantity += quantity;
         } else {
             // Add the new product to the cart
             cart.productIds.push({
                 product: productId,
-                items: {
-                    quantity: quantity,
-                    color: color,
-                    size: size,
-                },
+                quantity: quantity,
+                color: color,
+                size: size,
             });
         }
 
@@ -191,10 +187,10 @@ export const getCart = async (req, res) => {
 const deleteCart = async (req, res) => {
     try {
         const { productId, size, color } = req.body;
-        const creatorId = req.id;
+        const cartId = req.cartId;
 
         // Find the cart first
-        const cart = await cartModel.find({ creatorId: creatorId });
+        const cart = await cartModel.findById(cartId);
 
         if (!cart) {
             return res.status(404).json({
@@ -203,25 +199,25 @@ const deleteCart = async (req, res) => {
         }
 
         // Filter out the product that matches productId, size, and color
-        const updatedItems = cart.productIds.filter(
-            (item) =>
+        const updatedProducts = cart.productIds.filter(
+            (product) =>
                 !(
-                    item.product.toString() === productId &&
-                    item.items.size === size &&
-                    item.items.color === color
+                    product.product.toString() === productId &&
+                    product.size === size &&
+                    product.color === color
                 )
         );
 
-        // If the length of items hasn't changed, the product was not found
-        if (updatedItems.length === cart.items.length) {
+        // If the length of productIds hasn't changed, the product was not found
+        if (updatedProducts.length === cart.productIds.length) {
             return res.status(404).json({
                 message:
                     "Product with the specified attributes not found in the cart",
             });
         }
 
-        // Update the cart with the filtered items
-        cart.items = updatedItems;
+        // Update the cart with the filtered products
+        cart.productIds = updatedProducts;
         await cart.save();
 
         return res.status(200).json({
