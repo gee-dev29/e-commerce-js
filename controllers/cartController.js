@@ -27,9 +27,7 @@ const addProductToCart = async (req, res) => {
                 ],
             });
             await cart.save();
-            return res
-                .status(201)
-                .json({ message: "Cart created and product added" });
+            return res.status(201).json({ message: "product added to cart" });
         }
 
         // Check if the product already exists in the cart
@@ -42,7 +40,7 @@ const addProductToCart = async (req, res) => {
 
         if (existingProduct) {
             // Update the quantity of the existing product
-            existingProduct.quantity += quantity;
+            existingProduct.items.quantity += quantity;
         } else {
             // Add the new product to the cart
             cart.productIds.push({
@@ -57,9 +55,7 @@ const addProductToCart = async (req, res) => {
 
         // Save the updated cart
         await cart.save();
-        return res
-            .status(200)
-            .json({ message: "Cart updated successfully", data: cart });
+        return res.status(200).json({ message: "Cart updated successfully" });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -176,7 +172,7 @@ const updateCart = async (req, res) => {
 export const getCart = async (req, res) => {
     try {
         const userId = req.id;
-        const cart = await cartModel.findOne({ creatorId: userId }).populate({
+        const cart = await cartModel.find({ creatorId: userId }).populate({
             path: "productIds.product", // Populate the product details
             model: "product", // Make sure the product model is correctly referenced
         });
@@ -194,10 +190,42 @@ export const getCart = async (req, res) => {
 
 const deleteCart = async (req, res) => {
     try {
-        const cartId = req.cartId;
-        await entity.deleteDataById(cartId, cartModel);
+        const { productId, size, color } = req.body;
+        const creatorId = req.id;
+
+        // Find the cart first
+        const cart = await cartModel.find({ creatorId: creatorId });
+
+        if (!cart) {
+            return res.status(404).json({
+                message: "Cart not found",
+            });
+        }
+
+        // Filter out the product that matches productId, size, and color
+        const updatedItems = cart.productIds.filter(
+            (item) =>
+                !(
+                    item.product.toString() === productId &&
+                    item.items.size === size &&
+                    item.items.color === color
+                )
+        );
+
+        // If the length of items hasn't changed, the product was not found
+        if (updatedItems.length === cart.items.length) {
+            return res.status(404).json({
+                message:
+                    "Product with the specified attributes not found in the cart",
+            });
+        }
+
+        // Update the cart with the filtered items
+        cart.items = updatedItems;
+        await cart.save();
+
         return res.status(200).json({
-            message: "Cart deleted successfully",
+            message: "Product deleted from the cart successfully",
         });
     } catch (error) {
         return res.status(500).json({

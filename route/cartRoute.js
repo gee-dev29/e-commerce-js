@@ -20,7 +20,6 @@ router
 router
     .route("/:cartId")
     .patch(jwtVerify, checkCart, checkProduct, updateCart)
-    .delete(jwtVerify, checkCart, deleteCart)
-    .post();
+    .post(jwtVerify, deleteCart);
 
 export default router;
