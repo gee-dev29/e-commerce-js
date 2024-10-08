@@ -17,6 +17,7 @@ import colorsRoute from "./route/colorsRoute.js";
 import countriesRoute from "./route/countryRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 import passport from "passport";
+import cookieSession from "cookie-session";
 import * as passportMain from "./passportSetup.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
@@ -31,11 +32,11 @@ dotenv.config();
 // middleware
 app.use(cors());
 app.use(
-    bodyParser.urlencoded({
-        limit: "50mb",
-        extended: true,
-        parameterLimit: 50000,
-    })
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
 );
 app.use(bodyParser.json({ limit: "100mb" }));
 
@@ -44,6 +45,14 @@ dbConnection();
 
 // swaggerApi(app)
 app.use(passport.initialize());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["kncloset"],
+    maxAge: 24 * 60 * 60 * 100,
+  })
+);
+app.use(passport.session( ))
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/cart", cartRoute);
@@ -56,13 +65,13 @@ app.use("/api/v1/hero", heroRoute);
 app.use("/api/v1/colors", colorsRoute);
 app.use("/api/v1/countries", countriesRoute);
 app.use("/api/v1/stripe", stripeRoute);
-app.use("/api/v1/ping", (req, res)=> {
-    res.send('welcome to kncloset')
+app.use("/api/v1/ping", (req, res) => {
+  res.send("welcome to kncloset");
 });
 
 app.listen(process.env.PORT || 8920, () => {
-    consola.success({
-        message: `Server started on port ${process.env.PORT || 8920}`,
-        badge: true,
-    });
+  consola.success({
+    message: `Server started on port ${process.env.PORT || 8920}`,
+    badge: true,
+  });
 });
