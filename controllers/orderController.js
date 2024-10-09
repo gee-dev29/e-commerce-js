@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { orderStatus } from "../enums/orderEnum.js";
 import { currency } from "../utils/currency.js";
 
-export const orderItem = async (req, res) => {
+export const createOrderItem = async (req, res) => {
     try {
         const userId = req.id;
         const {
@@ -20,7 +20,7 @@ export const orderItem = async (req, res) => {
             zipCode,
             phone,
             orderNote,
-            items,
+            orderedItems,
         } = req.body;
         const missingFields = entity.checkMissingFieldsInput(
             orderField,
@@ -35,7 +35,7 @@ export const orderItem = async (req, res) => {
         const newOrder = new orderModel({
             creatorId: userId,
             fullName: fullName,
-            orderedItems: items,
+            orderedItems: orderedItems,
             orderTrackingNumber: uuidv4(),
             paymentMethod: paymentMethod,
             totalAmount: totalAmount,
