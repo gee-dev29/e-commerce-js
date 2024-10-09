@@ -187,10 +187,10 @@ export const getCart = async (req, res) => {
 const deleteCart = async (req, res) => {
     try {
         const { productId, size, color } = req.body;
-        const cartId = req.cartId;
+        const filter = { creatorId: req.id };
 
         // Find the cart first
-        const cart = await cartModel.findById(cartId);
+        const cart = await cartModel.find(filter);
 
         if (!cart) {
             return res.status(404).json({
@@ -199,7 +199,7 @@ const deleteCart = async (req, res) => {
         }
 
         // Filter out the product that matches productId, size, and color
-        const updatedProducts = cart.productIds.filter(
+        const updatedProducts = cart[0].productIds.filter(
             (product) =>
                 !(
                     product.product.toString() === productId &&
@@ -208,18 +208,12 @@ const deleteCart = async (req, res) => {
                 )
         );
 
-        // If the length of productIds hasn't changed, the product was not found
-        if (updatedProducts.length === cart.productIds.length) {
-            return res.status(404).json({
-                message:
-                    "Product with the specified attributes not found in the cart",
-            });
-        }
-
         // Update the cart with the filtered products
-        cart.productIds = updatedProducts;
-        await cart.save();
-
+        await entity.updateDataById(
+            cart[0]._id,
+            { productIds: updatedProducts },
+            cartModel
+        );
         return res.status(200).json({
             message: "Product deleted from the cart successfully",
         });

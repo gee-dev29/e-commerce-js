@@ -22,15 +22,15 @@ const productField = [
     "productImages",
 ];
 const orderField = [
-    "paymentMethod",
+    "fullName",
     "orderedItems",
+    "paymentMethod",
     "street",
     "city",
     "state",
     "country",
     "zipCode",
     "phone",
-    "fullName",
 ];
 
 const shippingField = [

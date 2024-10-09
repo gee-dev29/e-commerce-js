@@ -1,26 +1,19 @@
-import { orderStatus } from "../enums/orderEnum.js";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 import { orderModel } from "../model/orderModel.js";
 import { productModel } from "../model/productModel.js";
-import { checkShippingInfo } from "../middleware/checkShippingInfo.js";
 import { entity } from "../utils/entity.js";
 import { orderField } from "../utils/inputFields.js";
-import mongoose from "mongoose";
-
-import { orderModel } from "./path-to-order-model";
-import { productModel } from "./path-to-product-model"; // Ensure the path is correct
-import { v4 as uuidv4 } from "uuid"; // For generating unique tracking numbers
+import { v4 as uuidv4 } from "uuid";
 import { orderStatus } from "../enums/orderEnum.js";
-import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 import { currency } from "../utils/currency.js";
 
 export const orderItem = async (req, res) => {
     try {
-        const userId = req.id; // Assuming req.id holds the authenticated user's ID
+        const userId = req.id;
         const {
-            paymentMethod,
             fullName,
             orderedItems,
+            paymentMethod,
             street,
             city,
             state,
@@ -29,30 +22,43 @@ export const orderItem = async (req, res) => {
             phone,
             orderNote,
         } = req.body;
-
         const missingFields = entity.checkMissingFieldsInput(
             orderField,
             req.body
         );
-        if (missingFields) {
+        if (missingFields && missingFields.length > 0) {
             return res.status(400).json({
                 message: `Missing fields: ${missingFields.join(", ")}`,
             });
         }
-
+        // Validate payment method
         if (!Object.values(PaymentMethod).includes(paymentMethod)) {
-            return res.status(400).json({
-                message: "Invalid payment method",
-            });
+            return res.status(400).json({ message: "Invalid payment method" });
         }
 
-        const productIds = orderedItems.map((item) => item.productId);
-        const products = await productModel.find({ _id: { $in: productIds } });
+        // Validate orderedItems array
+        if (
+            !orderedItems ||
+            !Array.isArray(orderedItems) ||
+            orderedItems.length === 0
+        ) {
+            return res
+                .status(400)
+                .json({ message: "Ordered items are missing or invalid" });
+        }
 
+        // Extract product IDs from the ordered items
+        const productIds = orderedItems.map((item) => item.productId);
+        if (productIds.length === 0) {
+            return res
+                .status(400)
+                .json({ message: "No product IDs found in ordered items" });
+        }
+        const products = await productModel.find({ _id: { $in: productIds } });
         if (!products || products.length === 0) {
-            return res.status(404).json({
-                message: "No products found for the given items",
-            });
+            return res
+                .status(404)
+                .json({ message: "No products found for the given items" });
         }
         let totalAmount = 0;
         orderedItems.forEach((item) => {
@@ -61,6 +67,10 @@ export const orderItem = async (req, res) => {
             );
             if (product) {
                 totalAmount += product.price * item.quantity;
+            } else {
+                return res.status(404).json({
+                    message: `Product with ID ${item.productId} not found`,
+                });
             }
         });
         const newOrder = new orderModel({
@@ -86,15 +96,16 @@ export const orderItem = async (req, res) => {
             currency: currency.USD, 
         });
         await newOrder.save();
-
         return res.status(201).json({
             message: "Order created successfully",
             orderId: newOrder._id,
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message,
-        });
+        return res
+            .status(500)
+            .json({
+                message: "Internal server error. Please try again later.",
+            });
     }
 };
 
