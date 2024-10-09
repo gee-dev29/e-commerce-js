@@ -1,5 +1,8 @@
 import Stripe from "stripe";
+import dotenv from "dotenv";
+dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 export const getClientIntent = async (req, res) => {
   try {
     const { amount } = req.body;
@@ -14,32 +17,34 @@ export const getClientIntent = async (req, res) => {
 };
 
 export const getStripeWebhook = async (req, res) => {
-  const sig = req.headers["stripe-signature"];
-
   let event;
-  console.log(req.body);
-  
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    const signature = req.headers["stripe-signature"]
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
-    res.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+    console.log(err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
+  res.json({ received: true });
+  console.log(event);
   // Handle the event
   switch (event.type) {
     case "payment_intent.succeeded":
       const paymentIntentSucceeded = event.data.object;
+      console.log(paymentIntentSucceeded);
+
       // Then define and call a function to handle the event payment_intent.succeeded
       break;
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
-
   // Return a 200 response to acknowledge receipt of the event
   res.send();
-
 };
 
 export const createStripeSession = async (req, res) => {
