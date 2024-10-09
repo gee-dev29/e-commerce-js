@@ -8,11 +8,9 @@ const addProductToCart = async (req, res) => {
         const userId = req.id;
         const { productId, color, quantity, size } = req.products;
 
-        // Find the user's cart
         let cart = await cartModel.findOne({ creatorId: userId });
 
         if (!cart) {
-            // Create a new cart if it doesn't exist
             cart = new cartModel({
                 creatorId: userId,
                 productIds: [
@@ -49,7 +47,6 @@ const addProductToCart = async (req, res) => {
             });
         }
 
-        // Save the updated cart
         await cart.save();
         return res.status(200).json({ message: "Cart updated successfully" });
     } catch (error) {
@@ -59,7 +56,7 @@ const addProductToCart = async (req, res) => {
 
 const addProductsToCart = async (req, res) => {
     try {
-        const userId = req.id; // Assuming this is the authenticated user's ID
+        const userId = req.id;
         const allProducts = req.products;
 
         let cart = await cartModel.findOne({ creatorId: userId });

@@ -56,7 +56,7 @@ export const createOrderItem = async (req, res) => {
         });
     } catch (error) {
         return res.status(500).json({
-            message: "Internal server error. Please try again later.",
+            message: error.message,
         });
     }
 };
