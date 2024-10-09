@@ -16,6 +16,8 @@ export const getClientIntent = async (req, res) => {
 export const getStripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
+  console.log(req.body);
+  
   try {
     event = stripe.webhooks.constructEvent(
       req.body,

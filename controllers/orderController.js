@@ -12,7 +12,6 @@ export const orderItem = async (req, res) => {
         const userId = req.id;
         const {
             fullName,
-            orderedItems,
             paymentMethod,
             street,
             city,
@@ -21,6 +20,7 @@ export const orderItem = async (req, res) => {
             zipCode,
             phone,
             orderNote,
+            items,
         } = req.body;
         const missingFields = entity.checkMissingFieldsInput(
             orderField,
@@ -31,58 +31,12 @@ export const orderItem = async (req, res) => {
                 message: `Missing fields: ${missingFields.join(", ")}`,
             });
         }
-        // Validate payment method
-        if (!Object.values(PaymentMethod).includes(paymentMethod)) {
-            return res.status(400).json({ message: "Invalid payment method" });
-        }
 
-        // Validate orderedItems array
-        if (
-            !orderedItems ||
-            !Array.isArray(orderedItems) ||
-            orderedItems.length === 0
-        ) {
-            return res
-                .status(400)
-                .json({ message: "Ordered items are missing or invalid" });
-        }
-
-        // Extract product IDs from the ordered items
-        const productIds = orderedItems.map((item) => item.productId);
-        if (productIds.length === 0) {
-            return res
-                .status(400)
-                .json({ message: "No product IDs found in ordered items" });
-        }
-        const products = await productModel.find({ _id: { $in: productIds } });
-        if (!products || products.length === 0) {
-            return res
-                .status(404)
-                .json({ message: "No products found for the given items" });
-        }
-        let totalAmount = 0;
-        orderedItems.forEach((item) => {
-            const product = products.find(
-                (p) => p._id.toString() === item.productId
-            );
-            if (product) {
-                totalAmount += product.price * item.quantity;
-            } else {
-                return res.status(404).json({
-                    message: `Product with ID ${item.productId} not found`,
-                });
-            }
-        });
         const newOrder = new orderModel({
             creatorId: userId,
             fullName: fullName,
-            orderedItems: orderedItems.map((item) => ({
-                product: item.productId,
-                quantity: item.quantity,
-                color: item.color,
-                size: item.size,
-            })),
-            orderTrackingNumber: uuidv4(), 
+            orderedItems: items,
+            orderTrackingNumber: uuidv4(),
             paymentMethod: paymentMethod,
             totalAmount: totalAmount,
             orderStatus: orderStatus.PROCESSING,
@@ -92,8 +46,8 @@ export const orderItem = async (req, res) => {
             country: country,
             zipCode: zipCode,
             phone: phone,
-            orderNote: orderNote || "", 
-            currency: currency.USD, 
+            orderNote: orderNote || "",
+            currency: currency.USD,
         });
         await newOrder.save();
         return res.status(201).json({
@@ -101,11 +55,9 @@ export const orderItem = async (req, res) => {
             orderId: newOrder._id,
         });
     } catch (error) {
-        return res
-            .status(500)
-            .json({
-                message: "Internal server error. Please try again later.",
-            });
+        return res.status(500).json({
+            message: "Internal server error. Please try again later.",
+        });
     }
 };
 

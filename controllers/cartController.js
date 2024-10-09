@@ -174,7 +174,7 @@ export const getCart = async (req, res) => {
         });
 
         return res.status(200).json({
-            data: cart,
+            data: cart[0],
         });
     } catch (error) {
         if (error.name === "CastError" && error.kind === "ObjectId") {
