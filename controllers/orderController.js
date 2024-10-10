@@ -18,7 +18,9 @@ export const createOrderItem = async (req, res) => {
             state,
             country,
             zipCode,
+            totalAmount,
             phone,
+            email,
             orderNote,
             orderedItems,
         } = req.body;
@@ -41,6 +43,7 @@ export const createOrderItem = async (req, res) => {
             totalAmount: totalAmount,
             orderStatus: orderStatus.PROCESSING,
             street: street,
+            email: email,
             city: city,
             state: state,
             country: country,
@@ -87,6 +90,51 @@ export const viewOrder = async (req, res) => {
         // console.log(order)
         // const orderItem = await orderModel.findById(orderId);
         return res.status(200).json({ data: order });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const changeOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.orderId;
+        const { orderStatus } = req.body;
+        const payload = { orderStatus: orderStatus };
+        await entity.updateDataById(orderId, payload, orderModel).then(() => {
+            return res
+                .status(200)
+                .json({ message: "order status updated successfully" });
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const getUserOrders = async (req, res) => {
+    try {
+        const { userId } = req.id;
+        const filter = { creatorId: userId };
+        const { skip, limit } = req.query;
+        const data = await entity
+            .getPaginatedData(orderModel, filter, skip, limit)
+            .then(() => {
+                return res.status(200).json({ payload: data });
+            });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const getOrderByStatus = async (req, res) => {
+    try {
+        const { orderStatus } = req.body;
+        const { skip, limit } = req.query;
+        const filter = { orderStatus: orderStatus };
+        const data = await entity
+            .getPaginatedData(orderModel, filter, skip, limit)
+            .then(() => {
+                return res.status(200).json({ payload: data });
+            });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

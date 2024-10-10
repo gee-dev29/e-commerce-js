@@ -128,8 +128,35 @@ const isValidObjectId = (id) => {
     return isValid;
 };
 
+const getPaginatedData = async (model, filter, skip, limit) => {
+    const data = await model.find(filter).limit(limit).skip(skip);
+    const totalRecords = data.length;
+    return { data, totalRecords };
+};
+const getPaginatedDataWithPopulate = async (
+    model,
+    filter,
+    skip,
+    limit,
+    path,
+    selectedModel
+) => {
+    const data = await model
+        .find(filter)
+        .populate({
+            path: path,
+            model: selectedModel,
+        })
+        .limit(limit)
+        .skip(skip);
+    const totalRecords = data.length;
+    return { data, totalRecords };
+};
+
 export const entity = {
     encryptPassword,
+    getPaginatedDataWithPopulate,
+    getPaginatedData,
     decryptPassword,
     jwtSign,
     getAllFilteredData,
