@@ -97,7 +97,8 @@ export const googleLogin = async (req, res) => {
       });
     }
   } else {
-    throw new Error("Something when wrong!");
+   console.log('something went wrong');
+   return res.status(200).json()
   }
 };
 
