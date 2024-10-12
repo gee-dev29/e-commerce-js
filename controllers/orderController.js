@@ -41,7 +41,6 @@ export const createOrderItem = async (req, res) => {
             orderTrackingNumber: uuidv4(),
             paymentMethod: paymentMethod,
             totalAmount: totalAmount,
-            orderStatus: orderStatus.PROCESSING,
             street: street,
             email: email,
             city: city,
