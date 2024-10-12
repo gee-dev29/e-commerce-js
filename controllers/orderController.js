@@ -38,7 +38,7 @@ export const createOrderItem = async (req, res) => {
             creatorId: userId,
             fullName: fullName,
             orderedItems: orderedItems,
-            orderTrackingNumber: uuidv4(),
+            orderTrackingNumber: entity.generateOrderNumber(),
             paymentMethod: paymentMethod,
             totalAmount: totalAmount,
             street: street,
