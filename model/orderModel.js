@@ -58,7 +58,6 @@ const orderSchema = new mongoose.Schema(
             type: String,
             enums: [
                 PaymentMethod.CASH,
-                PaymentMethod.CREDIT_CARD,
                 PaymentMethod.PAYPAL,
                 PaymentMethod.STRIPE,
             ],
