@@ -28,7 +28,15 @@ const app = express();
 // }
 
 dotenv.config();
-
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["kncloset"],
+    maxAge: 24 * 60 * 60 * 100,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session( ))
 // middleware
 app.use(cors());
 app.use(
@@ -44,15 +52,7 @@ app.use(bodyParser.json({ limit: "100mb" }));
 dbConnection();
 
 // swaggerApi(app)
-app.use(passport.initialize());
-app.use(
-  cookieSession({
-    name: "session",
-    keys: ["kncloset"],
-    maxAge: 24 * 60 * 60 * 100,
-  })
-);
-app.use(passport.session( ))
+
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/cart", cartRoute);

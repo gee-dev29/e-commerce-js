@@ -8,12 +8,12 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL,
+      callbackURL: '/auth/google/callback',
       passReqToCallback: true,
       scope: ["profile", "email"],
     },
     async function (request, accessToken, refreshToken, profile, done) {
-      try {
+      try {  
         let data = profile?._json;
         let user = await userModel.findOne({ email: data.email });
 

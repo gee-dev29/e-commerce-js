@@ -108,6 +108,11 @@ export const failedGoogleLogin = async (req, res) => {
   });
 };
 
+export const googleLogout  = async (req, res)=> {
+  req.logout()
+  res.redirect(process.env.CLIENT_URL)
+}
+
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;

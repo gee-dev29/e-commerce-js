@@ -18,17 +18,19 @@ const router = express.Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(findUserByEmail, loginUser);
-router.get("/google", passport.authenticate("google", ["profile", "email"]));
 router.get("/login/success", googleLogin);
 router.get("/login/failed", failedGoogleLogin);
 
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/login/success",
+    successRedirect: process.env.CLIENT_URL,
     failureRedirect: "/login/failed",
   })
 );
+router.get("/google", passport.authenticate("google", ["profile", "email"]));
+
+router.route("/logout").post( loginAdmin);
 router.route("/admin").post(findUserByEmail, loginAdmin);
 router
   .route("/registerAdmin")
