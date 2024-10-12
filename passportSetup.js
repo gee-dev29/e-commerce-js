@@ -24,8 +24,8 @@ passport.use(
             lastName: data.family_name,
             profilePicture: data.picture,
             email: data.email,
+            loginAgent: LoginAgents.GOOGLE,
             isVerified: true,
-            loginAgent: LoginAgents.GOOGLE
           });
           await newUser.save()
           return await done(null, profile);
