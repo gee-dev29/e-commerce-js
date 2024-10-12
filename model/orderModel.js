@@ -73,11 +73,10 @@ const orderSchema = new mongoose.Schema(
             type: String,
             enums: [
                 orderStatus.AWAITING_PAYMENT,
-                orderStatus.PROCESSING,
+                orderStatus.PAID,
                 orderStatus.SHIPPED,
                 orderStatus.DELIVERED,
                 orderStatus.CANCELED,
-                orderStatus.PAID
             ],
             default: orderStatus.AWAITING_PAYMENT,
         },
