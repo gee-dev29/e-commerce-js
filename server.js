@@ -28,6 +28,15 @@ const app = express();
 // }
 
 dotenv.config();
+
+// middleware
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: "GET,POST,PUT,DELETE ",
+  credentials: true
+
+}
+));
 app.use(
   cookieSession({
     name: "session",
@@ -37,8 +46,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session( ))
-// middleware
-app.use(cors());
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
