@@ -1,6 +1,7 @@
 import GoogleStrategy from "passport-google-oauth20";
 import { userModel } from "./model/userModel.js";
 import passport from "passport";
+import { LoginAgents } from "./enums/LoginAgents.js";
 
 // Register a Strategy to be passed when authenticate () method is called
 passport.use(
@@ -24,6 +25,7 @@ passport.use(
             profilePicture: data.picture,
             email: data.email,
             isVerified: true,
+            loginAgent: LoginAgents.GOOGLE
           });
           await newUser.save()
           return await done(null, profile);
