@@ -27,20 +27,14 @@ const orderSchema = new mongoose.Schema(
           ref: "product",
           required: true,
         },
-      },
-      {
         quantity: {
           type: Number,
           required: true,
         },
-      },
-      {
         color: {
           type: String,
           required: true,
         },
-      },
-      {
         size: {
           type: String,
           required: true,

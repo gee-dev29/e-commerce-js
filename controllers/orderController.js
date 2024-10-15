@@ -34,7 +34,7 @@ export const createOrderItem = async (req, res) => {
             });
         }
 
-        const orderTrackingNumber = entity.generateTrackingNumber();
+        // const orderTrackingNumber = entity.generateTrackingNumber();
 
         const newOrder = new orderModel({
             creatorId: userId,
