@@ -153,8 +153,15 @@ const getPaginatedDataWithPopulate = async (
     return { data, totalRecords };
 };
 
+function generateTrackingNumber() {
+    const timestampPart = Date.now().toString().slice(-7); // Last 7 digits of the timestamp
+    const randomPart = Math.floor(1000 + Math.random() * 9000); // Random 4-digit number
+    return `${timestampPart}${randomPart}`; // Concatenate to get 11 digits
+}
+
 export const entity = {
     encryptPassword,
+    generateTrackingNumber,
     getPaginatedDataWithPopulate,
     getPaginatedData,
     decryptPassword,

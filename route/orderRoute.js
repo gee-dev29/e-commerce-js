@@ -4,6 +4,8 @@ import {
     adminViewOrders,
     changeOrderStatus,
     createOrderItem,
+    getOrderById,
+    getUserOrders,
     viewOrder,
     viewOrders,
 } from "../controllers/orderController.js";
@@ -14,7 +16,7 @@ const router = express.Router();
 
 router
     .route("/")
-    .get(jwtVerify, viewOrders)
+    .get(jwtVerify, checkUser, getUserOrders)
     .post(jwtVerify, checkUser, createOrderItem);
 
 router
@@ -28,5 +30,7 @@ router
     .route("/view/:orderId")
     .get(jwtVerify, checkOrder, viewOrder)
     .patch(jwtVerify, checkOrder, changeOrderStatus);
+
+router.route("/get-order").get(jwtVerify, checkUser, getOrderById);
 
 export default router;

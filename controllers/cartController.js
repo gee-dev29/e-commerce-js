@@ -1,5 +1,4 @@
 import { cartModel } from "../model/cartModel.js";
-import { productModel } from "../model/productModel.js";
 import { entity } from "../utils/entity.js";
 import { cartField } from "../utils/inputFields.js";
 
@@ -25,8 +24,6 @@ const addProductToCart = async (req, res) => {
             await cart.save();
             return res.status(201).json({ message: "product added to cart" });
         }
-
-        // Check if the product already exists in the cart
         const existingProduct = cart.productIds.find(
             (p) =>
                 p.product.toString() === productId &&
@@ -35,10 +32,8 @@ const addProductToCart = async (req, res) => {
         );
 
         if (existingProduct) {
-            // Update the quantity of the existing product
             existingProduct.quantity += quantity;
         } else {
-            // Add the new product to the cart
             cart.productIds.push({
                 product: productId,
                 quantity: quantity,
@@ -60,8 +55,6 @@ const addProductsToCart = async (req, res) => {
         const allProducts = req.products;
 
         let cart = await cartModel.findOne({ creatorId: userId });
-
-        // If no cart exists, create a new one
         if (!cart) {
             const newCart = new cartModel({
                 creatorId: userId,
@@ -71,11 +64,10 @@ const addProductsToCart = async (req, res) => {
             await newCart.save();
             return res.status(201).json({
                 message: "Cart created and products added",
-                cart: newCart, // Return the new cart for client-side use
+                cart: newCart, 
             });
         }
         let updatedPayload = [];
-        // If a cart already exists, update it
         for (const item of allProducts) {
             const productId = item.product._id;
             if (!productId) {
@@ -86,7 +78,6 @@ const addProductsToCart = async (req, res) => {
                 });
             }
 
-            // Check if the product with the same `productId`, `color`, and `size` already exists in the cart
             const existingProductIndex = cart.productIds.findIndex(
                 (p) =>
                     p.product._id === productId &&
@@ -95,13 +86,11 @@ const addProductsToCart = async (req, res) => {
             );
 
             if (existingProductIndex !== -1) {
-                // If the product already exists (same productId, color, size), update its quantity
                 const payload = (cart.productIds[
                     existingProductIndex
                 ].items.quantity += item.items.quantity);
                 updatedPayload.push(payload);
             } else {
-                // If the product doesn't exist in the cart, add it as a new entry
                 updatedPayload.push({
                     product: productId,
                     items: {
@@ -166,8 +155,8 @@ export const getCart = async (req, res) => {
     try {
         const userId = req.id;
         const cart = await cartModel.find({ creatorId: userId }).populate({
-            path: "productIds.product", // Populate the product details
-            model: "product", // Make sure the product model is correctly referenced
+            path: "productIds.product",
+            model: "product", 
         });
 
         return res.status(200).json({
