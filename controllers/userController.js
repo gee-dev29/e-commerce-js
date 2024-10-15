@@ -60,6 +60,13 @@ export const loginUser = async (req, res) => {
       });
     }
     const user = req.user;
+    console.log(req.password);
+
+    if (!user.password) {
+      return res.status(400).json({
+        message: "user has no set password",
+      });
+    }
     const isPasswordValid = await entity.decryptPassword(
       password,
       req.password
@@ -87,8 +94,10 @@ export const loginUser = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   if (req.user) {
-    const user = await userModel.findOne({ email: req.user.email });
-    if (findUser) {
+    const user = await userModel
+      .findOne({ email: req.user.email })
+      .select("-password");
+    if (user) {
       const token = entity.jwtSign(user._id);
       return res.status(200).json({
         message: "Login Successful",
@@ -97,7 +106,7 @@ export const googleLogin = async (req, res) => {
       });
     }
   } else {
-    throw new Error("Something when wrong!");
+    return res.status(200).json();
   }
 };
 
@@ -106,6 +115,11 @@ export const failedGoogleLogin = async (req, res) => {
     status: false,
     message: "Login failed",
   });
+};
+
+export const googleLogout = async (req, res) => {
+  req.logout();
+  res.redirect('http://localhost:5173/login');
 };
 
 export const loginAdmin = async (req, res) => {

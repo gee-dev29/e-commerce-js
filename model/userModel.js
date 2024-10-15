@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { UserStatus } from "../enums/statusEnum.js";
 import { Role } from "../enums/role.js";
+import { LoginAgents } from "../enums/LoginAgents.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,7 +20,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     phone: {
       type: String,
@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
     isSuspended: {
       type: Boolean,
       default: false,
+    },
+    loginAgent: {
+      type: String,
+      enum: [LoginAgents.EMAIL, LoginAgents.GOOGLE, LoginAgents.FACEBOOK],
+      default: LoginAgents.EMAIL,
     },
   },
   { timestamps: true }

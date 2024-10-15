@@ -2,6 +2,7 @@ import express from "express";
 import {
   failedGoogleLogin,
   googleLogin,
+  googleLogout,
   loginAdmin,
   loginUser,
   registerAdmin,
@@ -18,17 +19,18 @@ const router = express.Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(findUserByEmail, loginUser);
-router.get("/google", passport.authenticate("google", ["profile", "email"]));
 router.get("/login/success", googleLogin);
-router.get("/login/failed", failedGoogleLogin);
 
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/login/success",
-    failureRedirect: "/login/failed",
+    successRedirect: 'http://localhost:5173',
+    failureRedirect: "http://localhost:5173/login",
   })
-);
+); 
+router.get("/google", passport.authenticate("google", ["profile", "email"]));
+
+router.route("/logout").get(googleLogout);
 router.route("/admin").post(findUserByEmail, loginAdmin);
 router
   .route("/registerAdmin")

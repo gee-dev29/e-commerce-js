@@ -19,7 +19,7 @@ export const getClientIntent = async (req, res) => {
 export const getStripeWebhook = async (req, res) => {
   let event;
   try {
-    const signature = req.headers["stripe-signature"]
+    const signature = req.headers["stripe-signature"];
     event = stripe.webhooks.constructEvent(
       req.body,
       signature,
@@ -57,7 +57,11 @@ export const createStripeSession = async (req, res) => {
           name: item.product.productTitle,
           images: item.product.productImages,
         },
-        unit_amount: Math.round(item.product.productPrice * 100),
+        unit_amount: Math.round(
+          (item.product.productPrice -
+            item.product.productPrice * (item.product?.productDiscount / 100)) *
+            100
+        ),
       },
       quantity: item.quantity,
     }));
