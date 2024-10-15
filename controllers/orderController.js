@@ -116,11 +116,13 @@ export const getUserOrders = async (req, res) => {
         const userId = req.id;
         const filter = { creatorId: userId };
         const { skip, limit } = req.query;
-        const data = await entity.getPaginatedData(
+        const data = await entity.getPaginatedDataWithPopulate(
             orderModel,
             filter,
             skip,
-            limit
+            limit,
+            "orderedItems.productId",
+            "product"
         );
 
         return res.status(200).json({ payload: data });
