@@ -64,7 +64,7 @@ const addProductsToCart = async (req, res) => {
             await newCart.save();
             return res.status(201).json({
                 message: "Cart created and products added",
-                cart: newCart, 
+                cart: newCart,
             });
         }
         let updatedPayload = [];
@@ -156,11 +156,13 @@ export const getCart = async (req, res) => {
         const userId = req.id;
         const cart = await cartModel.find({ creatorId: userId }).populate({
             path: "productIds.product",
-            model: "product", 
+            model: "product",
         });
 
+        const { productIds, ...others } = cart[0];
+
         return res.status(200).json({
-            data: cart[0],
+            data: productIds,
         });
     } catch (error) {
         if (error.name === "CastError" && error.kind === "ObjectId") {
