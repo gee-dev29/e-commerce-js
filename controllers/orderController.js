@@ -121,7 +121,7 @@ export const getUserOrders = async (req, res) => {
             filter,
             skip,
             limit,
-            "orderedItems.productId",
+            "orderedItems.product",
             "product"
         );
 
