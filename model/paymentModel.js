@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PaymentMethod } from "../enums/paymentMethodEnums";
+import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 
 const paymentSchema = new mongoose.Schema({
   creatorId: {
@@ -9,7 +9,7 @@ const paymentSchema = new mongoose.Schema({
   PaymentMethod: {
     type: String,
     enums: [PaymentMethod.PAYPAL || PaymentMethod.STRIPE],
-    default: PaymentMethod.STRIPE,
+    default: PaymentMethod.PAYPAL,
     required: true,
   },
   paymentRef: {
