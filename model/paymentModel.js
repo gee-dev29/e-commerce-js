@@ -6,10 +6,8 @@ const paymentSchema = new mongoose.Schema({
   email: {
     type: String,
   },
-  PaymentMethod: {
+  paymentMethod: {
     type: String,
-    enums: [PaymentMethod.PAYPAL, PaymentMethod.STRIPE],
-    default: PaymentMethod.PAYPAL,
     required: true,
   },
   paymentRef: {

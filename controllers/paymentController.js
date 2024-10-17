@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 import client from "../middleware/payPalConfig.js";
 import paypal from "@paypal/checkout-server-sdk";
 import { orderModel } from "../model/orderModel.js";
-import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 import { orderStatus } from "../enums/orderEnum.js";
 import { paymentModel } from "../model/paymentModel.js";
 import { entity } from "../utils/entity.js";
 import { currency } from "../utils/currency.js";
+import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -44,12 +44,13 @@ export const getStripeWebhook = async (req, res) => {
       const update = {
         orderStatus: orderStatus.PAID,
       };
-     const myorder = await orderModel.findOneAndUpdate(filter, update, { new: true });
-      await savePayment(
-        PaymentMethod.STRIPE,
-        payment.id,
-        paymentModel
-      );
+      await orderModel.findOneAndUpdate(filter, update, { new: true });
+      const newPayment = new paymentModel({
+        paymentMethod: PaymentMethod.STRIPE,
+        paymentRef: payment.id,
+        paymentStatus: orderStatus.PAID,
+      });
+      await newPayment.save();
       break;
     default:
   }
@@ -139,7 +140,6 @@ export const createOrder = async (req, res) => {
             currency_code: "USD",
             value: Number(order.totalAmount) * 100,
           },
-          // items: products,
           description: "order",
         },
       ],
@@ -156,11 +156,12 @@ export const createOrder = async (req, res) => {
         message: "Failed to retrieve PayPal approval URL",
       });
     }
-    await savePayment(
-      PaymentMethod.PAYPAL,
-      paypalOrderId,
-      paymentModel
-    );
+    const newPayment = new paymentModel({
+      paymentMethod: PaymentMethod.PAYPAL,
+      paymentRef: paypalOrderId,
+      paymentStatus: orderStatus.PAID,
+    });
+    await newPayment.save();
 
     res.status(201).json({
       orderID: paypalOrderId,
@@ -237,15 +238,3 @@ export const captureOrder = async (req, res) => {
   }
 };
 
-const savePayment = async (
-  method,
-  paymentRef,
-  model
-) => {
-  const newPayment = new model({
-    paymentMethod: method,
-    paymentRef: paymentRef,
-    paymentStatus: orderStatus.PAID
-  });
-  await newPayment.save();
-};
