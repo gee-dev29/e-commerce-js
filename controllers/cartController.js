@@ -14,7 +14,7 @@ const addProductToCart = async (req, res) => {
                 creatorId: userId,
                 productIds: [
                     {
-                        product: productId,
+                        product: productId._id,
                         quantity: quantity,
                         color: color,
                         size: size,
@@ -26,7 +26,7 @@ const addProductToCart = async (req, res) => {
         }
         const existingProduct = cart.productIds.find(
             (p) =>
-                p.product.toString() === productId &&
+                p.product.toString() === productId._id &&
                 p.color === color &&
                 p.size === size
         );
@@ -35,7 +35,7 @@ const addProductToCart = async (req, res) => {
             existingProduct.quantity += quantity;
         } else {
             cart.productIds.push({
-                product: productId,
+                product: productId._id,
                 quantity: quantity,
                 color: color,
                 size: size,
