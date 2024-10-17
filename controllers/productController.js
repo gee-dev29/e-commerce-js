@@ -18,7 +18,7 @@ export const createProduct = async (req, res) => {
             productSize,
             productStock,
             productImages,
-            productShortDescription
+            productShortDescription,
         } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
             productField,
@@ -119,6 +119,39 @@ export const getProductByCategory = async (req, res) => {
             productCategory: req.body.productCategory,
         });
         return res.status(200).json({ payload: data });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const searchProduct = async (req, res) => {
+    try {
+        const {
+            productCategory,
+            productTitle,
+            skip = "0",
+            limit = "10",
+        } = req.body;
+        const filter = {
+            productCategory: productCategory,
+            productTitle: productTitle,
+        };
+        const searchParams = {
+            productCategory,
+            productTitle,
+        }
+        Object.entries(searchParams).forEach(([key, value]) => {
+            if (value && value.trim())
+                filter[key] = { $regex: value, $options: "i" };
+        });
+
+        const retrivedData = await entity.getPaginatedData(
+            productModel,
+            filter,
+            skip,
+            limit
+        );
+        return res.status(200).json({ payload: retrivedData });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

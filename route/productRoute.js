@@ -1,9 +1,10 @@
 import express from "express";
 import {
-  createProduct,
-  deleteProduct,
-  viewProduct,
-  viewProducts,
+    createProduct,
+    deleteProduct,
+    searchProduct,
+    viewProduct,
+    viewProducts,
 } from "../controllers/productController.js";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { checkProduct } from "../middleware/checkProduct.js";
@@ -13,7 +14,9 @@ const router = express.Router();
 router.route("/").post(jwtVerify, createProduct).get(viewProducts);
 
 router
-  .route("/:productId")
-  .get(checkProduct, viewProduct)
-  .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct)
+    .route("/:productId")
+    .get(checkProduct, viewProduct)
+    .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct);
+
+router.route("/searchProduct").get(jwtVerify, checkProduct, searchProduct);
 export default router;
