@@ -252,23 +252,13 @@ export const captureOrder = async (req, res) => {
     }
 };
 
-export const getPaymentByPaymentStatus = async (req, res) => {
+export const getPayments = async (req, res) => {
     try {
-        const { paymentStatus } = req.body;
-
+        const userId = req.id;
         const filter = {
-            paymentStatus: paymentStatus.PAID,
+            creatorId: userId,
         };
-        if (paymentStatus === paymentStatus.PAID) {
-            const data = await entity.getAllFilteredData(paymentModel, filter);
-            return res.status(200).json({
-                payload: data,
-            });
-        }
-        const data = await entity.getAllFilteredData(
-            paymentModel,
-            "awaiting payment"
-        );
+        const data = await entity.getAllFilteredData(paymentModel, filter);
         return res.status(200).json({
             payload: data,
         });
