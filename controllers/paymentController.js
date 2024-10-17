@@ -8,6 +8,7 @@ import { paymentModel } from "../model/paymentModel.js";
 import { entity } from "../utils/entity.js";
 import { currency } from "../utils/currency.js";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
+import { cartModel } from '../model/cartModel.js';
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -64,7 +65,7 @@ export const createStripeSession = async (req, res) => {
     const { products, orderData } = req.body;
     const lineItems = products.map((item) => ({
       price_data: {
-        currency: "usd",
+        currency: "USD",
         product_data: {
           name: item.product.productTitle,
           images: item.product.productImages,
@@ -83,6 +84,10 @@ export const createStripeSession = async (req, res) => {
       order = orderData;
     } else {
       order = await entity.saveOrder(orderData, req.id, orderModel);
+      const filter = {
+        creatorId: req.id
+      }
+      await cartModel.deleteOne(filter)
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -138,7 +143,7 @@ export const createOrder = async (req, res) => {
           reference_id: order._id,
           amount: {
             currency_code: "USD",
-            value: Number(order.totalAmount) * 100,
+            value: Number(order.totalAmount),
           },
           description: "order",
         },

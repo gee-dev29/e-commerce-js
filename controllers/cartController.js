@@ -158,12 +158,15 @@ export const getCart = async (req, res) => {
             path: "productIds.product",
             model: "product",
         });
+        if(cart && cart.length > 0){
+            const { productIds, ...others } = cart[0];
+            return res.status(200).json({
+                data: productIds,
+            });
+        }
 
-        const { productIds, ...others } = cart[0];
+        return  res.status(200).json({data: []})
 
-        return res.status(200).json({
-            data: productIds,
-        });
     } catch (error) {
         if (error.name === "CastError" && error.kind === "ObjectId") {
             return res.status(400).json({ message: "Invalid user ID format." });

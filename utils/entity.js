@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import moment from "moment";
 import mongoose from "mongoose";
+import { currency } from "./currency.js";
 // this function checks if the user data is correct
 
 // Encrypt function
