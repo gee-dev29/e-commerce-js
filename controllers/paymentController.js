@@ -100,8 +100,8 @@ export const createStripeSession = async (req, res) => {
         user_id: req.id.toString(),
       },
       mode: "payment",
-      success_url: "http://localhost:5173/checkout-summary",
-      cancel_url: "http://localhost:5173/checkout-summary",
+      success_url: "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
+      cancel_url: "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
     });
 
     res.json({

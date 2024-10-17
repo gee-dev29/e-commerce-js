@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  failedGoogleLogin,
   googleLogin,
   googleLogout,
   loginAdmin,
@@ -24,8 +23,8 @@ router.get("/login/success", googleLogin);
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: 'http://localhost:5173',
-    failureRedirect: "http://localhost:5173/login",
+    successRedirect: 'https://ecommerce-frontend-pi-cyan.vercel.app',
+    failureRedirect: "https://ecommerce-frontend-pi-cyan.vercel.app/login",
   })
 ); 
 router.get("/google", passport.authenticate("google", ["profile", "email"]));

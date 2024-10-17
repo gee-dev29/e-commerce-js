@@ -3,7 +3,7 @@ info:
   title: API for Ecommerce System
   version: "1.0"
 servers:
-  - url: http://localhost:8920
+  - url: https://ecommerce-frontend-pi-cyan.vercel.app
     description: local developement server
 tags:
   - name: users
