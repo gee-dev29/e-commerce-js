@@ -13,8 +13,8 @@ export const addItemToWishList = async (req, res) => {
         creatorId: userId,
         productIds: [
           {
-            product: productId._id
-          }
+            product: productId._id,
+          },
         ],
       });
       await newWishList.save();
@@ -77,28 +77,58 @@ export const updateWishList = async (req, res) => {
 
 export const deleteWishList = async (req, res) => {
   try {
-    const wishListId = req.wishListId;
-    await entity.deleteDataById(wishListId, wishListModel);
+    const { productId } = req.body;
+    const filter = { creatorId: req.id };
+
+    // Find the cart first
+    const wishlist = await wishListModel.find(filter);
+
+    if (!wishlist) {
+      return res.status(404).json({
+        message: "wishlist not found",
+      });
+    }
+
+    // Filter out the product that matches productId, size, and color
+    const updatedProducts = wishlist[0].productIds.filter(
+      (product) => !(product.product.toString() === productId)
+    );
+
+    // Update the cart with the filtered products
+    await entity.updateDataById(
+      wishlist[0]._id,
+      { productIds: updatedProducts },
+      wishListModel
+    );
     return res.status(200).json({
-      message: "wish list deleted successfully",
+      message: "Wishlist deleted from the cart successfully",
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
-export const viewWishList = async (req, res) => {
+export const getWishlist = async (req, res) => {
   try {
-    let count = 0;
-    const wishListId = req.wishListId;
-    const wishList = await wishListModel
-      .findOne({ _id: wishListId })
-      .populate("productIds");
-    return res.status(200).json({
-      // totalRecords: count(wishList),
-      data: wishList,
+    const userId = req.id;
+    const wishlist = await wishListModel.find({ creatorId: userId }).populate({
+      path: "productIds.product",
+      model: "product",
     });
+    if (wishlist && wishlist.length > 0) {
+      const { productIds, ...others } = wishlist[0];
+      return res.status(200).json({
+        data: productIds,
+      });
+    }
+
+    return res.status(200).json({ data: [] });
   } catch (error) {
+    if (error.name === "CastError" && error.kind === "ObjectId") {
+      return res.status(400).json({ message: "Invalid user ID format." });
+    }
     return res.status(500).json({ message: error.message });
   }
 };
