@@ -9,11 +9,12 @@ import {
 } from "../controllers/wishListController.js";
 import { checkWishList } from "../middleware/checkWishList.js";
 import { findWishList } from "../middleware/FindWishList.js";
+import { checkUser } from "../middleware/checkUser.js";
 const router = express.Router();
 
 router
   .route("/")
-  .post(jwtVerify, checkProduct, findWishList, addItemToWishList)
+  .post(jwtVerify, checkUser, addItemToWishList)
   .get(jwtVerify, checkWishList, viewWishList);
   
 router

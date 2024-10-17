@@ -8,16 +8,31 @@ export const addItemToWishList = async (req, res) => {
     const { productId } = req.body;
     let wishlist = await wishListModel.findOne({ creatorId: userId });
 
-    if (wishlist) {
+    if (!wishlist) {
       const newWishList = new wishListModel({
         creatorId: userId,
-        productIds: [productId],
+        productIds: [
+          {
+            product: productId._id
+          }
+        ],
       });
       await newWishList.save();
       return res.status(200).json({
         message: "product added to wish list",
       });
     }
+
+    const existingProduct = wishlist.productIds.find(
+      (p) => p.product.toString() === productId._id
+    );
+
+    if (existingProduct) {
+      return res.status(400).json({
+        message: "wishlist aleady exists",
+      });
+    }
+
     wishlist.productIds.push({
       product: productId._id,
     });
@@ -45,16 +60,6 @@ export const updateWishList = async (req, res) => {
     if (wishList && wishList.productIds.includes(productId)) {
       return res.status(404).json({
         message: "product already added to wish list",
-      });
-    }
-
-    const existingProduct = wishList.productIds.find(
-      (p) => p.product.toString() === productId._id
-    );
-
-    if (existingProduct) {
-      return res.status(400).json({
-        message: "wishlist aleady exists",
       });
     }
 
