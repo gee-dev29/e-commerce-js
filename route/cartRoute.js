@@ -1,5 +1,4 @@
 import {
-    addProductsToCart,
     addProductToCart,
     deleteCart,
     getCart,

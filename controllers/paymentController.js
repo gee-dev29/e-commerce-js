@@ -83,11 +83,13 @@ export const createStripeSession = async (req, res) => {
     if (orderData._id) {
       order = orderData;
     } else {
-      order = await entity.saveOrder(orderData, req.id, orderModel);
-      const filter = {
-        creatorId: req.id
+      if(orderData.totalAmount > 0){
+        order = await entity.saveOrder(orderData, req.id, orderModel);
+        const filter = {
+          creatorId: req.id
+        }
+        await cartModel.deleteOne(filter)
       }
-      await cartModel.deleteOne(filter)
     }
 
     const session = await stripe.checkout.sessions.create({
