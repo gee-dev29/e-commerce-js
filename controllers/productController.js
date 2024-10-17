@@ -132,14 +132,11 @@ export const searchProduct = async (req, res) => {
             skip = "0",
             limit = "10",
         } = req.body;
-        const filter = {
-            productCategory: productCategory,
-            productTitle: productTitle,
-        };
+        const filter = {};
         const searchParams = {
             productCategory,
             productTitle,
-        }
+        };
         Object.entries(searchParams).forEach(([key, value]) => {
             if (value && value.trim())
                 filter[key] = { $regex: value, $options: "i" };

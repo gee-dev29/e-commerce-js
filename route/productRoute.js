@@ -9,6 +9,7 @@ import {
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { checkProduct } from "../middleware/checkProduct.js";
 import { superAdminRoleCheck } from "../middleware/checkRole.js";
+import { checkUser } from "../middleware/checkUser.js";
 const router = express.Router();
 
 router.route("/").post(jwtVerify, createProduct).get(viewProducts);
@@ -18,5 +19,5 @@ router
     .get(checkProduct, viewProduct)
     .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct);
 
-router.route("/search-product").get(jwtVerify, checkProduct, searchProduct);
+router.route("/search-product").get(jwtVerify, checkUser, searchProduct);
 export default router;
