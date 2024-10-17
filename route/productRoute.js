@@ -18,5 +18,5 @@ router
     .get(checkProduct, viewProduct)
     .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct);
 
-router.route("/searchProduct").get(jwtVerify, checkProduct, searchProduct);
+router.route("/search-product").get(jwtVerify, checkProduct, searchProduct);
 export default router;
