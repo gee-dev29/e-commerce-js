@@ -16,7 +16,6 @@ export const checkOrder = async (req, res, next) => {
         if (!order) {
             return res.status(404).json({ message: "Order not found" });
         }
-        req.orderId = orderId;
         req.order = order;
         next();
     } catch (error) {
