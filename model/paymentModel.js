@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
+import { orderStatus } from "../enums/orderEnum.js";
 
 const paymentSchema = new mongoose.Schema({
-  creatorId: {
+  email: {
     type: String,
-    required: true,
   },
   PaymentMethod: {
     type: String,
-    enums: [PaymentMethod.PAYPAL || PaymentMethod.STRIPE],
+    enums: [PaymentMethod.PAYPAL, PaymentMethod.STRIPE],
     default: PaymentMethod.PAYPAL,
     required: true,
   },
@@ -16,10 +16,9 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  order: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "product",
-    required: true,
+  paymentStatus: {
+    type: String,
+    default: orderStatus.AWAITING_PAYMENT,
   },
 });
 

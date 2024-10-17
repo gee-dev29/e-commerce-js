@@ -161,6 +161,45 @@ const generateOrderNumber = () => {
     return `${prefix}${randomNumber}`;
 };
 
+
+const saveOrder = async (orderData, userId, orderModel) => {
+    const {
+      fullName,
+      paymentMethod,
+      street,
+      city,
+      state,
+      country,
+      zipCode,
+      totalAmount,
+      phone,
+      email,
+      orderNote,
+      orderedItems,
+    } = orderData;
+  
+    const newOrder = new orderModel({
+      creatorId: userId,
+      fullName: fullName,
+      orderedItems: orderedItems,
+      orderTrackingNumber: generateOrderNumber(),
+      paymentMethod: paymentMethod,
+      totalAmount: totalAmount,
+      street: street,
+      email: email,
+      city: city,
+      state: state,
+      country: country,
+      zipCode: zipCode,
+      phone: phone,
+      orderNote: orderNote || "",
+      currency: currency.USD,
+    });
+    await newOrder.save();
+    return newOrder;
+  };
+  
+
 export const entity = {
     encryptPassword,
     getPaginatedDataWithPopulate,
@@ -180,4 +219,5 @@ export const entity = {
     isValidUUID,
     isValidObjectId,
     generateOrderNumber,
+    saveOrder
 };

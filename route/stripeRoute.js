@@ -12,6 +12,6 @@ router
   .route("/create-checkout-session")
   .post(jwtVerify, checkUser, createStripeSession);
 
-router.route("/webhook").post( getStripeWebhook);
+router.route("/webhook").post(getStripeWebhook);
 
 export default router;

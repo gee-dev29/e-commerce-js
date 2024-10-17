@@ -101,6 +101,9 @@ const orderSchema = new mongoose.Schema(
         orderNote: {
             type: String,
         },
+        paymentIntentId: {
+            type: String,
+        },
         currency: {
             type: String,
             default: currency.USD,

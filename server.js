@@ -18,8 +18,7 @@ import countriesRoute from "./route/countryRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 import passport from "passport";
 import cookieSession from "cookie-session";
-import paypalRoute from "./route/paypalRoute.js"
-
+import paypalRoute from "./route/paypalRoute.js";
 import * as passportMain from "./passportSetup.js";
 // import { swaggerApi } from "./swaggerDoc.js";
 
@@ -33,30 +32,36 @@ dotenv.config();
 
 // middleware
 app.use(
-    cors({
-        origin: "http://localhost:5174",
-        methods: "GET,POST,PUT,DELETE ",
-        credentials: true,
-    })
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,PUT,DELETE ",
+    credentials: true,
+  })
 );
 app.use(
-    cookieSession({
-        name: "session",
-        keys: ["kncloset"],
-        maxAge: 24 * 60 * 60 * 100,
-    })
+  cookieSession({
+    name: "session",
+    keys: ["kncloset"],
+    maxAge: 24 * 60 * 60 * 1000,
+  })
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(
-    bodyParser.urlencoded({
-        limit: "50mb",
-        extended: true,
-        parameterLimit: 50000,
-    })
-);
-app.use(bodyParser.json({ limit: "100mb" }));
 
+app.use((req, res, next) => {
+  if (req.originalUrl.includes("webhook")) {
+    express.raw({ type: "application/json" })(req, res, next);
+  } else {
+    bodyParser.urlencoded({
+      limit: "100mb",
+      extended: true,
+      parameterLimit: 50000,
+    })(req, res, (err) => {
+      if (err) return next(err); // Handle error
+      bodyParser.json({ limit: "100mb" })(req, res, next);
+    });
+  }
+});
 // combineRoute();
 dbConnection();
 
@@ -76,12 +81,12 @@ app.use("/api/v1/countries", countriesRoute);
 app.use("/api/v1/stripe", stripeRoute);
 app.use("/api/v1/paypal", paypalRoute);
 app.use("/api/v1/ping", (req, res) => {
-    res.send("welcome to kncloset");
+  res.send("welcome to kncloset");
 });
 
 app.listen(process.env.PORT || 8920, () => {
-    consola.success({
-        message: `Server started on port ${process.env.PORT || 8920}`,
-        badge: true,
-    });
+  consola.success({
+    message: `Server started on port ${process.env.PORT || 8920}`,
+    badge: true,
+  });
 });
