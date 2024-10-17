@@ -4,12 +4,13 @@ import { shippingField, updateShippingField } from "../utils/inputFields.js";
 
 export const createShippingInfo = async (req, res) => {
     try {
-        const userId = req.id;
-        const {
-            shippingRate,
-            continent,
-            currency,
-        } = req.body;
+        const shippingId = req.params.shippingId;
+        const { shippingRate, continent, currency } = req.body;
+        const payload = {
+            shippingRate: shippingId,
+            continent: continent,
+            currency: currency,
+        };
         const checkFields = entity.checkMissingFieldsInput(
             shippingField,
             req.body
@@ -19,25 +20,20 @@ export const createShippingInfo = async (req, res) => {
                 message: checkFields.message,
             });
         }
-        const newShippingInfo = new shippingModel({
-            creatorId: userId,
-            shippingTrackingNumber: shippingTrackingNumber,
-            shippingAddress: [
-                {
-                    street: street,
-                    city: city,
-                    state: state,
-                    zipCode: zipCode,
-                },
-            ],
-            shippingCountry: shippingCountry,
-            shippingNote: shippingNote,
-            shippingFee: shippingFee,
+        if (shippingId) {
+            await entity.updateDataById(shippingId, payload, shippingModel);
+            return res
+                .status(200)
+                .json({ message: "shipping update successfully " });
+        }
+        const shipping = new shippingModel({
+            shippingRate: shippingRate,
+            continent: continent,
             currency: currency,
         });
-        await newShippingInfo.save();
+        await shipping.save();
         return res.status(200).json({
-            message: "Shipping info created successfully",
+            message: "Shipping rate created successfully",
         });
     } catch (error) {
         return res.status(500).json({
