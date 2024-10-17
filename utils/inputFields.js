@@ -34,14 +34,8 @@ const orderField = [
 ];
 
 const shippingField = [
-    "shippingTrackingNumber",
-    "zipCode",
-    "state",
-    "city",
-    "street",
-    "shippingCountry",
-    "shippingNote",
-    "shippingFee",
+    "shippingRate",
+    "continent",
     "currency",
 ];
 const updateShippingField = [

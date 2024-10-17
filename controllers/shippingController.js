@@ -6,14 +6,8 @@ export const createShippingInfo = async (req, res) => {
     try {
         const userId = req.id;
         const {
-            shippingTrackingNumber,
-            state,
-            city,
-            street,
-            zipCode,
-            shippingNote,
-            shippingCountry,
-            shippingFee,
+            shippingRate,
+            continent,
             currency,
         } = req.body;
         const checkFields = entity.checkMissingFieldsInput(
