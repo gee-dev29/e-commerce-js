@@ -112,3 +112,17 @@ export const viewShippingInfos = async (req, res) => {
         });
     }
 };
+
+export const deleteShippingRate = async (req, res) => {
+    try {
+        const { shippingId } = req.query;
+        await entity.deleteDataById(shippingId, shippingModel);
+        return res.status(200).json({
+            message: "shipping rate deleted successfuly",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};
