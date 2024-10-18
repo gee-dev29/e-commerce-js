@@ -21,8 +21,8 @@ export const addCategory = async (req, res) => {
             if (image.includes("https")) {
                 entity.updateDataById(_id, req.body, categoryModel);
                 return res.status(200).json({
-                  message: "category updated successfully",
-              });
+                    message: "category updated successfully",
+                });
             } else {
                 const result = await uploadDocument(image, "");
                 const payload = {
@@ -31,8 +31,8 @@ export const addCategory = async (req, res) => {
                 };
                 entity.updateDataById(_id, payload, categoryModel);
                 return res.status(200).json({
-                  message: "category updated successfully",
-              });
+                    message: "category updated successfully",
+                });
             }
         }
         const imageData = await uploadDocument(req.body.image, "");
@@ -74,8 +74,11 @@ export const getAllColors = async (req, res) => {
 
 export const deleteCategory = async (req, res) => {
     try {
-        const categoryId = req.params.categoryId;
+        const { categoryId } = req.query;
         await entity.deleteDataById(categoryId, categoryModel);
+        return res.status(200).json({
+            message: "category deleted successfuly",
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
