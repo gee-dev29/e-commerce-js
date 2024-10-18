@@ -58,9 +58,9 @@ export const getHeros = async (req, res) => {
 
 export const deleteHero = async (req, res) => {
     try {
-        const id = req.body._id;
-        if (isValidObjectId(id)) {
-            await entity.deleteDataById(id, heroModel);
+        const { heroId } = req.query;
+        if (isValidObjectId(heroId)) {
+            await entity.deleteDataById(heroId, heroModel);
             return res
                 .status(200)
                 .json({ message: "hero deleted successfully" });

@@ -99,15 +99,15 @@ export const viewProduct = async (req, res) => {
 
 //delete product
 export const deleteProduct = async (req, res) => {
-  try {
-    const productId = req.productId;
-    await entity.deleteDataById(productId, productModel);
-    return res.status(200).json({
-      message: "product deleted successfuly",
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        const { productId } = req.query;
+        await entity.deleteDataById(productId, productModel);
+        return res.status(200).json({
+            message: "product deleted successfuly",
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 export const getProductByCategory = async (req, res) => {

@@ -131,8 +131,8 @@ const isValidObjectId = (id) => {
 
 const getPaginatedData = async (model, filter, skip, limit) => {
     const data = await model.find(filter).limit(limit).skip(skip);
-    const totalRecords = await model.countDocuments();  
-    return { data, totalRecords };
+    const totalRecords = await model.countDocuments(filter);
+    return { totalRecords, data };
 };
 const getPaginatedDataWithPopulate = async (
     model,
@@ -150,8 +150,8 @@ const getPaginatedDataWithPopulate = async (
         })
         .limit(limit)
         .skip(skip);
-        
-    const totalRecords = await model.countDocuments();    ;
+
+    const totalRecords = await model.countDocuments();
     return { data, totalRecords };
 };
 
@@ -163,44 +163,42 @@ const generateOrderNumber = () => {
     return `${prefix}${randomNumber}`;
 };
 
-
 const saveOrder = async (orderData, userId, orderModel) => {
     const {
-      fullName,
-      paymentMethod,
-      street,
-      city,
-      state,
-      country,
-      zipCode,
-      totalAmount,
-      phone,
-      email,
-      orderNote,
-      orderedItems,
+        fullName,
+        paymentMethod,
+        street,
+        city,
+        state,
+        country,
+        zipCode,
+        totalAmount,
+        phone,
+        email,
+        orderNote,
+        orderedItems,
     } = orderData;
-  
+
     const newOrder = new orderModel({
-      creatorId: userId,
-      fullName: fullName,
-      orderedItems: orderedItems,
-      orderTrackingNumber: generateOrderNumber(),
-      paymentMethod: paymentMethod,
-      totalAmount: totalAmount,
-      street: street,
-      email: email,
-      city: city,
-      state: state,
-      country: country,
-      zipCode: zipCode,
-      phone: phone,
-      orderNote: orderNote || "",
-      currency: currency.USD,
+        creatorId: userId,
+        fullName: fullName,
+        orderedItems: orderedItems,
+        orderTrackingNumber: generateOrderNumber(),
+        paymentMethod: paymentMethod,
+        totalAmount: totalAmount,
+        street: street,
+        email: email,
+        city: city,
+        state: state,
+        country: country,
+        zipCode: zipCode,
+        phone: phone,
+        orderNote: orderNote || "",
+        currency: currency.USD,
     });
     await newOrder.save();
     return newOrder;
-  };
-  
+};
 
 export const entity = {
     encryptPassword,
@@ -221,5 +219,5 @@ export const entity = {
     isValidUUID,
     isValidObjectId,
     generateOrderNumber,
-    saveOrder
+    saveOrder,
 };
