@@ -3,7 +3,7 @@ info:
   title: API for Ecommerce System
   version: "1.0"
 servers:
-  - url: https://ecommerce-frontend-pi-cyan.vercel.app
+  - url: https://api.kncloset.com
     description: local developement server
 tags:
   - name: users
