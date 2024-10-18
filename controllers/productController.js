@@ -103,7 +103,7 @@ export const viewProduct = async (req, res) => {
 //delete product
 export const deleteProduct = async (req, res) => {
     try {
-        const productId = req.productId;
+        const { productId } = req.query;
         await entity.deleteDataById(productId, productModel);
         return res.status(200).json({
             message: "product deleted successfuly",

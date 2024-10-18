@@ -12,12 +12,13 @@ import { superAdminRoleCheck } from "../middleware/checkRole.js";
 import { checkUser } from "../middleware/checkUser.js";
 const router = express.Router();
 
-router.route("/").post(jwtVerify, createProduct).get(viewProducts);
+router
+    .route("/")
+    .post(jwtVerify, createProduct)
+    .get(viewProducts)
+    .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteProduct);
 router.route("/search/product").get(jwtVerify, checkUser, searchProduct);
 
-router
-    .route("/:productId")
-    .get(checkProduct, viewProduct)
-    .delete(jwtVerify, superAdminRoleCheck, checkProduct, deleteProduct);
+router.route("/:productId").get(checkProduct, viewProduct);
 
 export default router;
