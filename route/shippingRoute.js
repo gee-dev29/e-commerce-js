@@ -2,6 +2,7 @@ import express from "express";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import {
     createShipping,
+    deleteShippingRate,
     viewShippingInfo,
     viewShippingInfos,
 } from "../controllers/shippingController.js";
@@ -15,5 +16,7 @@ router
 router
     .route("/:shippingId")
     .get(jwtVerify, checkShippingInfo, viewShippingInfo);
+
+router.route("/").delete(jwtVerify, deleteShippingRate);
 
 export default router;
