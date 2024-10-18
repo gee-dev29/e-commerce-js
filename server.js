@@ -33,7 +33,11 @@ dotenv.config();
 // middleware
 app.use(
   cors({
-    origin: "https://ecommerce-frontend-pi-cyan.vercel.app",
+    origin: [
+      "https://ecommerce-frontend-pi-cyan.vercel.app",
+      "https://ecommerce-dashboard-hazel-kappa.vercel.app",
+      "http://localhost:5173, http://localhost:5174",
+    ],
     methods: "GET,POST,PUT,DELETE ",
     // credentials: true,
   })

@@ -101,7 +101,9 @@ export const loginUser = async (req, res) => {
 };
 
 export const googleLogin = async (req, res) => {
+  console.log(req);
   if (req.user) {
+    
     const user = await userModel
       .findOne({ email: req.user.email })
       .select("-password");
