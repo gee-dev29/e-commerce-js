@@ -35,7 +35,7 @@ app.use(
   cors({
     origin: "https://ecommerce-frontend-pi-cyan.vercel.app",
     methods: "GET,POST,PUT,DELETE ",
-    credentials: true,
+    // credentials: true,
   })
 );
 app.use(
