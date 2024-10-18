@@ -4,7 +4,7 @@ import { currency } from "../utils/currency.js";
 const shippingSchema = new mongoose.Schema(
     {
         shippingRate: {
-            type: String,
+            type: Number,
             required: true,
         },
         continent: {
@@ -13,7 +13,8 @@ const shippingSchema = new mongoose.Schema(
         },
         currency: {
             type: String,
-            required: true,
+            default: currency.USD,
+            enums: [currency.EUR, currency.NGN, currency.USD]
         },
     },
     { timestamps: true }

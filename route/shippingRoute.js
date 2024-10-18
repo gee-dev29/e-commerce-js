@@ -9,7 +9,7 @@ import { checkShippingInfo } from "../middleware/checkShippingInfo.js";
 const router = express.Router();
 
 router
-    .route("/")
+    .route("/create-shipping")
     .post(jwtVerify, createShipping)
     .get(jwtVerify, viewShippingInfos);
 router

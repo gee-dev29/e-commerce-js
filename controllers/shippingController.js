@@ -4,10 +4,10 @@ import { shippingField, updateShippingField } from "../utils/inputFields.js";
 
 export const createShipping = async (req, res) => {
     try {
-        const shippingId = req.body;
+        const shippingId = req.body.shippingId;
         const { shippingRate, continent, currency } = req.body;
         const payload = {
-            shippingRate: shippingId,
+            shippingRate: shippingRate,
             continent: continent,
             currency: currency,
         };
