@@ -106,6 +106,16 @@ export const createStripeSession = async (req, res) => {
             cancel_url:
                 "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
         });
+        const emailHtml = receiptEmailTemplate(
+            order.orderTrackingNumber,
+            new Date().toISOString(),
+            order.country,
+            order.state,
+            order.city,
+            order.totalAmount,
+            products
+        );
+        await sendEmail(order.email, "Your Order Receipt", emailHtml);
 
         res.json({
             id: session.id,

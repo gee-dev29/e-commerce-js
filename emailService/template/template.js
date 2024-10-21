@@ -307,4 +307,135 @@ export const resetPasswordTemplate = (token, name) => {
      </body>`;
 };
 
+export const welcomeTemplate = (firstName, lastName) => {
+    return `
+      <body style="background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Oxygen-Sans,Ubuntu,Cantarell,&quot;Helvetica Neue&quot;,sans-serif">
+        <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:37.5em;margin:0 auto;padding:20px 0 48px">
+          <tbody>
+            <tr style="width:100%">
+              <td>
+                <img alt="KNcloset" height="80" width="80" src="https://ecommerce-frontend-pi-cyan.vercel.app/assets/logo-CwyzW5JF.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" width="170" />
+                <p style="font-size:16px;line-height:26px;margin:16px 0">Hi ${firstName} ${lastName},</p>
+                <p style="font-size:16px;line-height:26px;margin:16px 0">Welcome to KNcloset, your go-to destination for the latest fashion. Enjoy a seamless shopping experience with easy ordering, secure payments, and fast delivery right to your doorstep..</p>
+                <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="text-align:center">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <a href="https://kncloset.com" style="line-height:100%;text-decoration:none;display:block;max-width:100%;mso-padding-alt:0px;background-color:#5F51E8;border-radius:3px;color:#fff;font-size:16px;text-align:center;padding:12px 12px 12px 12px" target="_blank">
+                          Get started
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style="font-size:16px;line-height:26px;margin:16px 0">Best,<br />The KNcloset team</p>
+                <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#cccccc;margin:20px 0" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    `;
+};
+
+export const receiptEmailTemplate = (
+    orderNumber,
+    invoiceDate,
+    country,
+    state,
+    city,
+    totalAmount,
+    products
+) => `
+    <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff;">
+      <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width: 100%; margin: 0 auto; padding: 20px 0 48px; width: 660px;">
+        <tbody>
+          <tr>
+            <td>
+              <!-- Header Section -->
+              <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation">
+                <tbody>
+                  <tr>
+                    <td>
+                      <img alt="KNcloset" height="80" width="80" src="https://ecommerce-frontend-pi-cyan.vercel.app/assets/logo-CwyzW5JF.png" style="display: block; outline: none; border: none; text-decoration: none;" />
+                    </td>
+                    <td align="right" style="font-size: 32px; line-height: 24px; margin: 16px 0; font-weight: 300; color: #888888;">
+                      Receipt
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- Order Details Section -->
+              <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
+                <tbody>
+                  <tr>
+                    <td>
+                      <p style="font-size: 10px; color: #666666;">INVOICE DATE</p>
+                      <p style="font-size: 12px;">${invoiceDate}</p>
+                    </td>
+                    <td>
+                      <p style="font-size: 10px; color: #666666;">ORDER NO.</p>
+                      <p style="font-size: 12px;">${orderNumber}</p>
+                    </td>
+                    <td>
+                      <p style="font-size: 10px; color: #666666;">SHIPPED TO</p>
+                      <p style="font-size: 12px;">${city}, ${state}, ${country}</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- Product List Section -->
+              <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px; background-color: #fafafa; border-radius: 3px; padding: 15px;">
+                <tbody>
+                  ${products
+                      .map(
+                          (product) => `
+                      <tr>
+                        <td style="width: 80px;">
+                          <img src="${product.productImage}" alt="${
+                              product.productTitle
+                          }" style="width: 60px; height: 60px; border-radius: 8px;"/>
+                        </td>
+                        <td>
+                          <p style="font-size: 14px; margin: 0; font-weight: bold;">${
+                              product.productTitle
+                          }</p>
+                          <p style="font-size: 12px; margin: 0; color: #666666;">Size: ${
+                              product.productSize
+                          } | Quantity: ${product.productQuantity}</p>
+                        </td>
+                        <td align="right" style="font-size: 14px; font-weight: bold;">
+                          $${product.productPrice.toFixed(2)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <hr style="border: none; border-top: 1px solid #eaeaea; margin: 10px 0;">
+                        </td>
+                      </tr>
+                      `
+                      )
+                      .join("")}
+                </tbody>
+              </table>
+              <!-- Total Amount Section -->
+              <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
+                <tbody>
+                  <tr>
+                    <td align="right" style="font-size: 16px; font-weight: bold; padding-right: 10px;">
+                      TOTAL
+                    </td>
+                    <td align="right" style="font-size: 16px; font-weight: bold;">
+                      $${totalAmount.toFixed(2)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </body>
+  `;
+
 export default resetPasswordTemplate;
