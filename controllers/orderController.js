@@ -6,6 +6,8 @@ import { orderField } from "../utils/inputFields.js";
 import { v4 as uuidv4 } from "uuid";
 import { orderStatus } from "../enums/orderEnum.js";
 import { currency } from "../utils/currency.js";
+import { receiptEmailTemplate } from "../emailService/template/template.js";
+import { sendEmail } from "../emailService/email.js";
 
 export const createOrderItem = async (req, res) => {
     try {
@@ -34,8 +36,6 @@ export const createOrderItem = async (req, res) => {
             });
         }
 
-        // const orderTrackingNumber = entity.generateTrackingNumber();
-
         const newOrder = new orderModel({
             creatorId: userId,
             fullName: fullName,
@@ -54,6 +54,21 @@ export const createOrderItem = async (req, res) => {
             currency: currency.USD,
         });
         await newOrder.save();
+        const orderEmail = receiptEmailTemplate(
+            newOrder.orderTrackingNumber,
+            new Date().toISOString(),
+            newOrder.country,
+            newOrder.state,
+            newOrder.city,
+            newOrder.totalAmount,
+            orderedItems
+        );
+        const emailService = {
+            recieverEmail: email,
+            subject: "Your Order Receipt",
+            text: orderEmail,
+        };
+        await sendEmail(emailService);
         return res.status(201).json({
             message: "Order created successfully",
             orderId: newOrder._id,
