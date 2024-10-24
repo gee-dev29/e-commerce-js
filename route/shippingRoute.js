@@ -1,22 +1,22 @@
 import express from "express";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import {
-    createShipping,
-    deleteShippingRate,
-    viewShippingInfo,
-    viewShippingInfos,
+  createShippingRate,
+  deleteShippingRate,
+  getAllShippingRates,
+  getShippingrate,
 } from "../controllers/shippingController.js";
 import { checkShippingInfo } from "../middleware/checkShippingInfo.js";
 const router = express.Router();
 
 router
-    .route("/create-shipping")
-    .post(jwtVerify, createShipping)
-    .get(jwtVerify, viewShippingInfos);
-router
-    .route("/:shippingId")
-    .get(jwtVerify, checkShippingInfo, viewShippingInfo);
-
-router.route("/").delete(jwtVerify, deleteShippingRate);
+  .route("/")
+  .post(jwtVerify, createShippingRate)
+  .get(jwtVerify, getAllShippingRates)
+  .delete(jwtVerify, deleteShippingRate);
+  
+  router
+  .route("/rate")
+  .get(jwtVerify, checkShippingInfo, getShippingrate);
 
 export default router;
