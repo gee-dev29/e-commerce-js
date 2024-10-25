@@ -152,6 +152,28 @@ const getPaginatedDataWithPopulate = async (
   const totalRecords = await model.countDocuments();
   return { data, totalRecords };
 };
+const getPaginatedDataWithMultiplePopulate = async (
+  model,
+  filter,
+  skip,
+  limit,
+  paths,
+  selectedModels
+) => {
+  const data = await model
+    .find(filter)
+    .populate(
+        paths.map((path, index) => ({
+          path: path,
+          model: selectedModels[index], // Use corresponding model for each path
+        }))
+      )
+    .limit(limit)
+    .skip(skip);
+
+  const totalRecords = await model.countDocuments();
+  return { data, totalRecords };
+};
 const getdDataWithPopulate = async (model, filter, path, selectedModel) => {
   const data = await model.find(filter).populate({
     path: path,
@@ -211,6 +233,7 @@ const saveOrder = async (orderData, userId, shippingId, orderModel) => {
 export const entity = {
   encryptPassword,
   getPaginatedDataWithPopulate,
+  getPaginatedDataWithMultiplePopulate,
   getPaginatedData,
   decryptPassword,
   jwtSign,

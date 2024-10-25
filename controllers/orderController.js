@@ -128,13 +128,13 @@ export const getUserOrders = async (req, res) => {
     const userId = req.id;
     const filter = { creatorId: userId };
     const { skip, limit } = req.query;
-    const data = await entity.getPaginatedDataWithPopulate(
+    const data = await entity.getPaginatedDataWithMultiplePopulate(
       orderModel,
       filter,
       skip,
       limit,
-      "orderedItems.product",
-      "product"
+      ["orderedItems.product", "shippingId"],
+      ["product", "shipping"]
     );
 
     return res.status(200).json({ payload: data });
@@ -163,7 +163,12 @@ export const getSingleOrder = async (req, res) => {
   try {
     const { orderId } = req.query;
     const filter = { _id: orderId };
-    const data = await entity.getdDataWithPopulate(orderModel, filter, 'orderedItems.product', 'product');
+    const data = await entity.getdDataWithPopulate(
+      orderModel,
+      filter,
+      "orderedItems.product",
+      "product"
+    );
     return res.status(200).json({ payload: data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
