@@ -285,22 +285,28 @@ export const deleteUser = async (req, res) => {
 export const toggleSuspendUser = async (req, res) => {
     try {
         const {userId} = req.query;
-        if (user.status == UserStatus.ACTIVE) {
+        const user = await userModel.findById(userId)
+        if (user.UserStatus == UserStatus.ACTIVE) {
             const payload = {
-                status: UserStatus.SUSPENDED,
+                UserStatus: UserStatus.SUSPENDED,
+                isSuspended: true
             };
             await entity.updateDataById(userId, payload, userModel);
             return res.status(200).json({
                 message: "user suspended successfully",
             });
         }
-        const payload = {
-            status: UserStatus.ACTIVE,
-        };
-        await entity.updateDataById(userId, payload, userModel);
-        return res.status(200).json({
-            message: "user activated successfully",
-        });
+        else{
+            const payload = {
+                UserStatus: UserStatus.ACTIVE,
+                isSuspended: false
+            };
+            await entity.updateDataById(userId, payload, userModel);
+            return res.status(200).json({
+                message: "user activated successfully",
+            });
+        }
+
     } catch (error) {
         return res.status(500).json({
             message: error.message,

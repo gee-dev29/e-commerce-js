@@ -21,6 +21,6 @@ router
 
 router
   .route("/:id")
-  .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser)
+  .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser);
 
 export default router;
