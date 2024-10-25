@@ -163,11 +163,11 @@ export const getSingleOrder = async (req, res) => {
   try {
     const { orderId } = req.query;
     const filter = { _id: orderId };
-    const data = await entity.getdDataWithPopulate(
+    const data = await entity.getDataWithMultiplePopulate(
       orderModel,
       filter,
-      "orderedItems.product",
-      "product"
+      ["orderedItems.product", "shippingId"],
+      ["product", "shipping"]
     );
     return res.status(200).json({ payload: data });
   } catch (error) {

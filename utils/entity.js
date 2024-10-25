@@ -163,22 +163,38 @@ const getPaginatedDataWithMultiplePopulate = async (
   const data = await model
     .find(filter)
     .populate(
-        paths.map((path, index) => ({
-          path: path,
-          model: selectedModels[index], // Use corresponding model for each path
-        }))
-      )
+      paths.map((path, index) => ({
+        path: path,
+        model: selectedModels[index], // Use corresponding model for each path
+      }))
+    )
     .limit(limit)
     .skip(skip);
 
   const totalRecords = await model.countDocuments();
   return { data, totalRecords };
 };
-const getdDataWithPopulate = async (model, filter, path, selectedModel) => {
+const getDataWithPopulate = async (model, filter, path, selectedModel) => {
   const data = await model.find(filter).populate({
     path: path,
     model: selectedModel,
   });
+
+  const totalRecords = await model.countDocuments();
+  return { data, totalRecords };
+};
+const getDataWithMultiplePopulate = async (
+  model,
+  filter,
+  paths,
+  selectedModels
+) => {
+  const data = await model.find(filter).populate(
+    paths.map((path, index) => ({
+      path: path,
+      model: selectedModels[index], // Use corresponding model for each path
+    }))
+  );
 
   const totalRecords = await model.countDocuments();
   return { data, totalRecords };
@@ -234,6 +250,8 @@ export const entity = {
   encryptPassword,
   getPaginatedDataWithPopulate,
   getPaginatedDataWithMultiplePopulate,
+  getDataWithMultiplePopulate,
+  getDataWithPopulate,
   getPaginatedData,
   decryptPassword,
   jwtSign,
@@ -250,6 +268,5 @@ export const entity = {
   isValidUUID,
   isValidObjectId,
   generateOrderNumber,
-  getdDataWithPopulate,
   saveOrder,
 };
