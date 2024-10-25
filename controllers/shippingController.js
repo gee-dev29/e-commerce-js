@@ -5,10 +5,10 @@ import { shippingField, updateShippingField } from "../utils/inputFields.js";
 export const createShippingRate = async (req, res) => {
   try {
     const shippingId = req.body.shippingId;
-    const { shippingRate, continent, currency } = req.body;
+    const { shippingRate, subregion, currency } = req.body;
     const payload = {
       shippingRate: shippingRate,
-      continent: continent,
+      subregion: subregion,
       currency: currency ?? "USD",
     };
     const checkFields = entity.checkMissingFieldsInput(shippingField, req.body);
@@ -23,7 +23,7 @@ export const createShippingRate = async (req, res) => {
     }
     const shipping = new shippingModel({
       shippingRate: shippingRate,
-      continent: continent,
+      subregion: subregion,
       currency: currency,
     });
     await shipping.save();

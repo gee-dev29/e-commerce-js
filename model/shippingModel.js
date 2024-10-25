@@ -7,7 +7,7 @@ const shippingSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        continent: {
+        subregion: {
             type: String,
             required: true,
         },
