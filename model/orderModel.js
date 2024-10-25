@@ -39,10 +39,6 @@ const orderSchema = new mongoose.Schema(
                     type: String,
                     required: true,
                 },
-                price: {
-                    type: String,
-                    required: true,
-                },
             },
         ],
 
@@ -104,6 +100,10 @@ const orderSchema = new mongoose.Schema(
         },
         orderNote: {
             type: String,
+        },
+        shippingId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "shipping",
         },
         paymentIntentId: {
             type: String,

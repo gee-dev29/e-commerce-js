@@ -9,6 +9,8 @@ import { entity } from "../utils/entity.js";
 import { currency } from "../utils/currency.js";
 import { PaymentMethod } from "../enums/paymentMethodEnums.js";
 import { cartModel } from "../model/cartModel.js";
+import { sendEmail } from "../emailService/email.js";
+import { receiptEmailTemplate } from "../emailService/template/template.js";
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -62,7 +64,7 @@ export const getStripeWebhook = async (req, res) => {
 
 export const createStripeSession = async (req, res) => {
     try {
-        const { products, orderData } = req.body;
+        const { products, shippingId, orderData } = req.body;
         const lineItems = products.map((item) => ({
             price_data: {
                 currency: "USD",
@@ -85,7 +87,7 @@ export const createStripeSession = async (req, res) => {
             order = orderData;
         } else {
             if (orderData.totalAmount > 0) {
-                order = await entity.saveOrder(orderData, req.id, orderModel);
+                order = await entity.saveOrder(orderData, req.id, shippingId, orderModel);
                 const filter = {
                     creatorId: req.id,
                 };
@@ -102,7 +104,7 @@ export const createStripeSession = async (req, res) => {
             },
             mode: "payment",
             success_url:
-                "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
+                `https://ecommerce-frontend-pi-cyan.vercel.app/success/${order._id}`,
             cancel_url:
                 "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
         });
@@ -115,7 +117,7 @@ export const createStripeSession = async (req, res) => {
             order.totalAmount,
             products
         );
-        await sendEmail(order.email, "Your Order Receipt", emailHtml);
+        // await sendEmail(order.email, "Your Order Receipt", emailHtml);
 
         res.json({
             id: session.id,
@@ -146,8 +148,8 @@ export const createPaypalSession = async (req, res) => {
 // both createOrder and captureOrder will work with reactJs , i've comfirmed it
 export const createOrder = async (req, res) => {
     try {
-        const { products, orderData } = req.body;
-        const order = await entity.saveOrder(orderData, req.id, orderModel);
+        const { products, shippingId,  orderData } = req.body;
+        const order = await entity.saveOrder(orderData, req.id, shippingId, orderModel);
 
         const request = new paypal.orders.OrdersCreateRequest();
         request.prefer("return=representation");

@@ -170,7 +170,7 @@ const generateOrderNumber = () => {
   return `${prefix}${randomNumber}`;
 };
 
-const saveOrder = async (orderData, userId, orderModel) => {
+const saveOrder = async (orderData, userId, shippingId, orderModel) => {
   const {
     fullName,
     paymentMethod,
@@ -198,6 +198,7 @@ const saveOrder = async (orderData, userId, orderModel) => {
     city: city,
     state: state,
     country: country,
+    shippingId: shippingId,
     zipCode: zipCode,
     phone: phone,
     orderNote: orderNote || "",
