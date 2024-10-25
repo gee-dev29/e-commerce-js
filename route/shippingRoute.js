@@ -14,11 +14,9 @@ const router = express.Router();
 router
   .route("/")
   .post(jwtVerify, checkUser, superAdminRoleCheck, createShippingRate)
-  .get(jwtVerify, getAllShippingRates)
+  .get(jwtVerify, checkUser, superAdminRoleCheck, getAllShippingRates)
   .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteShippingRate);
-  
-  router
-  .route("/rate")
-  .get(jwtVerify, checkShippingInfo, getShippingrate);
+
+router.route("/rate").get(jwtVerify, getShippingrate);
 
 export default router;
