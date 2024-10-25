@@ -24,7 +24,7 @@ export const createShippingRate = async (req, res) => {
     const shipping = new shippingModel({
       shippingRate: shippingRate,
       subregion: subregion,
-      currency: currency,
+      currency: currency  ?? "USD",
     });
     await shipping.save();
     return res.status(200).json({
@@ -88,9 +88,9 @@ export const createShippingRate = async (req, res) => {
 
 export const getShippingrate = async (req, res) => {
   try {
-    const { continent } = req.query;
+    const { subregion } = req.query;
     const filter = {
-      continent: continent,
+      subregion: subregion,
     };
     const data = await entity.getAllFilteredData(shippingModel, filter);
     return res.status(200).json({ payload: data });

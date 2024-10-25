@@ -35,8 +35,7 @@ const orderField = [
 
 const shippingField = [
     "shippingRate",
-    "continent",
-    "currency",
+    "subregion",
 ];
 const updateShippingField = [
     "zipCode",
