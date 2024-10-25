@@ -151,7 +151,7 @@ export const getOrderByStatus = async (req, res) => {
       orderStatus: orderStatus,
       creatorId: userId,
     };
-    
+
     const data = await entity.getPaginatedData(orderModel, filter, skip, limit);
     return res.status(200).json({ payload: data });
   } catch (error) {
@@ -162,9 +162,9 @@ export const getOrderByStatus = async (req, res) => {
 export const getSingleOrder = async (req, res) => {
   try {
     const { orderId } = req.query;
-    const filter = { id: orderId };
-    const data = await entity.getAllFilteredData(orderModel, filter);
-    return res.status(200).json({ payload: data[0] });
+    const filter = { _id: orderId };
+    const data = await entity.getdDataWithPopulate(orderModel, filter, 'orderedItems.product', 'product');
+    return res.status(200).json({ payload: data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

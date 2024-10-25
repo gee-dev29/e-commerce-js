@@ -22,7 +22,7 @@ router
   .get(jwtVerify, checkUser, superAdminRoleCheck, adminViewOrders)
   .post(jwtVerify, checkUser, superAdminRoleCheck, processOrder);
 
-router.route("/view").get(jwtVerify, checkOrder, getSingleOrder);
+router.route("/view").get(jwtVerify, checkUser, getSingleOrder);
 
 
 
