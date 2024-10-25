@@ -145,9 +145,13 @@ export const getUserOrders = async (req, res) => {
 
 export const getOrderByStatus = async (req, res) => {
   try {
-    const orderStatus = req.body;
-    const { skip, limit } = req.query;
-    const filter = { orderStatus: orderStatus };
+    const userId = req.id;
+    const { orderStatus, skip, limit } = req.query;
+    const filter = {
+      orderStatus: orderStatus,
+      creatorId: userId,
+    };
+    
     const data = await entity.getPaginatedData(orderModel, filter, skip, limit);
     return res.status(200).json({ payload: data });
   } catch (error) {
@@ -155,13 +159,12 @@ export const getOrderByStatus = async (req, res) => {
   }
 };
 
-export const getOrderById = async (req, res) => {
+export const getSingleOrder = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { skip, limit } = req.query;
-    const filter = { creatorId: userId };
-    const data = await entity.getPaginatedData(orderModel, filter, skip, limit);
-    return res.status(200).json({ payload: data });
+    const { orderId } = req.query;
+    const filter = { id: orderId };
+    const data = await entity.getAllFilteredData(orderModel, filter);
+    return res.status(200).json({ payload: data[0] });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
