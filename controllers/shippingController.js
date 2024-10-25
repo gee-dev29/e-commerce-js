@@ -4,7 +4,7 @@ import { shippingField, updateShippingField } from "../utils/inputFields.js";
 
 export const createShippingRate = async (req, res) => {
   try {
-    const shippingId = req.body.shippingId;
+    const shippingId = req.body._id;
     const { shippingRate, subregion, currency } = req.body;
     const payload = {
       shippingRate: shippingRate,
