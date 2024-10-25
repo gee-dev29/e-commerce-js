@@ -275,7 +275,7 @@ export const viewAllUsers = async (req, res) => {
 //delete User
 export const deleteUser = async (req, res) => {
     try {
-        const userId = req.userId;
+        const {userId} = req.query;
         await entity.deleteDataById(userId, userModel);
         return res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {}
@@ -284,7 +284,7 @@ export const deleteUser = async (req, res) => {
 //suspend a user
 export const toggleSuspendUser = async (req, res) => {
     try {
-        const userId = req.userId;
+        const {userId} = req.query;
         if (user.status == UserStatus.ACTIVE) {
             const payload = {
                 status: UserStatus.SUSPENDED,

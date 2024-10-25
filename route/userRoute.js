@@ -1,5 +1,6 @@
 import {
   deleteUser,
+  toggleSuspendUser,
   viewAllUsers,
   viewSingleUser,
 } from "../controllers/userController.js";
@@ -8,13 +9,18 @@ import { checkUser } from "../middleware/checkUser.js";
 import { jwtVerify } from "../middleware/jwtAuthentication.js";
 import { superAdminRoleCheck } from "../middleware/checkRole.js";
 const router = express.Router();
-router.route("/").get(jwtVerify, checkUser, viewSingleUser);
+router
+  .route("/")
+  .get(jwtVerify, checkUser, viewSingleUser)
+  .post(jwtVerify, checkUser, superAdminRoleCheck, toggleSuspendUser)
+  .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteUser);
 
-router.route('/all').get(jwtVerify, checkUser, superAdminRoleCheck, viewAllUsers);
+router
+  .route("/all")
+  .get(jwtVerify, checkUser, superAdminRoleCheck, viewAllUsers);
 
 router
   .route("/:id")
   .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser)
-  .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteUser);
 
 export default router;
