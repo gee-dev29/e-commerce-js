@@ -3,6 +3,6 @@ export const orderStatus = {
     PAID: "paid",
     SHIPPED: "shipped",
     DELIVERED: "delivered",
-    CANCELED: "canceled",
+    CANCELED: "cancelled",
     REFUND: "refund",
 };
