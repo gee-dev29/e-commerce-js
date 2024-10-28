@@ -14,7 +14,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(jwtVerify, createProduct)
+  .post(jwtVerify, checkUser, superAdminRoleCheck, createProduct)
   .get(viewProducts)
   .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteProduct);
 router.route("/search/product").get(searchProduct);
