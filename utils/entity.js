@@ -208,6 +208,19 @@ const generateOrderNumber = () => {
   return `${prefix}${randomNumber}`;
 };
 
+const sortByOrder = async (sortOrder, model, param, skip, limit) => {
+  const sortValue = sortOrder === 'asc' ? 1 : -1;
+  const data = await model
+    .find()
+    .sort({ [param]: sortValue })
+    .skip(skip)
+    .limit(limit);
+
+  const totalRecords = await model.countDocuments();
+
+  return { totalRecords, data };
+};
+
 const saveOrder = async (orderData, userId, shippingId, orderModel) => {
   const {
     fullName,
@@ -269,4 +282,5 @@ export const entity = {
   isValidObjectId,
   generateOrderNumber,
   saveOrder,
+  sortByOrder,
 };

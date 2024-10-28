@@ -81,8 +81,13 @@ export const createProduct = async (req, res) => {
 //get all products
 export const getAllProducts = async (req, res) => {
   try {
-    const {skip, limit} = req.query
-    const products = await entity.getPaginatedData(productModel, {}, skip, limit);
+    const { skip, limit } = req.query;
+    const products = await entity.getPaginatedData(
+      productModel,
+      {},
+      skip,
+      limit
+    );
     return res.status(200).json({ payload: products });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -100,15 +105,15 @@ export const viewProduct = async (req, res) => {
 
 //delete product
 export const deleteProduct = async (req, res) => {
-    try {
-        const { productId } = req.query;
-        await entity.deleteDataById(productId, productModel);
-        return res.status(200).json({
-            message: "product deleted successfuly",
-        });
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
+  try {
+    const { productId } = req.query;
+    await entity.deleteDataById(productId, productModel);
+    return res.status(200).json({
+      message: "product deleted successfuly",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 export const getProductByCategory = async (req, res) => {
@@ -122,26 +127,83 @@ export const getProductByCategory = async (req, res) => {
   }
 };
 
-export const searchProduct = async (req, res) => {
+export const getProductsSortedByPrice = async (req, res) => {
   try {
-    const { productCategory, productTitle, skip, limit } = req.query;
-    const filter = {};
-    const searchParams = {
-      productCategory,
-      productTitle,
-    };
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value && value.trim()) filter[key] = { $regex: value, $options: "i" };
-    });
+    const { sortOrder, skip, limit } = req.query;
+    const data = await entity.sortByOrder(
+      sortOrder,
+      productModel,
+      "productPrice",
+      skip,
+      limit
+    );
 
-    const retrivedData = await entity.getPaginatedData(
+    return res.status(200).json({
+      payload: data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const searchProduct = async (req, res) => {
+  const {
+    minPrice,
+    maxPrice,
+    category,
+    colors,
+    sizes,
+    limit,
+    skip,
+  } = req.query;
+
+  const filter = {};
+
+  // Price range filter
+  if (minPrice || maxPrice) {
+    filter.productPrice = {};
+    if (minPrice) {
+      filter.productPrice.$gte = parseFloat(minPrice); // Greater than or equal to minPrice
+    }
+    if (maxPrice) {
+      filter.productPrice.$lte = parseFloat(maxPrice); // Less than or equal to maxPrice
+    }
+  }
+
+  // Category filter
+  if (category) {
+    filter.productCategory = category; // Exact match
+  }
+
+  // Color filter
+  if (colors) {
+    filter.productColors = { $in: colors.split(",") }; // Match any of the specified colors
+  }
+
+  // Size filter
+  if (sizes) {
+    filter.productSize = { $in: sizes.split(",") }; // Match any of the specified sizes
+  }
+
+  try {
+    const data = await entity.getPaginatedData(
       productModel,
       filter,
       skip,
       limit
     );
-    return res.status(200).json({ payload: retrivedData });
+
+    return res.json({ payload: data });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getProductsColors = async (req, res) => {
+  try {
+    const uniqueColors = await productModel.distinct("productColors");
+    res.json(uniqueColors);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

@@ -3,6 +3,7 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getProductsSortedByPrice,
   searchProduct,
   viewProduct,
 } from "../controllers/productController.js";
@@ -17,8 +18,9 @@ router
   .post(jwtVerify, checkUser, superAdminRoleCheck, createProduct)
   .get(getAllProducts)
   .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteProduct);
-router.route("/search/product").get(searchProduct);
+router.route("/search").get(searchProduct);
+router.route("/sort").get(getProductsSortedByPrice);
 
-router.route("/:productId").get(checkProduct, viewProduct);
+router.route("/detail/:productId").get(checkProduct, viewProduct);
 
 export default router;
