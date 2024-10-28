@@ -79,9 +79,10 @@ export const createProduct = async (req, res) => {
 };
 
 //get all products
-export const viewProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
-    const products = await entity.getAllFilteredData(productModel, {});
+    const {skip, limit} = req.query
+    const products = await entity.getPaginatedData(productModel, {}, skip, limit);
     return res.status(200).json({ payload: products });
   } catch (error) {
     return res.status(500).json({ message: error.message });
