@@ -147,15 +147,8 @@ export const getProductsSortedByPrice = async (req, res) => {
 };
 
 export const searchProduct = async (req, res) => {
-  const {
-    minPrice,
-    maxPrice,
-    category,
-    colors,
-    sizes,
-    limit,
-    skip,
-  } = req.query;
+  const { minPrice, maxPrice, category, colors, sizes, limit, skip } =
+    req.query;
 
   const filter = {};
 
@@ -177,13 +170,16 @@ export const searchProduct = async (req, res) => {
 
   // Color filter
   if (colors) {
-    filter.productColors = { $in: colors.split(",") }; // Match any of the specified colors
+    const colorNames = colors.split(",").map((color) => color.trim());
+    filter.productColors = { $elemMatch: { name: { $in: colorNames } } }; // Match any of the specified colors
   }
 
   // Size filter
   if (sizes) {
-    filter.productSize = { $in: sizes.split(",") }; // Match any of the specified sizes
+    const sizeArray = sizes.split(",").map((size) => size.trim());
+    filter.productSize = { $in: sizeArray }; // Match any of the specified sizes
   }
+
 
   try {
     const data = await entity.getPaginatedData(
@@ -201,8 +197,10 @@ export const searchProduct = async (req, res) => {
 
 export const getProductsColors = async (req, res) => {
   try {
-    const uniqueColors = await productModel.distinct("productColors");
-    res.json(uniqueColors);
+    const data = await productModel.distinct("productColors");
+    res.json({
+      payload: data,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

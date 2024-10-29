@@ -11,7 +11,7 @@ const router = express.Router();
 router
   .route("/")
   .post(jwtVerify, checkUser, addItemToWishList)
-  .get(jwtVerify, checkUser, getWishlist);
+  .get(jwtVerify, checkUser, getWishlist)
+  .delete(jwtVerify, deleteWishList);
 
-router.route("/:wishlistId").post(jwtVerify, deleteWishList);
 export default router;

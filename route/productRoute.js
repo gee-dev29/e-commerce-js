@@ -3,6 +3,7 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getProductsColors,
   getProductsSortedByPrice,
   searchProduct,
   viewProduct,
@@ -19,6 +20,7 @@ router
   .get(getAllProducts)
   .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteProduct);
 router.route("/search").get(searchProduct);
+router.route("/colors").get(getProductsColors);
 router.route("/sort").get(getProductsSortedByPrice);
 
 router.route("/detail/:productId").get(checkProduct, viewProduct);

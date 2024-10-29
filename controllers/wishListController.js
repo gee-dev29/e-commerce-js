@@ -77,7 +77,7 @@ export const updateWishList = async (req, res) => {
 
 export const deleteWishList = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.query;
     const filter = { creatorId: req.id };
 
     // Find the cart first
@@ -94,14 +94,13 @@ export const deleteWishList = async (req, res) => {
       (product) => !(product.product.toString() === productId)
     );
 
-    // Update the cart with the filtered products
     await entity.updateDataById(
       wishlist[0]._id,
       { productIds: updatedProducts },
       wishListModel
     );
     return res.status(200).json({
-      message: "Wishlist deleted from the cart successfully",
+      message: "Wishlist deleted successfully",
     });
   } catch (error) {
     return res.status(500).json({
@@ -119,6 +118,7 @@ export const getWishlist = async (req, res) => {
     });
     if (wishlist && wishlist.length > 0) {
       const { productIds, ...others } = wishlist[0];
+
       return res.status(200).json({
         data: productIds,
       });
