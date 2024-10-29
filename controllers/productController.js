@@ -169,7 +169,7 @@ export const searchProduct = async (req, res) => {
   }
 
   if(title){
-    filter.productTitle = title
+    filter.productTitle = { $regex: title, $options: "i" };
   }
 
   // Color filter

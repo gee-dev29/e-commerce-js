@@ -1,4 +1,5 @@
 import {
+    addProductsToCart,
     addProductToCart,
     deleteCart,
     getCart,
@@ -16,6 +17,8 @@ router
     .post(jwtVerify, checkProducts, addProductToCart)
     .get(jwtVerify, getCart);
 
+router.route('/bulk')
+    .post(jwtVerify, checkProducts, addProductsToCart)
 router
     .route("/:cartId")
     .patch(jwtVerify, checkCart, checkProduct, updateCart)

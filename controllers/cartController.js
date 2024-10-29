@@ -49,74 +49,60 @@ const addProductToCart = async (req, res) => {
   }
 };
 
-// const addProductsToCart = async (req, res) => {
-//     try {
-//         const userId = req.id;
-//         const allProducts = req.products;
 
-//         let cart = await cartModel.findOne({ creatorId: userId });
-//         if (!cart) {
-//             const newCart = new cartModel({
-//                 creatorId: userId,
-//                 productIds: allProducts,
-//             });
+const addProductsToCart = async (req, res) => {
+  try {
+    const userId = req.id;
+    const products = req.products; // Expecting an array of products
 
-//             await newCart.save();
-//             return res.status(201).json({
-//                 message: "Cart created and products added",
-//                 cart: newCart,
-//             });
-//         }
-//         let updatedPayload = [];
-//         for (const item of allProducts) {
-//             const productId = item.product._id;
-//             if (!productId) {
-//                 return res.status(400).json({
-//                     message: `Product with missing productId: ${JSON.stringify(
-//                         item
-//                     )}`,
-//                 });
-//             }
+    // Validate input
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ message: "Invalid or empty product list" });
+    }
 
-//             const existingProductIndex = cart.productIds.findIndex(
-//                 (p) =>
-//                     p.product._id === productId &&
-//                     p.color === item.items.color &&
-//                     p.size === item.items.size
-//             );
+    let cart = await cartModel.findOne({ creatorId: userId });
 
-//             if (existingProductIndex !== -1) {
-//                 const payload = (cart.productIds[
-//                     existingProductIndex
-//                 ].items.quantity += item.items.quantity);
-//                 updatedPayload.push(payload);
-//             } else {
-//                 updatedPayload.push({
-//                     product: productId,
-//                     items: {
-//                         quantity: item.items.quantity,
-//                         color: item.items.color,
-//                         size: item.items.size,
-//                     },
-//                 });
-//             }
-//         }
+    if (!cart) {
+      cart = new cartModel({
+        creatorId: userId,
+        productIds: [],
+      });
+    }
 
-//         await entity.updateDataById(
-//             cart._id,
-//             { productIds: updatedPayload },
-//             cartModel
-//         );
+    // Process each product
+    for (const { product, color, quantity, size } of products) {
+      // Validate individual product fields
+      if (!product || !color || !quantity || !size) {
+        return res.status(400).json({ message: "Missing required fields in one or more products" });
+      }
 
-//         return res.status(200).json({
-//             message: "Cart updated successfully",
-//         });
-//     } catch (error) {
-//         return res.status(500).json({
-//             message: error.message,
-//         });
-//     }
-// };
+      const existingProduct = cart.productIds.find(
+        (p) =>
+          p.product.toString() === product._id &&
+          p.color === color &&
+          p.size === size
+      );
+
+      if (existingProduct) {
+        existingProduct.quantity += quantity;
+      } else {
+        cart.productIds.push({
+          product: product._id,
+          quantity: quantity,
+          color: color,
+          size: size,
+        });
+      }
+    }
+
+    await cart.save();
+    return res.status(200).json({ message: "Cart updated successfully", cart });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
 
 const updateCart = async (req, res) => {
   try {
@@ -214,4 +200,4 @@ const deleteCart = async (req, res) => {
   }
 };
 
-export { addProductToCart, deleteCart, updateCart };
+export { addProductToCart, deleteCart, updateCart, addProductsToCart };
