@@ -337,107 +337,110 @@ export const welcomeTemplate = (firstName, lastName) => {
       </body>
     `;
 };
-
 export const receiptEmailTemplate = (
-    orderNumber,
-    invoiceDate,
-    country,
-    state,
-    city,
-    totalAmount,
-    orderedItems
+  orderNumber,
+  invoiceDate,
+  country,
+  state,
+  city,
+  totalAmount,
+  orderedItems
 ) => `
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff;">
-  <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width: 100%; margin: 0 auto; padding: 20px 0 48px; width: 660px;">
-    <tbody>
-      <tr>
-        <td>
-          <!-- Header Section -->
-          <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation">
-            <tbody>
-              <tr>
-                <td>
-                  <img alt="KNcloset" height="80" width="80" src="https://ecommerce-frontend-pi-cyan.vercel.app/assets/logo-CwyzW5JF.png" style="display: block; outline: none; border: none; text-decoration: none;" />
-                </td>
-                <td align="right" style="font-size: 32px; line-height: 24px; margin: 16px 0; font-weight: 300; color: #888888;">
-                  Receipt
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- Order Details Section -->
-          <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
-            <tbody>
-              <tr>
-                <td>
-                  <p style="font-size: 10px; color: #666666;">INVOICE DATE</p>
-                  <p style="font-size: 12px;">${invoiceDate}</p>
-                </td>
-                <td>
-                  <p style="font-size: 10px; color: #666666;">ORDER NO.</p>
-                  <p style="font-size: 12px;">${orderNumber}</p>
-                </td>
-                <td>
-                  <p style="font-size: 10px; color: #666666;">SHIPPED TO</p>
-                  <p style="font-size: 12px;">${city}, ${state}, ${country}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- Product List Section -->
-          <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px; background-color: #fafafa; border-radius: 3px; padding: 15px;">
-            <tbody>
-              ${orderedItems
-                  .map(
-                      (product) => `
-                <tr>
-                  <td style="width: 80px;">
-                    <img src="${
-                        product.productImage || "default-image-url.jpg"
-                    }" alt="${
-                          product.productTitle || "Product Image"
-                      }" style="width: 60px; height: 60px; border-radius: 8px;"/>
-                  </td>
-                  <td>
-                    <p style="font-size: 14px; margin: 0; font-weight: bold;">${
-                        product.productTitle || "Unknown Product"
-                    }</p>
-                    <p style="font-size: 12px; margin: 0; color: #666666;">Size: ${
-                        product.size || "N/A"
-                    } | Quantity: ${product.quantity || 0}</p>
-                  </td>
-                  <td align="right" style="font-size: 14px; font-weight: bold;">
-                    $${Number(product.price || 0).toFixed(2)}
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                    <hr style="border: none; border-top: 1px solid #eaeaea; margin: 10px 0;">
-                  </td>
-                </tr>
-              `
-                  )
-                  .join("")}
-            </tbody>
-          </table>
-          <!-- Total Amount Section -->
-          <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
-            <tbody>
-              <tr>
-                <td align="right" style="font-size: 16px; font-weight: bold; padding-right: 10px;">
-                  TOTAL
-                </td>
-                <td align="right" style="font-size: 16px; font-weight: bold;">
-                  $${Number(totalAmount || 0).toFixed(2)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width: 100%; margin: 0 auto; padding: 20px 0 48px; width: 660px;">
+<tbody>
+<tr>
+  <td>
+    <!-- Header Section -->
+    <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation">
+      <tbody>
+        <tr>
+          <td>
+            <img alt="KNcloset" height="80" width="80" src="https://ecommerce-frontend-pi-cyan.vercel.app/assets/logo-CwyzW5JF.png" style="display: block; outline: none; border: none; text-decoration: none;" />
+          </td>
+          <td align="right" style="font-size: 32px; line-height: 24px; margin: 16px 0; font-weight: 300; color: #888888;">
+            Receipt
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Order Details Section -->
+    <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
+      <tbody>
+        <tr>
+          <td>
+            <p style="font-size: 10px; color: #666666;">INVOICE DATE</p>
+            <p style="font-size: 12px;">${invoiceDate}</p>
+          </td>
+          <td>
+            <p style="font-size: 10px; color: #666666;">ORDER NO.</p>
+            <p style="font-size: 12px;">${orderNumber}</p>
+          </td>
+          <td>
+            <p style="font-size: 10px; color: #666666;">SHIPPED TO</p>
+            <p style="font-size: 12px;">${city}, ${state}, ${country}</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Product List Section -->
+    <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px; background-color: #fafafa; border-radius: 3px; padding: 15px;">
+      <tbody>
+        ${orderedItems
+            .map((product) => {
+                const calculatedPrice =
+                    (product.price || 0) * (product.quantity || 1);
+                const productImage = product.productImage && product.productImage.length > 0
+                    ? product.productImage[0] 
+                    : "default-image-url.jpg";
+                return `
+          <tr>
+            <td style="width: 80px;">
+              <img src="${productImage}" alt="${
+                    product.productTitle || "Unknown Product"
+                }" style="width: 60px; height: 60px; border-radius: 8px;"/>
+            </td>
+            <td>
+              <p style="font-size: 14px; margin: 0; font-weight: bold;">${
+                  product.productTitle || "Unknown Product"
+              }</p>
+              <p style="font-size: 12px; margin: 0; color: #666666;">Size: ${
+                  product.size || "N/A"
+              } | Quantity: ${product.quantity || 0}</p>
+            </td>
+            <td align="right" style="font-size: 14px; font-weight: bold;">
+              product Amount: $${calculatedPrice.toFixed(2)}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <hr style="border: none; border-top: 1px solid #eaeaea; margin: 10px 0;">
+            </td>
+          </tr>
+        `;
+            })
+            .join("")}
+      </tbody>
+    </table>
+    <!-- Total Amount Section -->
+    <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">
+      <tbody>
+        <tr>
+          <td align="right" style="font-size: 16px; font-weight: bold; padding-right: 10px;">
+
+          </td>
+          <td align="right" style="font-size: 16px; font-weight: bold;">
+            Total Amount: $${Number(totalAmount || 0).toFixed(2)}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+</tbody>
+</table>
 </body>
 `;
+
 
 export default resetPasswordTemplate;

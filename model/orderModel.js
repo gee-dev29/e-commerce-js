@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
 
         orderedItems: [
             {
-                product: {
+                productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "product",
                     required: true,
@@ -39,8 +39,15 @@ const orderSchema = new mongoose.Schema(
                     type: String,
                     required: true,
                 },
+                price: {
+                    type: String,
+                    required: true,
+                },
             },
         ],
+        totalAmount: {
+            type: Number,
+        },
 
         orderTrackingNumber: {
             type: String,
@@ -57,12 +64,6 @@ const orderSchema = new mongoose.Schema(
             ],
             required: true,
         },
-
-        totalAmount: {
-            type: Number,
-            required: true,
-        },
-
         orderStatus: {
             type: String,
             enums: [
