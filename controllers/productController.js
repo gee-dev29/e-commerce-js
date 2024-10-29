@@ -147,7 +147,7 @@ export const getProductsSortedByPrice = async (req, res) => {
 };
 
 export const searchProduct = async (req, res) => {
-  const { minPrice, maxPrice, category, colors, sizes, limit, skip } =
+  const { minPrice, maxPrice, category, colors, sizes, title, limit, skip } =
     req.query;
 
   const filter = {};
@@ -166,6 +166,10 @@ export const searchProduct = async (req, res) => {
   // Category filter
   if (category) {
     filter.productCategory = category; // Exact match
+  }
+
+  if(title){
+    filter.productTitle = title
   }
 
   // Color filter
