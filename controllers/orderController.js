@@ -152,8 +152,8 @@ export const getUserOrders = async (req, res) => {
             filter,
             skip,
             limit,
-            ["orderedItems.product", "shippingId"],
-            ["product", "shipping"]
+            ["orderedItems.product", "shippingId", "deliveryId"],
+            ["product", "shipping", "delivery"]
         );
 
         return res.status(200).json({ payload: data });
@@ -190,8 +190,8 @@ export const getSingleOrder = async (req, res) => {
         const data = await entity.getDataWithMultiplePopulate(
             orderModel,
             filter,
-            ["orderedItems.product", "shippingId"],
-            ["product", "shipping"]
+            ["orderedItems.product", "shippingId", "deliveryId"],
+            ["product", "shipping", "delivery"]
         );
         return res.status(200).json({ payload: data });
     } catch (error) {

@@ -38,7 +38,7 @@ export const getStripeWebhook = async (req, res) => {
       const payload = {
         paymentIntentId: checkout.payment_intent,
       };
-      await entity.updateDataById(orderId, payload, orderModel);
+     const order = await entity.updateDataById(orderId, payload, orderModel);
       break;
     case "payment_intent.succeeded":
       const payment = event.data.object;
@@ -48,8 +48,10 @@ export const getStripeWebhook = async (req, res) => {
       const update = {
         orderStatus: orderStatus.PAID,
       };
-      await orderModel.findOneAndUpdate(filter, update, { new: true });
+       await orderModel.findOneAndUpdate(filter, update, { new: true });
       const newPayment = new paymentModel({
+        creatorId: req.id,
+        amount: order?.totalAmount,
         paymentMethod: PaymentMethod.STRIPE,
         paymentRef: payment.id,
         paymentStatus: orderStatus.PAID,
@@ -67,7 +69,7 @@ export const createStripeSession = async (req, res) => {
   try {
     const { products, shippingId, orderData } = req.body;
     const shipping = await shippingModel.findById(shippingId);
-    
+
     const lineItems = products.map((item) => ({
       price_data: {
         currency: "USD",
@@ -136,20 +138,6 @@ export const createStripeSession = async (req, res) => {
   }
 };
 
-export const createPaypalSession = async (req, res) => {
-  try {
-    const { products } = req.body;
-    const purchase = products.map((item) => {
-      return { currency_code: "USD", value: item.product.productPrice };
-    });
-    let lineItems = {
-      purchase_units: purchase,
-      intent: "CAPTURE ",
-    };
-    console.log(lineItems);
-  } catch (error) {}
-};
-
 // Create PayPal order
 
 // both createOrder and captureOrder will work with reactJs , i've comfirmed it
@@ -162,6 +150,11 @@ export const createOrder = async (req, res) => {
       shippingId,
       orderModel
     );
+
+    const filter = {
+      creatorId: req.id,
+    };
+    await cartModel.deleteOne(filter);
 
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
@@ -179,27 +172,23 @@ export const createOrder = async (req, res) => {
       ],
     });
     const paypalOrder = await client.execute(request);
-    const paypalOrderId = paypalOrder.result.id;
+    const id = paypalOrder.result.id;
+    const payload = {
+      paymentIntentId: id,
+    };
+    await entity.updateDataById(order._id, payload, orderModel);
 
-    const approveUrl = paypalOrder.result.links.find(
-      (link) => link.rel === "approve"
-    )?.href;
-
-    if (!approveUrl) {
-      return res.status(500).json({
-        message: "Failed to retrieve PayPal approval URL",
-      });
-    }
     const newPayment = new paymentModel({
+      creatorId: req.id,
+      amount: orderData?.totalAmount,
       paymentMethod: PaymentMethod.PAYPAL,
-      paymentRef: paypalOrderId,
-      paymentStatus: orderStatus.PAID,
+      paymentRef: id,
+      paymentStatus: orderStatus.AWAITING_PAYMENT,
     });
     await newPayment.save();
 
     res.status(201).json({
-      orderID: paypalOrderId,
-      approveUrl: approveUrl,
+      id: id,
       message:
         "PayPal order created successfully. Redirect to the approval URL to complete the payment.",
     });
@@ -225,7 +214,7 @@ export const captureOrder = async (req, res) => {
     }
     // Find and update the payment record in the database
     const paymentRecord = await paymentModel.findOneAndUpdate(
-      { paymentRef: paypalOrderId },
+      { paymentRef: orderId },
       {
         $set: {
           paymentStatus: orderStatus.PAID,
@@ -233,7 +222,20 @@ export const captureOrder = async (req, res) => {
       },
       { new: true }
     );
-    const order = await orderModel.findById(paymentRecord.order);
+
+    if (!paymentRecord) {
+      return res.status(404).json({ message: "Payment record not found" });
+    }
+    const updatePayload = {
+      orderStatus: orderStatus.PAID,
+    };
+
+    const order = await orderModel.updateOne(
+      { paymentIntentId: orderId },
+      updatePayload,
+      { new: true }
+    );
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -253,12 +255,6 @@ export const captureOrder = async (req, res) => {
         phone: order.phone,
       },
     };
-
-    if (!paymentRecord) {
-      return res.status(404).json({ message: "Payment record not found" });
-    }
-    // update the orderStatus to PAID
-    await entity.updateDataById(order, orderModel);
 
     res.status(200).json({
       message: "Payment captured successfully",

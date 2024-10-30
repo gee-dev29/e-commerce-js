@@ -25,6 +25,8 @@ const orderField = [
     "fullName",
     "orderedItems",
     "paymentMethod",
+];
+const deliveryField = [
     "street",
     "city",
     "state",
@@ -70,4 +72,5 @@ export {
     uploadField,
     heroField,
     categoryField,
+    deliveryField
 };

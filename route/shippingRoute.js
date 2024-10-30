@@ -16,6 +16,6 @@ router
   .get(jwtVerify, checkUser, superAdminRoleCheck, getAllShippingRates)
   .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteShippingRate);
 
-router.route("/rate").get(jwtVerify, getShippingrate);
+router.route("/rate").get(getShippingrate);
 
 export default router;

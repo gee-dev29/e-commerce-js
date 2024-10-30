@@ -5,6 +5,8 @@ import crypto from "crypto";
 import moment from "moment";
 import mongoose from "mongoose";
 import { currency } from "./currency.js";
+import { receiptEmailTemplate } from "../emailService/template/template.js";
+import { sendEmail } from "../emailService/email.js";
 // this function checks if the user data is correct
 
 // Encrypt function
@@ -209,7 +211,7 @@ const generateOrderNumber = () => {
 };
 
 const sortByOrder = async (sortOrder, model, param, skip, limit) => {
-  const sortValue = sortOrder === 'asc' ? 1 : -1;
+  const sortValue = sortOrder === "asc" ? 1 : -1;
   const data = await model
     .find()
     .sort({ [param]: sortValue })
@@ -225,15 +227,10 @@ const saveOrder = async (orderData, userId, shippingId, orderModel) => {
   const {
     fullName,
     paymentMethod,
-    street,
-    city,
-    state,
-    country,
-    zipCode,
     totalAmount,
-    phone,
     email,
     orderNote,
+    deliveryId,
     orderedItems,
   } = orderData;
 
@@ -244,19 +241,52 @@ const saveOrder = async (orderData, userId, shippingId, orderModel) => {
     orderTrackingNumber: generateOrderNumber(),
     paymentMethod: paymentMethod,
     totalAmount: totalAmount,
-    street: street,
     email: email,
-    city: city,
-    state: state,
-    country: country,
+    deliveryId: deliveryId,
     shippingId: shippingId,
-    zipCode: zipCode,
-    phone: phone,
     orderNote: orderNote || "",
     currency: currency.USD,
   });
   await newOrder.save();
   return newOrder;
+};
+
+const sendOrderEmail = async (order) => {
+  const filter = {
+    _id: order._id,
+  };
+  const { data } = getDataWithPopulate(
+    order,
+    filter,
+    "orderedItems.productId",
+    "product"
+  );
+
+  let populatedOrderedItems = {
+    productTitle: data.productTitle,
+    productImage: data.productImages,
+    price: data.productPrice - (data.productPrice * data?.productDiscount),
+
+  };
+
+  // ...item,
+  // itemTotalPrice,
+
+  const orderEmail = receiptEmailTemplate(
+    order.orderTrackingNumber,
+    new Date().toISOString(),
+    order.country,
+    order.state,
+    order.city,
+    order.totalAmount,
+    populatedOrderedItems
+  );
+  const emailService = {
+    recieverEmail: order.email,
+    subject: "Your Order Receipt",
+    text: orderEmail,
+  };
+  await sendEmail(emailService);
 };
 
 export const entity = {
@@ -283,4 +313,5 @@ export const entity = {
   generateOrderNumber,
   saveOrder,
   sortByOrder,
+  sendOrderEmail
 };
