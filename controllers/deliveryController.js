@@ -5,7 +5,7 @@ import { deliveryField } from "../utils/inputFields.js";
 export const createDeliveryAddress = async (req, res) => {
   try {
     const userId = req.id;
-    const { street, city, state, country, zipCode, phone, _id } = req.body;
+    const { fullName, street, city, state, country, zipCode, phone, _id } = req.body;
 
     const missingFields = entity.checkMissingFieldsInput(
       deliveryField,
@@ -26,8 +26,8 @@ export const createDeliveryAddress = async (req, res) => {
 
     const delivery = new deliveryModel({
       creatorId: userId,
+      fullName: fullName,
       street: street,
-      email: email,
       city: city,
       state: state,
       country: country,
@@ -61,8 +61,8 @@ export const getUserDeliveryAddress = async (req, res) => {
 
 export const deleteDeliveryAddress = async (req, res) => {
   try {
-      const {_id} = req.query
-      await entity.deleteDataById(_id, deliveryModel)
+      const {id} = req.query
+      await entity.deleteDataById(id, deliveryModel)
       res.status(200).json({
         message: "Deleted successfully"
       })

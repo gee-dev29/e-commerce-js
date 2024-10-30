@@ -7,6 +7,10 @@ const deliverySchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
+        fullName: {
+            type: String,
+            required: true,
+        },
         street: {
             type: String,
             required: true,
@@ -20,7 +24,7 @@ const deliverySchema = new mongoose.Schema(
             required: true,
         },
         country: {
-            type: String,
+            type: Object,
             required: true,
         },
         phone: {
