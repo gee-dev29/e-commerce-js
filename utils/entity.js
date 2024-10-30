@@ -9,278 +9,297 @@ import { currency } from "./currency.js";
 
 // Encrypt function
 function encryptData(text, key) {
-  const cipher = crypto.createCipher("aes-256-cbc", key);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return encrypted;
+    const cipher = crypto.createCipher("aes-256-cbc", key);
+    let encrypted = cipher.update(text, "utf8", "hex");
+    encrypted += cipher.final("hex");
+    return encrypted;
 }
 
 // Decrypt function
 function decryptData(encryptedText, key) {
-  const decipher = crypto.createDecipher("aes-256-cbc", key);
-  let decrypted = decipher.update(encryptedText, "hex", "utf8");
-  decrypted += decipher.final("utf8");
-  return decrypted;
+    const decipher = crypto.createDecipher("aes-256-cbc", key);
+    let decrypted = decipher.update(encryptedText, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
 }
 
 const updateDataById = async (id, payload, model) => {
-  return await model.findByIdAndUpdate(id, payload, { new: true });
+    return await model.findByIdAndUpdate(id, payload, { new: true });
 };
 
 const updateArrayOfData = async (id, payload, model) => {
-  return await model.updateOne(id, { $push: payload });
+    return await model.updateOne(id, { $push: payload });
 };
 
 const deleteDataById = async (id, model) => {
-  return await model.findByIdAndDelete(id);
+    return await model.findByIdAndDelete(id);
 };
 
 const updateUserByEmail = async (email, payload, model) => {
-  return await model.updateOne({ email: email }, payload, { new: true });
+    return await model.updateOne({ email: email }, payload, { new: true });
 };
 
 // encrypt user password
 const encryptPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  const HashPassword = await bcrypt.hash(password, salt);
-  return HashPassword;
+    const salt = await bcrypt.genSalt(10);
+    const HashPassword = await bcrypt.hash(password, salt);
+    return HashPassword;
 };
 
 // decrypt password
 const decryptPassword = async (password, user) => {
-  return await bcrypt.compare(password, user);
+    return await bcrypt.compare(password, user);
 };
 
 // Document upload
 const checkUploadDoc = async (body) => {
-  const { file } = body;
-  if (file == "") {
-    return null;
-  }
-  return body;
+    const { file } = body;
+    if (file == "") {
+        return null;
+    }
+    return body;
 };
 
 const jwtSign = (id) => {
-  const token = jwt.sign(
-    {
-      userId: id,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "2hr",
-    }
-  );
-  return token;
+    const token = jwt.sign(
+        {
+            userId: id,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "2hr",
+        }
+    );
+    return token;
 };
 
 // generate Otp
 
 const generateOtp = () => {
-  const value = Math.random().toString().substr(2, 4);
-  const expiresIn = new Date(Date.now() + 10 * 60 * 1000);
-  return { otp: value, expiresIn: expiresIn };
+    const value = Math.random().toString().substr(2, 4);
+    const expiresIn = new Date(Date.now() + 10 * 60 * 1000);
+    return { otp: value, expiresIn: expiresIn };
 };
 
 const getAllFilteredData = async (model, filter) => {
-  const data = model.find(filter).sort({ createdAt: -1 });
-  return data;
+    const data = model.find(filter).sort({ createdAt: -1 });
+    return data;
 };
 
 const checkMissingFieldsInput = (requiredFields, requestBody) => {
-  const missingOrEmptyFields = [];
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const missingOrEmptyFields = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  requiredFields.forEach((field) => {
-    const value = requestBody[field];
-    if (
-      !requestBody.hasOwnProperty(field) ||
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      missingOrEmptyFields.push(field);
-    } else if (field === "email" && !emailRegex.test(value)) {
-      missingOrEmptyFields.push(`${field} (invalid email)`);
+    requiredFields.forEach((field) => {
+        const value = requestBody[field];
+        if (
+            !requestBody.hasOwnProperty(field) ||
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            missingOrEmptyFields.push(field);
+        } else if (field === "email" && !emailRegex.test(value)) {
+            missingOrEmptyFields.push(`${field} (invalid email)`);
+        }
+    });
+
+    if (missingOrEmptyFields.length > 0) {
+        return {
+            result: false,
+            message: `Missing required fields: ${missingOrEmptyFields.join(
+                ", "
+            )}`,
+        };
     }
-  });
 
-  if (missingOrEmptyFields.length > 0) {
     return {
-      result: false,
-      message: `Missing required fields: ${missingOrEmptyFields.join(", ")}`,
+        result: true,
     };
-  }
-
-  return {
-    result: true,
-  };
 };
 
 const isValidUUID = (id) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(id);
+    const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(id);
 };
 
 const isValidObjectId = (id) => {
-  const isValid = mongoose.Types.ObjectId.isValid({ id: id });
-  return isValid;
+    const isValid = mongoose.Types.ObjectId.isValid({ id: id });
+    return isValid;
 };
 
 const getPaginatedData = async (model, filter, skip, limit) => {
-  const data = await model.find(filter).limit(limit).skip(skip);
-  const totalRecords = await model.countDocuments(filter);
-  return { totalRecords, data };
+    const data = await model.find(filter).limit(limit).skip(skip);
+    const totalRecords = await model.countDocuments(filter);
+    return { totalRecords, data };
 };
 const getPaginatedDataWithPopulate = async (
-  model,
-  filter,
-  skip,
-  limit,
-  path,
-  selectedModel
+    model,
+    filter,
+    skip,
+    limit,
+    path,
+    selectedModel
 ) => {
-  const data = await model
-    .find(filter)
-    .populate({
-      path: path,
-      model: selectedModel,
-    })
-    .limit(limit)
-    .skip(skip);
+    const data = await model
+        .find(filter)
+        .populate({
+            path: path,
+            model: selectedModel,
+        })
+        .limit(limit)
+        .skip(skip);
 
-  const totalRecords = await model.countDocuments();
-  return { data, totalRecords };
+    const totalRecords = await model.countDocuments();
+    return { data, totalRecords };
 };
 const getPaginatedDataWithMultiplePopulate = async (
-  model,
-  filter,
-  skip,
-  limit,
-  paths,
-  selectedModels
+    model,
+    filter,
+    skip,
+    limit,
+    paths,
+    selectedModels
 ) => {
-  const data = await model
-    .find(filter)
-    .populate(
-      paths.map((path, index) => ({
-        path: path,
-        model: selectedModels[index], // Use corresponding model for each path
-      }))
-    )
-    .limit(limit)
-    .skip(skip);
+    const data = await model
+        .find(filter)
+        .populate(
+            paths.map((path, index) => ({
+                path: path,
+                model: selectedModels[index], // Use corresponding model for each path
+            }))
+        )
+        .limit(limit)
+        .skip(skip);
 
-  const totalRecords = await model.countDocuments();
-  return { data, totalRecords };
+    const totalRecords = await model.countDocuments();
+    return { data, totalRecords };
 };
 const getDataWithPopulate = async (model, filter, path, selectedModel) => {
-  const data = await model.find(filter).populate({
-    path: path,
-    model: selectedModel,
-  });
+    const data = await model.find(filter).populate({
+        path: path,
+        model: selectedModel,
+    });
 
-  const totalRecords = await model.countDocuments();
-  return { data, totalRecords };
+    const totalRecords = await model.countDocuments();
+    return { data, totalRecords };
 };
 const getDataWithMultiplePopulate = async (
-  model,
-  filter,
-  paths,
-  selectedModels
+    model,
+    filter,
+    paths,
+    selectedModels
 ) => {
-  const data = await model.find(filter).populate(
-    paths.map((path, index) => ({
-      path: path,
-      model: selectedModels[index], // Use corresponding model for each path
-    }))
-  );
+    const data = await model.find(filter).populate(
+        paths.map((path, index) => ({
+            path: path,
+            model: selectedModels[index], // Use corresponding model for each path
+        }))
+    );
 
-  const totalRecords = await model.countDocuments();
-  return { data, totalRecords };
+    const totalRecords = await model.countDocuments();
+    return { data, totalRecords };
 };
 
 const generateOrderNumber = () => {
-  const prefix = "#FWB";
+    const prefix = "#FWB";
 
-  const randomNumber = Math.floor(100000000 + Math.random() * 900000000);
+    const randomNumber = Math.floor(100000000 + Math.random() * 900000000);
 
-  return `${prefix}${randomNumber}`;
+    return `${prefix}${randomNumber}`;
 };
 
 const sortByOrder = async (sortOrder, model, param, skip, limit) => {
-  const sortValue = sortOrder === 'asc' ? 1 : -1;
-  const data = await model
-    .find()
-    .sort({ [param]: sortValue })
-    .skip(skip)
-    .limit(limit);
+    const sortValue = sortOrder === "asc" ? 1 : -1;
+    const data = await model
+        .find()
+        .sort({ [param]: sortValue })
+        .skip(skip)
+        .limit(limit);
 
-  const totalRecords = await model.countDocuments();
+    const totalRecords = await model.countDocuments();
 
-  return { totalRecords, data };
+    return { totalRecords, data };
 };
 
 const saveOrder = async (orderData, userId, shippingId, orderModel) => {
-  const {
-    fullName,
-    paymentMethod,
-    street,
-    city,
-    state,
-    country,
-    zipCode,
-    totalAmount,
-    phone,
-    email,
-    orderNote,
-    orderedItems,
-  } = orderData;
+    const {
+        fullName,
+        paymentMethod,
+        street,
+        city,
+        state,
+        country,
+        zipCode,
+        totalAmount,
+        phone,
+        email,
+        orderNote,
+        orderedItems,
+    } = orderData;
 
-  const newOrder = new orderModel({
-    creatorId: userId,
-    fullName: fullName,
-    orderedItems: orderedItems,
-    orderTrackingNumber: generateOrderNumber(),
-    paymentMethod: paymentMethod,
-    totalAmount: totalAmount,
-    street: street,
-    email: email,
-    city: city,
-    state: state,
-    country: country,
-    shippingId: shippingId,
-    zipCode: zipCode,
-    phone: phone,
-    orderNote: orderNote || "",
-    currency: currency.USD,
-  });
-  await newOrder.save();
-  return newOrder;
+    const newOrder = new orderModel({
+        creatorId: userId,
+        fullName: fullName,
+        orderedItems: orderedItems,
+        orderTrackingNumber: generateOrderNumber(),
+        paymentMethod: paymentMethod,
+        totalAmount: totalAmount,
+        street: street,
+        email: email,
+        city: city,
+        state: state,
+        country: country,
+        shippingId: shippingId,
+        zipCode: zipCode,
+        phone: phone,
+        orderNote: orderNote || "",
+        currency: currency.USD,
+    });
+    await newOrder.save();
+
+    const orderEmail = receiptEmailTemplate(
+        newOrder.orderTrackingNumber,
+        new Date().toISOString(),
+        newOrder.country,
+        newOrder.state,
+        newOrder.city,
+        newOrder.totalAmount,
+        orderedItems
+    );
+
+    const emailService = {
+        recieverEmail: email,
+        subject: "Your Order Receipt",
+        text: orderEmail,
+    };
+    await sendEmail(emailService);
+    return newOrder;
 };
 
 export const entity = {
-  encryptPassword,
-  getPaginatedDataWithPopulate,
-  getPaginatedDataWithMultiplePopulate,
-  getDataWithMultiplePopulate,
-  getDataWithPopulate,
-  getPaginatedData,
-  decryptPassword,
-  jwtSign,
-  getAllFilteredData,
-  checkUploadDoc,
-  updateUserByEmail,
-  checkMissingFieldsInput,
-  updateDataById,
-  deleteDataById,
-  updateArrayOfData,
-  encryptData,
-  decryptData,
-  generateOtp,
-  isValidUUID,
-  isValidObjectId,
-  generateOrderNumber,
-  saveOrder,
-  sortByOrder,
+    encryptPassword,
+    getPaginatedDataWithPopulate,
+    getPaginatedDataWithMultiplePopulate,
+    getDataWithMultiplePopulate,
+    getDataWithPopulate,
+    getPaginatedData,
+    decryptPassword,
+    jwtSign,
+    getAllFilteredData,
+    checkUploadDoc,
+    updateUserByEmail,
+    checkMissingFieldsInput,
+    updateDataById,
+    deleteDataById,
+    updateArrayOfData,
+    encryptData,
+    decryptData,
+    generateOtp,
+    isValidUUID,
+    isValidObjectId,
+    generateOrderNumber,
+    saveOrder,
+    sortByOrder,
 };
