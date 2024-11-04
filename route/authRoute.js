@@ -1,11 +1,13 @@
 import express from "express";
 import {
+  forgotPassword,
   googleLogin,
   googleLogout,
   loginAdmin,
   loginUser,
   registerAdmin,
   registerUser,
+  resetPassword,
   verifyOTP,
 } from "../controllers/userController.js";
 import { checkUser } from "../middleware/checkUser.js";
@@ -19,6 +21,8 @@ const router = express.Router();
 router.route("/register").post(registerUser);
 router.route("/login").post(findUserByEmail, loginUser);
 router.get("/login/success", googleLogin);
+router.route("/forgot-password").post(forgotPassword);
+router.route("/reset-password").post(resetPassword);
 
 router.get(
   "/google/callback",

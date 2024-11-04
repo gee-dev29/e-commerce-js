@@ -2,14 +2,14 @@ import { UserStatus } from "../enums/statusEnum.js";
 import { entity } from "../utils/entity.js";
 import { userModel } from "../model/userModel.js";
 import {
-  adminRegisterField,
-  loginField,
-  registerField,
-  updateField,
-  verifyOTPField,
+    adminRegisterField,
+    loginField,
+    registerField,
+    updateField,
+    verifyOTPField,
 } from "../utils/inputFields.js";
 import resetPasswordTemplate, {
-  welcomeTemplate,
+    welcomeTemplate,
 } from "../emailService/template/template.js";
 import { sendEmail } from "../emailService/email.js";
 import { messages } from "../message/messageEnum.js";
@@ -17,405 +17,462 @@ import { Role } from "../enums/role.js";
 import { isValidObjectId } from "mongoose";
 
 export const registerUser = async (req, res) => {
-  try {
-    const { firstName, lastName, email, password } = req.body;
+    try {
+        const { firstName, lastName, email, password } = req.body;
 
-    const checkFields = entity.checkMissingFieldsInput(registerField, req.body);
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
+        const checkFields = entity.checkMissingFieldsInput(
+            registerField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+
+        const formattedEmail = email.toLowerCase();
+        const otp = entity.generateOtp();
+        const hashPassword = await entity.encryptPassword(password);
+        const userExist = await userModel.findOne({
+            email: formattedEmail,
+        });
+        if (!userExist) {
+            const user = new userModel({
+                firstName: firstName,
+                lastName: lastName,
+                email: formattedEmail,
+                password: hashPassword,
+                otp: otp,
+            });
+
+            const welcomeEmail = welcomeTemplate(user.firstName, user.lastName);
+            const emailService = {
+                recieverEmail: formattedEmail,
+                subject: "Welcome to KNcloset!",
+                text: welcomeEmail,
+            };
+            sendEmail(emailService);
+            await user.save();
+            return res.status(201).json({
+                message: "user created successfuly",
+            });
+        }
+        return res.status(400).json({
+            message: "user already exists",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-
-    const formattedEmail = email.toLowerCase();
-    const otp = entity.generateOtp();
-    const hashPassword = await entity.encryptPassword(password);
-    const userExist = await userModel.findOne({
-      email: formattedEmail,
-    });
-    if (!userExist) {
-      const user = new userModel({
-        firstName: firstName,
-        lastName: lastName,
-        email: formattedEmail,
-        password: hashPassword,
-        otp: otp,
-      });
-
-      const welcomeEmail = welcomeTemplate(user.firstName, user.lastName);
-      const emailService = {
-        recieverEmail: formattedEmail,
-        subject: "Welcome to KNcloset!",
-        text: welcomeEmail,
-      };
-      sendEmail(emailService);
-      await user.save();
-      return res.status(201).json({
-        message: "user created successfuly",
-      });
-    }
-    return res.status(400).json({
-      message: "user already exists",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const checkFields = entity.checkMissingFieldsInput(loginField, req.body);
+        const checkFields = entity.checkMissingFieldsInput(
+            loginField,
+            req.body
+        );
 
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
-    }
-    const user = req.user;
-    console.log(req.password);
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const user = req.user;
+        console.log(req.password);
 
-    if (!req.password) {
-      return res.status(400).json({
-        message: "user has no set password",
-      });
+        if (!req.password) {
+            return res.status(400).json({
+                message: "user has no set password",
+            });
+        }
+        const isPasswordValid = await entity.decryptPassword(
+            password,
+            req.password
+        );
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: "Invalid credentials",
+            });
+        }
+        const token = entity.jwtSign(user._id);
+        return res.status(200).json({
+            message: "User login successful",
+            payload: {
+                token: token,
+                data: user,
+            },
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-    const isPasswordValid = await entity.decryptPassword(
-      password,
-      req.password
-    );
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
-    }
-    const token = entity.jwtSign(user._id);
-    return res.status(200).json({
-      message: "User login successful",
-      payload: {
-        token: token,
-        data: user,
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 export const googleLogin = async (req, res) => {
-  console.log(req);
-  if (req.user) {
-    const user = await userModel
-      .findOne({ email: req.user.email })
-      .select("-password");
-    if (user) {
-      const token = entity.jwtSign(user._id);
-      return res.status(200).json({
-        message: "Login Successful",
-        token: token,
-        data: user,
-      });
+    console.log(req);
+    if (req.user) {
+        const user = await userModel
+            .findOne({ email: req.user.email })
+            .select("-password");
+        if (user) {
+            const token = entity.jwtSign(user._id);
+            return res.status(200).json({
+                message: "Login Successful",
+                token: token,
+                data: user,
+            });
+        }
+    } else {
+        return res.status(200).json();
     }
-  } else {
-    return res.status(200).json();
-  }
 };
 
 export const failedGoogleLogin = async (req, res) => {
-  res.status(401).json({
-    status: false,
-    message: "Login failed",
-  });
+    res.status(401).json({
+        status: false,
+        message: "Login failed",
+    });
 };
 
 export const googleLogout = async (req, res) => {
-  req.logout();
-  res.redirect("https://ecommerce-frontend-pi-cyan.vercel.app/login");
+    req.logout();
+    res.redirect("https://ecommerce-frontend-pi-cyan.vercel.app/login");
 };
 
 export const loginAdmin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const checkFields = entity.checkMissingFieldsInput(loginField, req.body);
+        const checkFields = entity.checkMissingFieldsInput(
+            loginField,
+            req.body
+        );
 
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const user = req.user;
+        const isPasswordValid = await entity.decryptPassword(
+            password,
+            req.password
+        );
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: "Invalid credentials",
+            });
+        }
+        if (user.role === Role.USER) {
+            return res.status(401).json({
+                message: "Not Authorized",
+            });
+        }
+        const token = entity.jwtSign(user._id);
+        return res.status(200).json({
+            message: "User login successful",
+            payload: {
+                token: token,
+                data: user,
+            },
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-    const user = req.user;
-    const isPasswordValid = await entity.decryptPassword(
-      password,
-      req.password
-    );
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
-    }
-    if (user.role === Role.USER) {
-      return res.status(401).json({
-        message: "Not Authorized",
-      });
-    }
-    const token = entity.jwtSign(user._id);
-    return res.status(200).json({
-      message: "User login successful",
-      payload: {
-        token: token,
-        data: user,
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 // register Admin
 export const registerAdmin = async (req, res) => {
-  try {
-    const { _id, firstName, lastName, email, password, role } = req.body;
-    const checkFields = entity.checkMissingFieldsInput(
-      adminRegisterField,
-      req.body
-    );
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
-    }
-    if (isValidObjectId(_id)) {
-      const { password, ...others } = req.body;
-      let result;
-      if (password) {
-        const hashPassword = await entity.encryptPassword(password);
-        result = {
-          ...others,
-          password: hashPassword,
-        };
-      } else {
-        result = others;
-      }
-      await entity.updateDataById(_id, result, userModel);
-      return res.status(200).json({ message: "user updated successfully" });
-    }
-    const formattedEmail = email.toLowerCase();
+    try {
+        const { _id, firstName, lastName, email, password, role } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            adminRegisterField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        if (isValidObjectId(_id)) {
+            const { password, ...others } = req.body;
+            let result;
+            if (password) {
+                const hashPassword = await entity.encryptPassword(password);
+                result = {
+                    ...others,
+                    password: hashPassword,
+                };
+            } else {
+                result = others;
+            }
+            await entity.updateDataById(_id, result, userModel);
+            return res
+                .status(200)
+                .json({ message: "user updated successfully" });
+        }
+        const formattedEmail = email.toLowerCase();
 
-    if (req.user.email == formattedEmail) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
+        if (req.user.email == formattedEmail) {
+            return res.status(400).json({
+                message: "User already exists",
+            });
+        }
+        const hashPassword = await entity.encryptPassword(password);
+        const user = new userModel({
+            firstName: firstName,
+            lastName: lastName,
+            email: formattedEmail,
+            password: hashPassword,
+            role: role,
+        });
+        const welcomeEmail = welcomeTemplate(user.firstName, user.lastName);
+        const emailService = {
+            recieverEmail: formattedEmail,
+            subject: "Welcome to KNcloset!",
+            text: welcomeEmail,
+        };
+        sendEmail(emailService);
+        // sendRegistrationEmails(email, firstName);
+        await user.save();
+        return res.status(201).json({
+            message: "Admin created successfuly",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-    const hashPassword = await entity.encryptPassword(password);
-    const user = new userModel({
-      firstName: firstName,
-      lastName: lastName,
-      email: formattedEmail,
-      password: hashPassword,
-      role: role,
-    });
-    const welcomeEmail = welcomeTemplate(user.firstName, user.lastName);
-    const emailService = {
-      recieverEmail: formattedEmail,
-      subject: "Welcome to KNcloset!",
-      text: welcomeEmail,
-    };
-    sendEmail(emailService);
-    // sendRegistrationEmails(email, firstName);
-    await user.save();
-    return res.status(201).json({
-      message: "Admin created successfuly",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 //get user
 export const viewSingleUser = async (req, res) => {
-  try {
-    // const user = req.user
-    return res.status(200).json({ payload: req.user });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        // const user = req.user
+        return res.status(200).json({ payload: req.user });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 export const viewAllUsers = async (req, res) => {
-  try {
-    const users = await entity.getAllFilteredData(userModel, {
-      role: req.query.role,
-    });
-    const filtereData = users.map((user) => {
-      const { password, ...others } = user._doc;
-      return others;
-    });
-    return res.status(200).json({ payload: filtereData });
-  } catch (error) {
-    console.log(error);
-  }
+    try {
+        const users = await entity.getAllFilteredData(userModel, {
+            role: req.query.role,
+        });
+        const filtereData = users.map((user) => {
+            const { password, ...others } = user._doc;
+            return others;
+        });
+        return res.status(200).json({ payload: filtereData });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 //delete User
 export const deleteUser = async (req, res) => {
-  try {
-    const { userId } = req.query;
-    await entity.deleteDataById(userId, userModel);
-    return res.status(200).json({ message: "User deleted successfully" });
-  } catch (error) {}
+    try {
+        const { userId } = req.query;
+        await entity.deleteDataById(userId, userModel);
+        return res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {}
 };
 
 //suspend a user
 export const toggleSuspendUser = async (req, res) => {
-  try {
-    const { userId } = req.query;
-    const user = await userModel.findById(userId);
-    if (user.UserStatus == UserStatus.ACTIVE) {
-      const payload = {
-        UserStatus: UserStatus.SUSPENDED,
-        isSuspended: true,
-      };
-      await entity.updateDataById(userId, payload, userModel);
-      return res.status(200).json({
-        message: "user suspended successfully",
-      });
-    } else {
-      const payload = {
-        UserStatus: UserStatus.ACTIVE,
-        isSuspended: false,
-      };
-      await entity.updateDataById(userId, payload, userModel);
-      return res.status(200).json({
-        message: "user activated successfully",
-      });
+    try {
+        const { userId } = req.query;
+        const user = await userModel.findById(userId);
+        if (user.UserStatus == UserStatus.ACTIVE) {
+            const payload = {
+                UserStatus: UserStatus.SUSPENDED,
+                isSuspended: true,
+            };
+            await entity.updateDataById(userId, payload, userModel);
+            return res.status(200).json({
+                message: "user suspended successfully",
+            });
+        } else {
+            const payload = {
+                UserStatus: UserStatus.ACTIVE,
+                isSuspended: false,
+            };
+            await entity.updateDataById(userId, payload, userModel);
+            return res.status(200).json({
+                message: "user activated successfully",
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 //update user
 export const updateUser = async (req, res) => {
-  try {
-    const user = req.user;
-    const { phone, address, profilePicture } = req.body;
-    const checkFields = entity.checkMissingFieldsInput(updateField, req.body);
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
+    try {
+        const user = req.user;
+        const { phone, address, profilePicture } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            updateField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const payload = {
+            phone: phone,
+            address: address,
+            profilePicture: profilePicture,
+        };
+        await entity.updateDataById(user._id, payload, userModel);
+        return res.status(200).json({
+            message: "user updated successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-    const payload = {
-      phone: phone,
-      address: address,
-      profilePicture: profilePicture,
-    };
-    await entity.updateDataById(user._id, payload, userModel);
-    return res.status(200).json({
-      message: "user updated successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 // forgot password
 export const forgotPassword = async (req, res) => {
-  try {
-    const user = req.user;
-    const { email } = req.body;
-    const token = jwtSign(user._id);
-    const encrypedToken = encryptData(token, process.env.ENCRYPTION_KEY);
-    const text = resetPasswordTemplate(encrypedToken, user.fullName);
-    const emailMessage = {
-      recieverEmail: email,
-      subject: "Forgot Password verification",
-      text: text,
-    };
-    sendEmail(emailMessage);
-    res.status(200).json({
-      message: "An email has been sent to your mailbox",
-    });
-  } catch (error) {
-    return errorHandler(error, res);
-  }
+    try {
+        const { email } = req.body;
+        const filter = {
+            email: email,
+        };
+        // const user = await entity.getAllFilteredData(userModel, filter);
+        const formattedEmail = email.toLowerCase();
+        const user = await userModel.findOne({ email: formattedEmail });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const token = entity.jwtSign(user._id.toString());
+        const encrypedToken = entity.encryptData(token, process.env.ENCRYPTION_KEY);
+        const forgotPasswordEmail = resetPasswordTemplate(encrypedToken, `${user.firstName} ${user.lastName}`);
+        const emailMessage = {
+            recieverEmail: formattedEmail,
+            subject: "Forgot Password verification",
+            text: forgotPasswordEmail,
+        };
+        await sendEmail(emailMessage);
+        res.status(200).json({
+            message: "An email has been sent to your mailbox",
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+// reset password
+export const resetPassword = async (req, res) => {
+    try {
+        const user = req.user;
+        const { encryptedToken, newPassword } = req.body;
+        const token = decryptData(encryptedToken, process.env.ENCRYPTION_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const encryptedPassword = entity.encryptPassword(newPassword);
+        const payload = {
+            password: encryptedPassword,
+        };
+
+        if (decoded) {
+            await entity.updateUserByEmail(user.email, payload, userModel);
+
+            const emailMessage = {
+                receiverEmail: user.email,
+                subject: "Password Reset Successful",
+                text: `Hello ${user.fullName}, your password has been successfully reset.`,
+            };
+
+            await sendEmail(emailMessage);
+            return res.status(200).json({
+                message: "password reset successful",
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
 };
 
 export const verifyOTP = async (req, res) => {
-  try {
-    const { otp, email } = req.body;
-    const checkFields = entity.checkMissingFieldsInput(
-      verifyOTPField,
-      req.body
-    );
-    if (!checkFields.result) {
-      return res.status(400).json({
-        message: checkFields.message,
-      });
-    }
-    const _doc = req.user;
-    console.log(_doc);
-    if (otp !== _doc.otp.otp) {
-      return res.status(400).json({
-        message: "Invalid OTP",
-      });
-    } else {
-      const updateData = {
-        isVerified: true,
-      };
-      await entity.updateDataById(_doc._id, updateData, userModel).then(() => {
-        const emailMessage = {
-          recieverEmail: email,
-          subject: "Account verification successful",
-          text: `Hello ${_doc.fullName}. ${messages.VERIFIED_OTP}`,
-        };
-        const payload = {
-          id: _doc._id,
-          role: _doc.role,
-        };
-        const token = entity.jwtSign(payload);
-        res.setHeader("Authorization", `Bearer ${token}`);
-        sendEmail(emailMessage);
-        return res.status(200).json({
-          message: "OTP verification successful",
+    try {
+        const { otp, email } = req.body;
+        const checkFields = entity.checkMissingFieldsInput(
+            verifyOTPField,
+            req.body
+        );
+        if (!checkFields.result) {
+            return res.status(400).json({
+                message: checkFields.message,
+            });
+        }
+        const _doc = req.user;
+        console.log(_doc);
+        if (otp !== _doc.otp.otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        } else {
+            const updateData = {
+                isVerified: true,
+            };
+            await entity
+                .updateDataById(_doc._id, updateData, userModel)
+                .then(() => {
+                    const emailMessage = {
+                        recieverEmail: email,
+                        subject: "Account verification successful",
+                        text: `Hello ${_doc.fullName}. ${messages.VERIFIED_OTP}`,
+                    };
+                    const payload = {
+                        id: _doc._id,
+                        role: _doc.role,
+                    };
+                    const token = entity.jwtSign(payload);
+                    res.setHeader("Authorization", `Bearer ${token}`);
+                    sendEmail(emailMessage);
+                    return res.status(200).json({
+                        message: "OTP verification successful",
+                    });
+                });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
         });
-      });
     }
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 export const sendRegistrationEmails = (email, fullName) => {
-  const otpMessage = {
-    recieverEmail: email,
-    subject: "Verify Otp",
-    text: `Hello ${fullName}. ${messages.VERIFIED_OTP}`,
-  };
+    const otpMessage = {
+        recieverEmail: email,
+        subject: "Verify Otp",
+        text: `Hello ${fullName}. ${messages.VERIFIED_OTP}`,
+    };
 
-  const emailMessage = {
-    recieverEmail: email,
-    subject: "New Registration",
-    text: `Hello ${fullName}. ${messages.REGISTRATION}`,
-  };
+    const emailMessage = {
+        recieverEmail: email,
+        subject: "New Registration",
+        text: `Hello ${fullName}. ${messages.REGISTRATION}`,
+    };
 
-  sendEmail(emailMessage);
-  sendEmail(otpMessage);
+    sendEmail(emailMessage);
+    sendEmail(otpMessage);
 };
