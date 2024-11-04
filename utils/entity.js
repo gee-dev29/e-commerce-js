@@ -69,7 +69,7 @@ const jwtSign = (id) => {
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: "2hr",
+            expiresIn: "64hr",
         }
     );
     return token;
