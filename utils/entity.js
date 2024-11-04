@@ -69,7 +69,7 @@ const jwtSign = (id) => {
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: "64hr",
+            expiresIn: "72hr",
         }
     );
     return token;
@@ -205,7 +205,7 @@ const getDataWithMultiplePopulate = async (
 };
 
 const generateOrderNumber = () => {
-    const prefix = "#FWB";
+    const prefix = "#KNC";
 
     const randomNumber = Math.floor(100000000 + Math.random() * 900000000);
 
