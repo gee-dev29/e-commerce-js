@@ -12,11 +12,7 @@ const reviewSchema = new mongoose(
             ref: "product",
             required: true,
         },
-        reviewTitle: {
-            type: String,
-            required: true,
-        },
-        reviewComment: {
+        comment: {
             type: String,
             required: true,
         },

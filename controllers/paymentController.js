@@ -228,6 +228,7 @@ export const captureOrder = async (req, res) => {
     }
     const updatePayload = {
       orderStatus: orderStatus.PAID,
+      canReview: true
     };
 
     const order = await orderModel.updateOne(

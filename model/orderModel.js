@@ -82,6 +82,10 @@ const orderSchema = new mongoose.Schema(
     paymentIntentId: {
       type: String,
     },
+    canReview: {
+      type: Boolean,
+      default: false
+    },
     currency: {
       type: String,
       default: currency.USD,

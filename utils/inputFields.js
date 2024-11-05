@@ -56,6 +56,7 @@ const categoryField = ["image", "name"];
 const verifyOTPField = ["otp", "email"];
 
 const wishListField = ["productId"];
+const reviewFieldId = ["productId", "comment"];
 
 export {
     registerField,
@@ -72,5 +73,6 @@ export {
     uploadField,
     heroField,
     categoryField,
-    deliveryField
+    deliveryField,
+    reviewFieldId
 };
