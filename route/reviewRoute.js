@@ -1,13 +1,16 @@
 import express from "express";
-import { jwtVerify } from "../middleware/jwtAuthentication";
-import { checkUser } from "../middleware/checkUser";
-import { superAdminRoleCheck } from "../middleware/checkRole";
+import { jwtVerify } from "../middleware/jwtAuthentication.js";
+import { checkUser } from "../middleware/checkUser.js";
+import { superAdminRoleCheck } from "../middleware/checkRole.js";
+import { updateReview, createReview, getAllApprovedReviews, getAllReviews } from "../controllers/reviewController.js";
 const router = express.Router();
 
 router
   .route("/")
-  .post(jwtVerify, checkUser)
-  .get()
-  .delete(jwtVerify, checkUser, superAdminRoleCheck)
+  .post(jwtVerify, checkUser, createReview)
+  .get(getAllApprovedReviews)
+  .put(jwtVerify, checkUser, superAdminRoleCheck, updateReview)
 
+
+router.route('/all').get(jwtVerify, checkUser, superAdminRoleCheck, getAllReviews)
 export default router;

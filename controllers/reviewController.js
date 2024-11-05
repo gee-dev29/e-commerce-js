@@ -1,6 +1,6 @@
-import reviewModel from "../model/reviewModel";
-import { entity } from "../utils/entity";
-import { reviewFieldId } from "../utils/inputFields";
+import { entity } from "../utils/entity.js";
+import { reviewFieldId } from "../utils/inputFields.js";
+import { reviewModel } from '../model/reviewModel.js';
 
 export const createReview = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ export const createReview = async (req, res) => {
         message: checkFields.message,
       });
     }
-
+    const creatorId = req.id
     const newReview = new reviewModel({
       creatorId: creatorId,
       productId: productId,
@@ -26,7 +26,7 @@ export const createReview = async (req, res) => {
   }
 };
 
-export const approveReview = async (req, res) => {
+export const updateReview = async (req, res) => {
   try {
     const { id, status } = req.body;
     const payload = {
@@ -45,6 +45,18 @@ export const getAllReviews = async (req, res) => {
   try {
     const { skip, limit } = req.query;
     const reviews = await entity.getPaginatedData(reviewModel, {}, skip, limit);
+    return res.status(200).json({ payload: reviews });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+export const getAllApprovedReviews = async (req, res) => {
+  try {
+    const { skip, limit } = req.query;
+    const filter = {
+      isApproved: true,
+    };
+    const reviews = await entity.getPaginatedData(reviewModel, filter, skip, limit);
     return res.status(200).json({ payload: reviews });
   } catch (error) {
     return res.status(500).json({ message: error.message });

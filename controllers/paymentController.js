@@ -38,7 +38,7 @@ export const getStripeWebhook = async (req, res) => {
       const payload = {
         paymentIntentId: checkout.payment_intent,
       };
-     const order = await entity.updateDataById(orderId, payload, orderModel);
+      const order = await entity.updateDataById(orderId, payload, orderModel);
       break;
     case "payment_intent.succeeded":
       const payment = event.data.object;
@@ -48,7 +48,7 @@ export const getStripeWebhook = async (req, res) => {
       const update = {
         orderStatus: orderStatus.PAID,
       };
-       await orderModel.findOneAndUpdate(filter, update, { new: true });
+      await orderModel.findOneAndUpdate(filter, update, { new: true });
       const newPayment = new paymentModel({
         creatorId: req.id,
         amount: order?.totalAmount,
@@ -88,21 +88,12 @@ export const createStripeSession = async (req, res) => {
       quantity: item.quantity,
     }));
     let order;
-    if (orderData._id) {
-      order = orderData;
-    } else {
-      if (orderData.totalAmount > 0) {
-        order = await entity.saveOrder(
-          orderData,
-          req.id,
-          shippingId,
-          orderModel
-        );
-        const filter = {
-          creatorId: req.id,
-        };
-        await cartModel.deleteOne(filter);
-      }
+    if (orderData.totalAmount > 0) {
+      order = await entity.saveOrder(orderData, req.id, shippingId, orderModel);
+      const filter = {
+        creatorId: req.id,
+      };
+      await cartModel.deleteOne(filter);
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -117,15 +108,15 @@ export const createStripeSession = async (req, res) => {
       cancel_url:
         "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
     });
-    const emailHtml = receiptEmailTemplate(
-      order.orderTrackingNumber,
-      new Date().toISOString(),
-      order.country,
-      order.state,
-      order.city,
-      order.totalAmount,
-      products
-    );
+    // const emailHtml = receiptEmailTemplate(
+    //   order.orderTrackingNumber,
+    //   new Date().toISOString(),
+    //   order.country,
+    //   order.state,
+    //   order.city,
+    //   order.totalAmount,
+    //   products
+    // );
     // await sendEmail(order.email, "Your Order Receipt", emailHtml);
 
     res.json({
@@ -228,7 +219,7 @@ export const captureOrder = async (req, res) => {
     }
     const updatePayload = {
       orderStatus: orderStatus.PAID,
-      canReview: true
+      canReview: true,
     };
 
     const order = await orderModel.updateOne(

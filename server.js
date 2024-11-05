@@ -16,6 +16,7 @@ import deliveryRoute from "./route/deliveryRoute.js";
 import stripeRoute from "./route/stripeRoute.js";
 import colorsRoute from "./route/colorsRoute.js";
 import countriesRoute from "./route/countryRoute.js";
+import reviewRoute from "./route/reviewRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 import passport from "passport";
 import cookieSession from "cookie-session";
@@ -86,6 +87,7 @@ app.use("/api/v1/delivery", deliveryRoute);
 app.use("/api/v1/countries", countriesRoute);
 app.use("/api/v1/stripe", stripeRoute);
 app.use("/api/v1/paypal", paypalRoute);
+app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/ping", (req, res) => {
   res.send("welcome to kncloset");
 });
