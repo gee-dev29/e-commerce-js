@@ -4,7 +4,7 @@ import { reviewModel } from '../model/reviewModel.js';
 
 export const createReview = async (req, res) => {
   try {
-    const { productId, comment } = req.body;
+    const { productId, rating, comment } = req.body;
     const checkFields = entity.checkMissingFieldsInput(reviewFieldId, req.body);
     if (!checkFields.result) {
       return res.status(400).json({
@@ -15,6 +15,7 @@ export const createReview = async (req, res) => {
     const newReview = new reviewModel({
       creatorId: creatorId,
       productId: productId,
+      rating: rating,
       comment: comment,
     });
     await newReview.save();

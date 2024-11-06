@@ -419,3 +419,124 @@ export const sendRegistrationEmails = (email, fullName) => {
   sendEmail(emailMessage);
   sendEmail(otpMessage);
 };
+
+export const userAnalytics = async (req, res) => {
+  try {
+    const totalUsers = await userModel.countDocuments();
+    const totalOrders = await orderModel.countDocuments();
+    const totalSales = await orderModel.aggregate([
+      { $match: { orderStatus: orderStatus.PAID } },
+      { $group: { _id: null, total: { $sum: "$totalAmount" } } },
+    ]);
+
+    const totalSalesAmount = totalSales.length > 0 ? totalSales[0].total : 0;
+
+    return res.status(200).json({
+      totalUsers,
+      totalOrders,
+      totalSales: totalSalesAmount,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Helper function to map numerical month (e.g., "01", "02") to month names
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+// Helper function to format month to "Month Year" format
+const formatMonthYear = (year, month) => `${monthNames[parseInt(month, 10) - 1]} ${year}`;
+
+// Helper function to generate the initial summary template
+const generateInitialMonthSummary = () => {
+  return monthNames.map((monthName) => ({
+    month: monthName,
+    pendingOrders: 0,
+    paidOrders: 0,
+  }));
+};
+
+// Aggregation to get order summary per month for pending and paid orders
+const getMonthlyOrderSummary = async () => {
+  try {
+    // Aggregating orders based on month and order status
+    const result = await orderModel.aggregate([
+      // Format the createdAt field to "Year-Month" for grouping
+      {
+        $project: {
+          yearMonth: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          orderStatus: 1,
+        },
+      },
+      // Group by year-month and order status to count the number of orders per status
+      {
+        $group: {
+          _id: { yearMonth: "$yearMonth", status: "$orderStatus" },
+          count: { $sum: 1 },
+        },
+      },
+      // Re-group by year-month and accumulate the counts for pending and paid orders
+      {
+        $group: {
+          _id: "$_id.yearMonth",
+          pendingOrders: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.status", orderStatus.AWAITING_PAYMENT] }, "$count", 0],
+            },
+          },
+          paidOrders: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.status", orderStatus.PAID] }, "$count", 0],
+            },
+          },
+        },
+      },
+      // Sort by yearMonth (ascending, so we get January to December)
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    // Format the result into "Month Year" format and combine with the initial summary
+    const summary = generateInitialMonthSummary();
+
+    result.forEach(({ _id, pendingOrders, paidOrders }) => {
+      const [year, month] = _id.split("-"); // Split year and month
+      const formattedMonthYear = formatMonthYear(year, month);
+
+      // Find the month in the summary and update the counts
+      const monthIndex = monthNames.indexOf(formattedMonthYear.split(" ")[0]);
+      if (monthIndex !== -1) {
+        summary[monthIndex] = {
+          month: formattedMonthYear,
+          pendingOrders,
+          paidOrders,
+        };
+      }
+    });
+
+    return summary;
+  } catch (error) {
+    console.error("Error fetching monthly order summary:", error);
+    throw new Error("Failed to fetch monthly order summary");
+  }
+};
+
+// Controller to handle the request and send the response
+export const getPendingVsPaidSummary = async (req, res) => {
+  try {
+    const monthlySummary = await getMonthlyOrderSummary();
+    return res.status(200).json({
+      message: "Monthly order summary fetched successfully",
+      data: monthlySummary,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching the monthly order summary",
+      error: error.message,
+    });
+  }
+};

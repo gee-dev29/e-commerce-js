@@ -1,6 +1,8 @@
 import {
   deleteUser,
+  getPendingVsPaidSummary,
   toggleSuspendUser,
+  userAnalytics,
   viewAllUsers,
   viewSingleUser,
 } from "../controllers/userController.js";
@@ -22,5 +24,13 @@ router
 router
   .route("/:id")
   .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser);
+
+router
+  .route("/analytics")
+  .get(jwtVerify, checkUser, superAdminRoleCheck, userAnalytics);
+
+router
+  .route("/sales-analytics")
+  .get(jwtVerify, checkUser, superAdminRoleCheck, getPendingVsPaidSummary);
 
 export default router;

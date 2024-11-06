@@ -56,7 +56,7 @@ const categoryField = ["image", "name"];
 const verifyOTPField = ["otp", "email"];
 
 const wishListField = ["productId"];
-const reviewFieldId = ["productId", "comment"];
+const reviewFieldId = ["productId", "comment", "rating"];
 
 export {
     registerField,
