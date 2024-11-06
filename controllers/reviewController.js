@@ -44,8 +44,8 @@ export const updateReview = async (req, res) => {
 
 export const getAllReviews = async (req, res) => {
   try {
-    const { skip, limit } = req.query;
-    const reviews = await entity.getPaginatedData(reviewModel, {}, skip, limit);
+    const { status } = req.query;
+    const reviews = await entity.getAllFilteredData(reviewModel, {isApproved: status});
     return res.status(200).json({ payload: reviews });
   } catch (error) {
     return res.status(500).json({ message: error.message });

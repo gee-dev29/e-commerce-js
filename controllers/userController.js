@@ -15,6 +15,8 @@ import { sendEmail } from "../emailService/email.js";
 import { messages } from "../message/messageEnum.js";
 import { Role } from "../enums/role.js";
 import { isValidObjectId } from "mongoose";
+import { orderModel } from "../model/orderModel.js";
+import { orderStatus } from "../enums/orderEnum.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -425,7 +427,13 @@ export const userAnalytics = async (req, res) => {
     const totalUsers = await userModel.countDocuments();
     const totalOrders = await orderModel.countDocuments();
     const totalSales = await orderModel.aggregate([
-      { $match: { orderStatus: orderStatus.PAID } },
+      {
+        $match: {
+          orderStatus: {
+            $in: [orderStatus.PAID, orderStatus.DELIVERED, orderStatus.SHIPPED],
+          },
+        },
+      },
       { $group: { _id: null, total: { $sum: "$totalAmount" } } },
     ]);
 
@@ -443,12 +451,23 @@ export const userAnalytics = async (req, res) => {
 
 // Helper function to map numerical month (e.g., "01", "02") to month names
 const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 // Helper function to format month to "Month Year" format
-const formatMonthYear = (year, month) => `${monthNames[parseInt(month, 10) - 1]} ${year}`;
+const formatMonthYear = (year, month) =>
+  `${monthNames[parseInt(month, 10) - 1]} ${year}`;
 
 // Helper function to generate the initial summary template
 const generateInitialMonthSummary = () => {
@@ -484,12 +503,29 @@ const getMonthlyOrderSummary = async () => {
           _id: "$_id.yearMonth",
           pendingOrders: {
             $sum: {
-              $cond: [{ $eq: ["$_id.status", orderStatus.AWAITING_PAYMENT] }, "$count", 0],
+              $cond: [
+                { $eq: ["$_id.status", orderStatus.AWAITING_PAYMENT] },
+                "$count",
+                0,
+              ],
             },
           },
           paidOrders: {
             $sum: {
-              $cond: [{ $eq: ["$_id.status", orderStatus.PAID] }, "$count", 0],
+              $cond: [
+                {
+                  $in: [
+                    "$_id.status",
+                    [
+                      orderStatus.PAID,
+                      orderStatus.SHIPPED,
+                      orderStatus.DELIVERED,
+                    ],
+                  ],
+                },
+                "$count",
+                0,
+              ],
             },
           },
         },

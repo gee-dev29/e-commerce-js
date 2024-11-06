@@ -22,15 +22,16 @@ router
   .get(jwtVerify, checkUser, superAdminRoleCheck, viewAllUsers);
 
 router
-  .route("/:id")
-  .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser);
-
-router
   .route("/analytics")
   .get(jwtVerify, checkUser, superAdminRoleCheck, userAnalytics);
 
 router
   .route("/sales-analytics")
   .get(jwtVerify, checkUser, superAdminRoleCheck, getPendingVsPaidSummary);
+
+
+// router
+// .route("/:id")
+// .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser);
 
 export default router;
