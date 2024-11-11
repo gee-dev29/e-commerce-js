@@ -3,6 +3,8 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getProductByCategory,
+  getProductBySubcategory,
   getProductsColors,
   getProductsSortedByPrice,
   searchProduct,
@@ -22,6 +24,8 @@ router
 router.route("/search").get(searchProduct);
 router.route("/colors").get(getProductsColors);
 router.route("/sort").get(getProductsSortedByPrice);
+router.route("/categories").get(getProductByCategory);
+router.route("/subcategories").get(getProductBySubcategory);
 
 router.route("/detail/:productId").get(checkProduct, viewProduct);
 

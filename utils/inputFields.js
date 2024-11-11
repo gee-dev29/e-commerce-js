@@ -15,6 +15,7 @@ const productField = [
     "productDescription",
     "productPrice",
     "productCategory",
+    "productSubCategory",
     "productColors",
     "productStock",
     "productSize",

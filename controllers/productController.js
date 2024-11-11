@@ -14,6 +14,7 @@ export const createProduct = async (req, res) => {
       productPrice,
       productDiscount,
       productCategory,
+      productSubCategory,
       productColors,
       productSize,
       productStock,
@@ -64,6 +65,7 @@ export const createProduct = async (req, res) => {
       productDiscount: productDiscount,
       productShortDescription: productShortDescription,
       productCategory: productCategory,
+      productSubCategory: productSubCategory,
       productColors: productColors,
       productSize: productSize,
       productStock: productStock,
@@ -127,6 +129,17 @@ export const getProductByCategory = async (req, res) => {
   }
 };
 
+export const getProductBySubcategory = async (req, res) => {
+  try {
+    const data = await entity.getAllFilteredData(productModel, {
+      productSubCategory: req.body.productSubCategory,
+    });
+    return res.status(200).json({ payload: data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getProductsSortedByPrice = async (req, res) => {
   try {
     const { sortOrder, skip, limit } = req.query;
@@ -147,7 +160,7 @@ export const getProductsSortedByPrice = async (req, res) => {
 };
 
 export const searchProduct = async (req, res) => {
-  const { minPrice, maxPrice, category, colors, sizes, title, limit, skip } =
+  const { minPrice, maxPrice, category, subcategory, colors, sizes, title, limit, skip } =
     req.query;
 
   const filter = {};
@@ -166,6 +179,10 @@ export const searchProduct = async (req, res) => {
   // Category filter
   if (category) {
     filter.productCategory = category; // Exact match
+  }
+  // Category filter
+  if (subcategory) {
+    filter.productSubCategory = subcategory; // Exact match
   }
 
   if(title){

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+const subcategorySchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -9,7 +9,6 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    
 });
 
-export const categoryModel = mongoose.model("category", categorySchema);
+export const subCategoryModel = mongoose.model("subcategory", subcategorySchema);
