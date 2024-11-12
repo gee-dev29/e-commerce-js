@@ -57,7 +57,27 @@ export const getAllReviews = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
 export const getAllApprovedReviews = async (req, res) => {
+  try {
+    const { skip, limit } = req.query;
+    const filter = {
+      isApproved: true,
+    };
+    const reviews = await entity.getPaginatedData(
+      reviewModel,
+      filter,
+      skip,
+      limit
+    );
+    return res.status(200).json({ payload: reviews });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getUserProductReviews = async (req, res) => {
   try {
     const { skip, limit } = req.query;
     const filter = {

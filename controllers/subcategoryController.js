@@ -34,7 +34,7 @@ export const addSubCategory = async (req, res) => {
                     message: "subcategory updated successfully",
                 });
             }
-        }
+    }
         const imageData = await uploadDocument(req.body.image, "");
         const category = new subCategoryModel({
             name: req.body.name,

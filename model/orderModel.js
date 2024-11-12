@@ -39,6 +39,10 @@ const orderSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        canReview: {
+          type: Boolean,
+          default: false
+        }
       },
     ],
 
@@ -68,24 +72,30 @@ const orderSchema = new mongoose.Schema(
       ],
       default: orderStatus.AWAITING_PAYMENT,
     },
+
     deliveryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "delivery",
     },
+
     orderNote: {
       type: String,
     },
+
     shippingId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "shipping",
     },
+
     paymentIntentId: {
       type: String,
     },
+
     canReview: {
       type: Boolean,
-      default: false
+      default: false,
     },
+
     currency: {
       type: String,
       default: currency.USD,

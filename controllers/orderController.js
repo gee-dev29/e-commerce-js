@@ -201,10 +201,28 @@ export const getSingleOrder = async (req, res) => {
 export const processOrder = async (req, res) => {
   try {
     const { _id, note, orderStatus } = req.body;
-    const payload = {
-      orderStatus: orderStatus,
-    };
-    await entity.updateDataById(_id, payload, orderModel);
+    if (orderStatus !== "delivered") {
+      const payload = {
+        orderStatus: orderStatus,
+      };
+      await entity.updateDataById(_id, payload, orderModel);
+    }
+    const deliveredOrders = await orderModel.find({
+      id: _id,
+      orderStatus: "delivered",
+    });
+
+    for (const order of deliveredOrders) {
+      const updatedOrderedItems = order.orderedItems.map((item) => {
+        // Set canReview to true for each product in orderedItems
+        item.canReview = true;
+        return item;
+      });
+
+      // Step 3: Save the updated order
+      order.orderedItems = updatedOrderedItems;
+      await order.save();
+    }
     return res.status(200).json({ message: "order process successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
