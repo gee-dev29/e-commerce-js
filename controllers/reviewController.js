@@ -87,7 +87,12 @@ export const getAllReviews = async (req, res) => {
       };
     }
 
-    const reviews = await entity.getDataWithMultiplePopulate(reviewModel, filter, ['creatorId', 'productId'], ['user', 'product'] );
+    const reviews = await entity.getDataWithMultiplePopulate(
+      reviewModel,
+      filter,
+      ["creatorId", "productId"],
+      ["user", "product"]
+    );
     return res.status(200).json({ payload: reviews });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -134,4 +139,25 @@ export const getUserProductReviews = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+};
+
+export const getProductReviews = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const filter = {
+      productId: id,
+      isApproved: true,
+    };
+
+    const reviews = entity.getDataWithPopulate(
+      reviewModel,
+      filter,
+      "creatorId",
+      "user"
+    );
+
+    return res.status(200).json({
+      payload: reviews,
+    });
+  } catch (error) {}
 };
