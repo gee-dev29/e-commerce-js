@@ -82,7 +82,7 @@ export const createStripeSession = async (req, res) => {
         },
         unit_amount: Math.round(
           (item.product.productPrice -
-            item.product.productPrice * (item.product?.productDiscount / 100) +
+            (item.product.productPrice * (item.product?.productDiscount / 100)) +
             shipping.shippingRate) *
             100
         ),

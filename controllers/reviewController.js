@@ -88,17 +88,24 @@ export const getAllApprovedReviews = async (req, res) => {
 
 export const getUserProductReviews = async (req, res) => {
   try {
-    const { skip, limit } = req.query;
-    const filter = {
-      isApproved: true,
+   
+    const userId = req.id;  
+    const filter = { 
+      creatorId: userId,
+      "orderedItems.canReview": true, 
     };
-    const reviews = await entity.getPaginatedData(
-      reviewModel,
+    const { skip, limit } = req.query;
+
+    const data = await entity.getPaginatedDataWithMultiplePopulate(
+      orderModel,
       filter,
       skip,
-      limit
+      limit,
+      ["orderedItems.product"],
+      ["product"]
     );
-    return res.status(200).json({ payload: reviews });
+
+    return res.status(200).json({ payload: data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
