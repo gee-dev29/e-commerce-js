@@ -152,7 +152,7 @@ export const getProductReviews = async (req, res) => {
     const reviews = await reviewModel.find(filter).populate({
       path: "creatorId",
       model: "user",
-      select: "firstName  lastname",
+      select: "firstName  lastName",
     });
 
     return res.status(200).json({
