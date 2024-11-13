@@ -149,12 +149,11 @@ export const getProductReviews = async (req, res) => {
       isApproved: true,
     };
 
-    const reviews = entity.getDataWithPopulate(
-      reviewModel,
-      filter,
-      "creatorId",
-      "user"
-    );
+    const reviews = await reviewModel.find(filter).populate({
+      path: "creatorId",
+      model: "user",
+      select: "firstName  lastname",
+    });
 
     return res.status(200).json({
       payload: reviews,
