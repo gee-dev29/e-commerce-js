@@ -1,26 +1,36 @@
 import { entity } from "../utils/entity.js";
 import { reviewFieldId } from "../utils/inputFields.js";
 import { reviewModel } from "../model/reviewModel.js";
+import { orderModel } from "../model/orderModel.js";
 
 export const createReview = async (req, res) => {
   try {
-    const { productId, rating, comment } = req.body;
+    const { productId, rating, orderId, comment } = req.body;
     const checkFields = entity.checkMissingFieldsInput(reviewFieldId, req.body);
+    
     if (!checkFields.result) {
       return res.status(400).json({
         message: checkFields.message,
       });
     }
-    const creatorId = req.id;
-    const newReview = new reviewModel({
-      creatorId: creatorId,
-      productId: productId,
-      rating: rating,
-      comment: comment,
-    });
-    await newReview.save();
-    return res.status(201).json({
-      message: "review created successfully",
+    const order = orderModel.findById(orderId);
+
+    if (order) {
+      const creatorId = req.id;
+      const newReview = new reviewModel({
+        creatorId: creatorId,
+        productId: productId,
+        rating: rating,
+        comment: comment,
+      });
+      
+      await newReview.save();
+      return res.status(201).json({
+        message: "review created successfully",
+      });
+    }
+    return res.status(404).json({
+      message: "order not found",
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -57,7 +67,6 @@ export const getAllReviews = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getAllApprovedReviews = async (req, res) => {
   try {

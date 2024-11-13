@@ -206,24 +206,31 @@ export const processOrder = async (req, res) => {
         orderStatus: orderStatus,
       };
       await entity.updateDataById(_id, payload, orderModel);
+      return res.status(200).json({ message: "order process successfully" });
     }
-    const deliveredOrders = await orderModel.find({
-      id: _id,
-      orderStatus: "delivered",
+    // If order status is 'delivered', we need to update 'canReview' in orderedItems
+    const order = await orderModel.findOne({
+      _id: _id,
     });
 
-    for (const order of deliveredOrders) {
-      const updatedOrderedItems = order.orderedItems.map((item) => {
-        // Set canReview to true for each product in orderedItems
-        item.canReview = true;
-        return item;
-      });
-
-      // Step 3: Save the updated order
-      order.orderedItems = updatedOrderedItems;
-      await order.save();
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found or not delivered" });
     }
-    return res.status(200).json({ message: "order process successfully" });
+
+    order.orderedItems.forEach((item) => {
+      item.canReview = true;
+    });
+    order.orderStatus = 'delivered'
+    order.canReview = true
+    await order.save();
+
+    return res
+      .status(200)
+      .json({
+        message: "Order processed successfully and products marked for review",
+      });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

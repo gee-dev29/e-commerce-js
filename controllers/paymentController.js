@@ -38,7 +38,7 @@ export const getStripeWebhook = async (req, res) => {
       const payload = {
         paymentIntentId: checkout.payment_intent,
       };
-      const order = await entity.updateDataById(orderId, payload, orderModel);
+      await entity.updateDataById(orderId, payload, orderModel);
       break;
     case "payment_intent.succeeded":
       const payment = event.data.object;
@@ -48,10 +48,13 @@ export const getStripeWebhook = async (req, res) => {
       const update = {
         orderStatus: orderStatus.PAID,
       };
-      await orderModel.findOneAndUpdate(filter, update, { new: true });
+      const myorder = await orderModel.findOneAndUpdate(filter, update, {
+        new: true,
+      });
+
       const newPayment = new paymentModel({
         creatorId: req.id,
-        amount: order?.totalAmount,
+        amount: myorder?.totalAmount,
         paymentMethod: PaymentMethod.STRIPE,
         paymentRef: payment.id,
         paymentStatus: orderStatus.PAID,
