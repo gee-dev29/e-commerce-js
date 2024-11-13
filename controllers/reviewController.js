@@ -7,30 +7,45 @@ export const createReview = async (req, res) => {
   try {
     const { productId, rating, orderId, comment } = req.body;
     const checkFields = entity.checkMissingFieldsInput(reviewFieldId, req.body);
-    
+
     if (!checkFields.result) {
       return res.status(400).json({
         message: checkFields.message,
       });
     }
-    const order = orderModel.findById(orderId);
 
-    if (order) {
-      const creatorId = req.id;
-      const newReview = new reviewModel({
-        creatorId: creatorId,
-        productId: productId,
-        rating: rating,
-        comment: comment,
-      });
-      
-      await newReview.save();
-      return res.status(201).json({
-        message: "review created successfully",
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
       });
     }
-    return res.status(404).json({
-      message: "order not found",
+
+    const orderedItem = order.orderedItems.find(
+      (item) => item.product.toString() === productId && item.canReview === true
+    );
+
+    if (!orderedItem) {
+      return res.status(400).json({
+        message: "This product cannot be reviewed or is not part of the order",
+      });
+    }
+
+    const creatorId = req.id;
+    const newReview = new reviewModel({
+      creatorId: creatorId,
+      productId: productId,
+      rating: rating,
+      comment: comment,
+    });
+
+    await newReview.save();
+    orderedItem.canReview = false;
+    await order.save();
+
+    return res.status(201).json({
+      message: "Review created successfully",
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -61,7 +76,18 @@ export const getAllReviews = async (req, res) => {
         isApproved: status,
       };
     }
-    const reviews = await entity.getAllFilteredData(reviewModel, filter);
+    if (status == "pending") {
+      filter = {
+        isApproved: false,
+      };
+    }
+    if (status == "accepted") {
+      filter = {
+        isApproved: true,
+      };
+    }
+
+    const reviews = await entity.getDataWithMultiplePopulate(reviewModel, filter, ['creatorId', 'productId'], ['user', 'product'] );
     return res.status(200).json({ payload: reviews });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -88,11 +114,10 @@ export const getAllApprovedReviews = async (req, res) => {
 
 export const getUserProductReviews = async (req, res) => {
   try {
-   
-    const userId = req.id;  
-    const filter = { 
+    const userId = req.id;
+    const filter = {
       creatorId: userId,
-      "orderedItems.canReview": true, 
+      "orderedItems.canReview": true,
     };
     const { skip, limit } = req.query;
 

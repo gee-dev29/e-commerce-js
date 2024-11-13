@@ -51,16 +51,17 @@ export const getStripeWebhook = async (req, res) => {
       const myorder = await orderModel.findOneAndUpdate(filter, update, {
         new: true,
       });
-
-      const newPayment = new paymentModel({
-        creatorId: req.id,
-        amount: myorder?.totalAmount,
-        paymentMethod: PaymentMethod.STRIPE,
-        paymentRef: payment.id,
-        paymentStatus: orderStatus.PAID,
-      });
-      await newPayment.save();
-      break;
+      if (myorder) {
+        const newPayment = new paymentModel({
+          creatorId: req.id,
+          amount: myorder?.totalAmount,
+          paymentMethod: PaymentMethod.STRIPE,
+          paymentRef: payment.id,
+          paymentStatus: orderStatus.PAID,
+        });
+        await newPayment.save();
+        break;
+      }
     default:
   }
 
@@ -82,7 +83,7 @@ export const createStripeSession = async (req, res) => {
         },
         unit_amount: Math.round(
           (item.product.productPrice -
-            (item.product.productPrice * (item.product?.productDiscount / 100)) +
+            item.product.productPrice * (item.product?.productDiscount / 100) +
             shipping.shippingRate) *
             100
         ),
