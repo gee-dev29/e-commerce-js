@@ -144,7 +144,7 @@ export const failedGoogleLogin = async (req, res) => {
 
 export const googleLogout = async (req, res) => {
     req.logout();
-    res.redirect("https://ecommerce-frontend-pi-cyan.vercel.app/login");
+    res.redirect("https://knclosets.com/login");
 };
 
 export const loginAdmin = async (req, res) => {

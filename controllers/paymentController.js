@@ -108,9 +108,9 @@ export const createStripeSession = async (req, res) => {
         user_id: req.id.toString(),
       },
       mode: "payment",
-      success_url: `https://ecommerce-frontend-pi-cyan.vercel.app/success/${order._id}`,
+      success_url: `https://knclosets.com/success/${order._id}`,
       cancel_url:
-        "https://ecommerce-frontend-pi-cyan.vercel.app/checkout-summary",
+        "https://knclosets.com/checkout-summary",
     });
     // const emailHtml = receiptEmailTemplate(
     //   order.orderTrackingNumber,

@@ -27,8 +27,8 @@ router.route("/reset-password").post(resetPassword);
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: 'https://ecommerce-frontend-pi-cyan.vercel.app',
-    failureRedirect: "https://ecommerce-frontend-pi-cyan.vercel.app/login",
+    successRedirect: 'https://knclosets.com',
+    failureRedirect: "https://knclosets.com/login",
   })
 ); 
 router.get("/google", passport.authenticate("google", ["profile", "email"]));

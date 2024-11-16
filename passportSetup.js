@@ -15,7 +15,7 @@ passport.use(
     },
      async function (request, accessToken, refreshToken, profile, done) {
       try {  
-        let data = profile?._json;
+        let data = profile && profile._json; 
         console.log(data);
         let user = await userModel.findOne({ email: data.email });
         

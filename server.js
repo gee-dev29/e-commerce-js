@@ -37,12 +37,14 @@ dotenv.config();
 app.use(
   cors({
     origin: [
-      "https://ecommerce-frontend-pi-cyan.vercel.app",
+      "https://superuser.knclosets.com",
+      "https://knclosets.com",
+      "https://admin.knclosets.com",
       "https://ecommerce-dashboard-hazel-kappa.vercel.app",
       "http://localhost:5173", "http://localhost:5174",
     ],
     methods: "GET,POST,PUT,DELETE ",
-    // credentials: true,
+    credentials: true,
   })
 );
 app.use(
