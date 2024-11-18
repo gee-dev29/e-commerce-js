@@ -1,3 +1,4 @@
+import moment from "moment";
 
 export const resetPasswordTemplate = (token, name) => {
   return `
@@ -11,7 +12,8 @@ export const resetPasswordTemplate = (token, name) => {
                 <tr>
                   <td>
                     <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Hi ${name},</p>
-                    <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Someone recently requested a password change for your KNcloset account. If this was you, you can set a new password here:</p><a href=${token} style="line-height:100%;text-decoration:none;display:block;max-width:100%;mso-padding-alt:0px;background-color:#007ee6;border-radius:4px;color:#fff;font-family:&#x27;Open Sans&#x27;, &#x27;Helvetica Neue&#x27;, Arial;font-size:15px;text-align:center;width:210px;padding:14px 7px 14px 7px" target="_blank"><span><!--[if mso]><i style="mso-font-width:350%;mso-text-raise:21" hidden>&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Reset password</span><span><!--[if mso]><i style="mso-font-width:350%" hidden>&#8202;&#8203;</i><![endif]--></span></a>
+                    <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Someone recently requested a password change for your KNcloset account. If this was you, you can set a new password here:</p><p style="font-size:26px;line-height:26px; text-align: center; margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040" >${token.otp}</p>
+                    <p style="text-align: center; font-size:15px;">Expires: ${moment(token.expiresIn).format('MMMM Do YYYY, h:mm a')} </p>
                     <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">If you don&#x27;t want to change your password or didn&#x27;t request this, just ignore and delete this message.</p>
                   </td>
                 </tr>
@@ -33,19 +35,19 @@ export const welcomeTemplate = (firstName, lastName) => {
               <td>
                 <img alt="KNcloset" height="80" width="80" src="https://knclosets.com/assets/logo-CwyzW5JF.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" width="170" />
                 <p style="font-size:16px;line-height:26px;margin:16px 0">Hi ${firstName} ${lastName},</p>
-                <p style="font-size:16px;line-height:26px;margin:16px 0">Welcome to KNcloset, your go-to destination for the latest fashion. Enjoy a seamless shopping experience with easy ordering, secure payments, and fast delivery right to your doorstep..</p>
+                <p style="font-size:16px;line-height:26px;margin:16px 0">Welcome to KNCLOSET, your go-to destination for the latest fashion. Enjoy a seamless shopping experience with easy ordering, secure payments, and fast delivery right to your doorstep..</p>
                 <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="text-align:center">
                   <tbody>
                     <tr>
                       <td>
-                        <a href="https://kncloset.com" style="line-height:100%;text-decoration:none;display:block;max-width:100%;mso-padding-alt:0px;background-color:#5F51E8;border-radius:3px;color:#fff;font-size:16px;text-align:center;padding:12px 12px 12px 12px" target="_blank">
+                        <a href="https://knclosets.com" style="line-height:100%;text-decoration:none;display:block;max-width:100%;mso-padding-alt:0px;background-color:#A10153;border-radius:3px;color:#fff;font-size:16px;text-align:center;padding:12px 12px 12px 12px" target="_blank">
                           Get started
                         </a>
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <p style="font-size:16px;line-height:26px;margin:16px 0">Best,<br />The KNcloset team</p>
+                <p style="font-size:16px;line-height:26px;margin:16px 0">Best,<br />The KNCLOSET team</p>
                 <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#cccccc;margin:20px 0" />
               </td>
             </tr>
