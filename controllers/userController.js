@@ -421,18 +421,6 @@ export const verifyOTP = async (req, res) => {
         isVerified: true,
       };
       await entity.updateDataById(_doc._id, updateData, userModel).then(() => {
-        const emailMessage = {
-          recieverEmail: email,
-          subject: "Account verification successful",
-          text: `Hello ${_doc.fullName}. ${messages.VERIFIED_OTP}`,
-        };
-        const payload = {
-          id: _doc._id,
-          role: _doc.role,
-        };
-        const token = entity.jwtSign(payload);
-        res.setHeader("Authorization", `Bearer ${token}`);
-        sendEmail(emailMessage);
         return res.status(200).json({
           message: "OTP verification successful",
         });

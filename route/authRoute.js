@@ -27,10 +27,10 @@ router.route("/reset-password").post(resetPassword);
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: 'https://knclosets.com',
+    successRedirect: "https://knclosets.com",
     failureRedirect: "https://knclosets.com/login",
   })
-); 
+);
 router.get("/google", passport.authenticate("google", ["profile", "email"]));
 
 router.route("/logout").get(googleLogout);
