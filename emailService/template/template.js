@@ -12,8 +12,12 @@ export const resetPasswordTemplate = (token, name) => {
                 <tr>
                   <td>
                     <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Hi ${name},</p>
-                    <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Someone recently requested a password change for your KNcloset account. If this was you, you can set a new password here:</p><p style="font-size:32px;line-height:26px; text-align: center; margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040" >${token.otp}</p>
-                    <p style="text-align: center; font-size:15px;">Expires: ${moment(token.expiresIn).format('MMMM Do YYYY, h:mm a')} </p>
+                    <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Someone recently requested a password change for your KNcloset account. If this was you, you can set a new password here:</p><p style="font-size:32px;line-height:26px; text-align: center; margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040" >${
+                      token.otp
+                    }</p>
+                    <p style="text-align: center; font-size:15px;">Expires: ${moment(
+                      token.expiresIn
+                    ).format("MMMM Do YYYY, h:mm a")} </p>
                     <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">If you don&#x27;t want to change your password or didn&#x27;t request this, just ignore and delete this message.</p>
                   </td>
                 </tr>
@@ -24,10 +28,10 @@ export const resetPasswordTemplate = (token, name) => {
       </tbody>
     </table><!--/$-->
   </body>
-`
-}
+`;
+};
 export const welcomeTemplate = (firstName, lastName) => {
-    return `
+  return `
       <body style="background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Oxygen-Sans,Ubuntu,Cantarell,&quot;Helvetica Neue&quot;,sans-serif">
         <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:37.5em;margin:0 auto;padding:20px 0 48px">
           <tbody>
@@ -57,13 +61,13 @@ export const welcomeTemplate = (firstName, lastName) => {
     `;
 };
 export const receiptEmailTemplate = (
-    orderNumber,
-    invoiceDate,
-    country,
-    state,
-    city,
-    totalAmount,
-    orderedItems
+  orderNumber,
+  invoiceDate,
+  country,
+  state,
+  city,
+  totalAmount,
+  orderedItems
 ) => `
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff;">
 <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width: 100%; margin: 0 auto; padding: 20px 0 48px; width: 660px;">
@@ -104,43 +108,48 @@ export const receiptEmailTemplate = (
     </table>
     <!-- Product List Section -->
     <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px; background-color: #fafafa; border-radius: 3px; padding: 15px;">
-      <tbody>
-        ${orderedItems
-            .map((product) => {
-                const calculatedPrice =
-                    (product.price || 0) * (product.quantity || 1);
-                const productImage =
-                    product.productImage && product.productImage.length > 0
-                        ? product.productImage[0]
-                        : "default-image-url.jpg";
-                return `
-          <tr>
-            <td style="width: 80px;">
-              <img src="${productImage}" alt="${
-                    product.productTitle || "Unknown Product"
-                }" style="width: 60px; height: 60px; border-radius: 8px;"/>
-            </td>
-            <td>
-              <p style="font-size: 14px; margin: 0; font-weight: bold;">${
-                  product.productTitle || "Unknown Product"
-              }</p>
-              <p style="font-size: 12px; margin: 0; color: #666666;">Size: ${
-                  product.size || "N/A"
-              } | Quantity: ${product.quantity || 0}</p>
-            </td>
-            <td align="right" style="font-size: 14px; font-weight: bold;">
-              product Amount: $${calculatedPrice.toFixed(2)}
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <hr style="border: none; border-top: 1px solid #eaeaea; margin: 10px 0;">
-            </td>
-          </tr>
-        `;
-            })
-            .join("")}
-      </tbody>
+  <tbody>
+  ${orderedItems
+    .map((orderItem) => {
+      const product = orderItem.product; // Access the product from the orderItem
+      const calculatedPrice =
+        (product.productPrice || 0) * (orderItem.quantity || 1);
+      const productImage =
+        product.productImages &&
+        product.productImages.length > 0 &&
+        product.productImages[0];
+
+      return `
+        <tr>
+          <td style="width: 80px;">
+            <img src="${productImage}" alt="${
+        product.productTitle || "Unknown Product"
+      }" style="width: 60px; height: 60px; border-radius: 8px;" />
+          </td>
+          <td>
+            <p style="font-size: 14px; margin: 0; font-weight: bold;">
+              ${product.productTitle || "Unknown Product"}
+            </p>
+            <p style="font-size: 12px; margin: 0; color: #666666;">
+              Color: ${orderItem.color || "N/A"} | Size: ${
+        orderItem.size || "N/A"
+      } | Quantity: ${orderItem.quantity || 0}
+            </p>
+          </td>
+          <td align="right" style="font-size: 14px; font-weight: bold;">
+            Product Amount: $${calculatedPrice.toFixed(2)}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <hr style="border: none; border-top: 1px solid #eaeaea; margin: 10px 0;">
+          </td>
+        </tr>
+      `;
+    })
+    .join("")}
+</tbody>
+
     </table>
     <!-- Total Amount Section -->
     <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin-top: 20px;">

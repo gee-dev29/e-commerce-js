@@ -109,8 +109,7 @@ export const createStripeSession = async (req, res) => {
       },
       mode: "payment",
       success_url: `https://knclosets.com/success/${order._id}`,
-      cancel_url:
-        "https://knclosets.com/checkout-summary",
+      cancel_url: "https://knclosets.com/checkout-summary",
     });
     // const emailHtml = receiptEmailTemplate(
     //   order.orderTrackingNumber,
@@ -199,7 +198,7 @@ export const createOrder = async (req, res) => {
 export const captureOrder = async (req, res) => {
   try {
     const { orderId } = req.body;
-
+    const user = req.user
     // Capture the PayPal order
     const request = new paypal.orders.OrdersCaptureRequest(orderId);
     request.requestBody({});
@@ -232,6 +231,14 @@ export const captureOrder = async (req, res) => {
       { new: true }
     );
 
+    const filter = { paymentIntentId: orderId };
+    const userOrder = await entity.getDataWithMultiplePopulate(
+      orderModel,
+      filter,
+      ["orderedItems.product", "shippingId", "deliveryId"],
+      ["product", "shipping", "delivery"]
+    );
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -239,16 +246,8 @@ export const captureOrder = async (req, res) => {
     const enrichedResponse = {
       ...captureResponse.result,
       orderDetails: {
-        fullName: order.fullName,
-        email: order.email,
-        shippingAddress: {
-          street: order.street,
-          city: order.city,
-          state: order.state,
-          zipCode: order.zipCode,
-          country: order.country,
-        },
-        phone: order.phone,
+        fullName: user.firstName + ' ' + user.lastName,
+        email: user.email,
       },
     };
 
@@ -256,6 +255,25 @@ export const captureOrder = async (req, res) => {
       message: "Payment captured successfully",
       paymentDetails: enrichedResponse,
     });
+    
+    const orderEmail = receiptEmailTemplate(
+      userOrder.data[0]?.orderTrackingNumber,
+      Date.now(),
+      userOrder.data[0]?.deliveryId?.country?.name,
+      userOrder.data[0]?.deliveryId?.state,
+      userOrder.data[0]?.deliveryId?.city,
+      userOrder.data[0]?.totalAmount,
+      userOrder.data[0]?.orderedItems,
+    );
+
+    const emailMessage = {
+      recieverEmail: order.email,
+      subject: "KNCLOSET Order Created Successfully",
+      text: orderEmail,
+    };
+
+    sendEmail(emailMessage)
+
   } catch (error) {
     res.status(500).json({
       message: "An error occurred while capturing the PayPal order.",
