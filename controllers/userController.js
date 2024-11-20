@@ -420,6 +420,7 @@ export const resetPassword = async (req, res) => {
     return res.status(400).json({
       message: "token is incorrect",
     });
+    
   } catch (error) {
     return res.status(500).json({
       message: error.message,
