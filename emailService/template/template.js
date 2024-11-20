@@ -243,7 +243,7 @@ export const orderUpdateTemplate = (name, orderNumber, orderStatus, note) => {
                      ${note}
                     </p>
                     <p
-                      style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040"
+                      style="font-size:12px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040;  font-style: italic;"
                     >
                       If you did not make this order or have any concerns,
                       please contact our support team immediately. Thank you for

@@ -204,30 +204,9 @@ export const getSingleOrder = async (req, res) => {
 export const processOrder = async (req, res) => {
   try {
     const { _id, note, orderStatus } = req.body;
-    if (orderStatus !== "delivered") {
-      const payload = {
-        orderStatus: orderStatus,
-      };
-      await entity.updateDataById(_id, payload, orderModel);
-      return res.status(200).json({ message: "order process successfully" });
-    }
-    // If order status is 'delivered', we need to update 'canReview' in orderedItems
     const order = await orderModel.findOne({
       _id: _id,
     });
-
-    if (!order) {
-      return res
-        .status(404)
-        .json({ message: "Order not found or not delivered" });
-    }
-
-    order.orderedItems.forEach((item) => {
-      item.canReview = true;
-    });
-    order.orderStatus = "delivered";
-    order.canReview = true;
-    await order.save();
 
     const orderEmail = orderUpdateTemplate(
       order.fullName,
@@ -242,6 +221,29 @@ export const processOrder = async (req, res) => {
     };
 
     sendEmail(emailService);
+
+    if (orderStatus !== "delivered") {
+      const payload = {
+        orderStatus: orderStatus,
+      };
+      await entity.updateDataById(_id, payload, orderModel);
+      return res.status(200).json({ message: "order process successfully" });
+    }
+    // If order status is 'delivered', we need to update 'canReview' in orderedItems
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found or not delivered" });
+    }
+
+    order.orderedItems.forEach((item) => {
+      item.canReview = true;
+    });
+    order.orderStatus = "delivered";
+    order.canReview = true;
+    await order.save();
+
 
     return res.status(200).json({
       message: "Order processed successfully and products marked for review",
