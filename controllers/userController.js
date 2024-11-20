@@ -17,6 +17,7 @@ import { Role } from "../enums/role.js";
 import { isValidObjectId } from "mongoose";
 import { orderModel } from "../model/orderModel.js";
 import { orderStatus } from "../enums/orderEnum.js";
+import { tokenModel } from "../model/tokenModel.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -340,15 +341,34 @@ export const updateUser = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-   
+
     const formattedEmail = email.toLowerCase();
     const user = await userModel.findOne({ email: formattedEmail });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     const otp = entity.generateOtp();
+    const otpUser = await entity.getAllFilteredData(tokenModel, {
+      email: formattedEmail,
+    })[0];
+
+    if (otpUser) {
+      const payload = {
+        tokem: otp,
+      };
+
+      await entity.updateDataById(otpUser._id, payload, tokenModel);
+    } else {
+      const userToken = new tokenModel({
+        email: formattedEmail,
+        token: otp,
+      });
+
+      await userToken.save();
+    }
+
     const forgotPasswordEmail = resetPasswordTemplate(
-        otp,
+      otp,
       `${user.firstName} ${user.lastName}`
     );
     const emailMessage = {
@@ -368,29 +388,38 @@ export const forgotPassword = async (req, res) => {
 // reset password
 export const resetPassword = async (req, res) => {
   try {
-    const user = req.user;
-    const { encryptedToken, newPassword } = req.body;
-    const token = decryptData(encryptedToken, process.env.ENCRYPTION_KEY);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const encryptedPassword = entity.encryptPassword(newPassword);
+    const { password, otp, email } = req.body;
+
+    const encryptedPassword = entity.encryptPassword(password);
+    const formattedEmail = email.toLowerCase();
     const payload = {
       password: encryptedPassword,
     };
+    const otpUser = await tokenModel.find({
+      email: formattedEmail,
+    })[0];
 
-    if (decoded) {
-      await entity.updateUserByEmail(user.email, payload, userModel);
+    const user = await userModel.find({
+      email: formattedEmail,
+    })[0];
+
+    if (otpUser.otp == otp && user.email == formattedEmail) {
+      await entity.updateUserByEmail(email, payload, userModel);
 
       const emailMessage = {
-        receiverEmail: user.email,
+        receiverEmail: email,
         subject: "Password Reset Successful",
         text: `Hello ${user.fullName}, your password has been successfully reset.`,
       };
 
-      await sendEmail(emailMessage);
+      sendEmail(emailMessage);
       return res.status(200).json({
         message: "password reset successful",
       });
     }
+    return res.status(400).json({
+      message: "token is incorrect",
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message,
