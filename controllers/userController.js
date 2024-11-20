@@ -390,26 +390,26 @@ export const resetPassword = async (req, res) => {
   try {
     const { password, otp, email } = req.body;
 
-    const encryptedPassword = entity.encryptPassword(password);
+    const encryptedPassword = await entity.encryptPassword(password);
     const formattedEmail = email.toLowerCase();
     const payload = {
       password: encryptedPassword,
     };
     const otpUser = await tokenModel.find({
       email: formattedEmail,
-    })[0];
+    });
 
     const user = await userModel.find({
       email: formattedEmail,
-    })[0];
+    });
 
-    if (otpUser.otp == otp && user.email == formattedEmail) {
-      await entity.updateUserByEmail(email, payload, userModel);
+    if (otpUser[0].token.otp == otp && user[0].email == formattedEmail) {
+      await entity.updateUserByEmail(formattedEmail, payload, userModel);
 
       const emailMessage = {
-        receiverEmail: email,
+        recieverEmail: email,
         subject: "Password Reset Successful",
-        text: `Hello ${user.fullName}, your password has been successfully reset.`,
+        text: `Hello ${user[0].firstName + " " + user[0].lastName}, your password has been successfully reset.`,
       };
 
       sendEmail(emailMessage);
