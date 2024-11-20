@@ -12,6 +12,7 @@ import { cartModel } from "../model/cartModel.js";
 import { sendEmail } from "../emailService/email.js";
 import { receiptEmailTemplate } from "../emailService/template/template.js";
 import { shippingModel } from "../model/shippingModel.js";
+import moment from "moment";
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -255,10 +256,10 @@ export const captureOrder = async (req, res) => {
       message: "Payment captured successfully",
       paymentDetails: enrichedResponse,
     });
-    
+
     const orderEmail = receiptEmailTemplate(
       userOrder.data[0]?.orderTrackingNumber,
-      Date.now(),
+      moment().format('YYYY-MM-DD hh:mm'),
       userOrder.data[0]?.deliveryId?.country?.name,
       userOrder.data[0]?.deliveryId?.state,
       userOrder.data[0]?.deliveryId?.city,
@@ -267,7 +268,7 @@ export const captureOrder = async (req, res) => {
     );
 
     const emailMessage = {
-      recieverEmail: order.email,
+      recieverEmail: user.email,
       subject: "KNCLOSET Order Created Successfully",
       text: orderEmail,
     };
