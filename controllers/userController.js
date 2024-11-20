@@ -409,7 +409,7 @@ export const resetPassword = async (req, res) => {
       const emailMessage = {
         recieverEmail: email,
         subject: "Password Reset Successful",
-        text: `Hello ${user[0].firstName + " " + user[0].lastName}, your password has been successfully reset.`,
+        text: `Hello ${user[0].firstName + " " + user[0].lastName}, your password reset was successfully.`,
       };
 
       sendEmail(emailMessage);
@@ -420,7 +420,7 @@ export const resetPassword = async (req, res) => {
     return res.status(400).json({
       message: "token is incorrect",
     });
-    
+
   } catch (error) {
     return res.status(500).json({
       message: error.message,
