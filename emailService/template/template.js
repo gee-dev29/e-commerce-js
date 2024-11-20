@@ -6,7 +6,7 @@ export const resetPasswordTemplate = (token, name) => {
     <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:37.5em;background-color:#ffffff;border:1px solid #f0f0f0;padding:45px">
       <tbody>
         <tr style="width:100%">
-          <td><img alt="KNcloset" height="80" width="80"src="https://knclosets.com/assets/logo-DVIgV1q8.webp" style="display:block;outline:none;border:none;text-decoration:none" width="40" />
+          <td><img alt="KNcloset" height="80" width="80"src="https://res.cloudinary.com/dzrrdkd7i/image/upload/v1732136066/zkc3dbnvdep7r5auonip.png" style="display:block;outline:none;border:none;text-decoration:none" width="40" />
             <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation">
               <tbody>
                 <tr>
@@ -37,7 +37,7 @@ export const welcomeTemplate = (firstName, lastName) => {
           <tbody>
             <tr style="width:100%">
               <td>
-                <img alt="KNcloset" height="80" width="80" src="https://knclosets.com/assets/logo-DVIgV1q8.webp" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" width="170" />
+                <img alt="KNcloset" height="80" width="80" src="https://res.cloudinary.com/dzrrdkd7i/image/upload/v1732136066/zkc3dbnvdep7r5auonip.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" width="170" />
                 <p style="font-size:16px;line-height:26px;margin:16px 0">Hi ${firstName} ${lastName},</p>
                 <p style="font-size:16px;line-height:26px;margin:16px 0">Welcome to KNCLOSET, your go-to destination for the latest fashion. Enjoy a seamless shopping experience with easy ordering, secure payments, and fast delivery right to your doorstep..</p>
                 <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="text-align:center">
@@ -80,7 +80,7 @@ export const receiptEmailTemplate = (
       <tbody>
         <tr>
           <td>
-            <img alt="KNcloset" height="80" width="80" src="https://knclosets.com/assets/logo-DVIgV1q8.webp" style="display: block; outline: none; border: none; text-decoration: none;" />
+            <img alt="KNcloset" height="80" width="80" src="https://res.cloudinary.com/dzrrdkd7i/image/upload/v1732136066/zkc3dbnvdep7r5auonip.png" style="display: block; outline: none; border: none; text-decoration: none;" />
           </td>
           <td align="right" style="font-size: 32px; line-height: 24px; margin: 16px 0; font-weight: 300; color: #888888;">
             Receipt
@@ -101,7 +101,7 @@ export const receiptEmailTemplate = (
             <p style="font-size: 12px;">${orderNumber}</p>
           </td>
           <td>
-            <p style="font-size: 10px; color: #666666;">SHIPPED TO</p>
+            <p style="font-size: 10px; color: #666666;">SHIP TO</p>
             <p style="font-size: 12px;">${city}, ${state}, ${country}</p>
           </td>
         </tr>

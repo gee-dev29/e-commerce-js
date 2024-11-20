@@ -269,7 +269,7 @@ export const captureOrder = async (req, res) => {
 
     const emailMessage = {
       recieverEmail: user.email,
-      subject: "KNCLOSET Order Created Successfully",
+      subject: "KNCLOSET Order Reciept",
       text: orderEmail,
     };
 
