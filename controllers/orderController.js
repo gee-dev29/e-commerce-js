@@ -3,7 +3,10 @@ import { productModel } from "../model/productModel.js";
 import { entity } from "../utils/entity.js";
 import { orderField } from "../utils/inputFields.js";
 import { currency } from "../utils/currency.js";
-import { receiptEmailTemplate } from "../emailService/template/template.js";
+import {
+  orderUpdateTemplate,
+  receiptEmailTemplate,
+} from "../emailService/template/template.js";
 import { sendEmail } from "../emailService/email.js";
 
 export const createOrderItem = async (req, res) => {
@@ -222,15 +225,27 @@ export const processOrder = async (req, res) => {
     order.orderedItems.forEach((item) => {
       item.canReview = true;
     });
-    order.orderStatus = 'delivered'
-    order.canReview = true
+    order.orderStatus = "delivered";
+    order.canReview = true;
     await order.save();
 
-    return res
-      .status(200)
-      .json({
-        message: "Order processed successfully and products marked for review",
-      });
+    const orderEmail = orderUpdateTemplate(
+      order.fullName,
+      order.orderTrackingNumber,
+      orderStatus,
+      note
+    );
+    const emailService = {
+      recieverEmail: order.email,
+      subject: "Your Order has been updated",
+      text: orderEmail,
+    };
+
+    sendEmail(emailService);
+
+    return res.status(200).json({
+      message: "Order processed successfully and products marked for review",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
