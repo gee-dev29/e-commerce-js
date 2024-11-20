@@ -71,6 +71,7 @@ export const receiptEmailTemplate = (
   orderedItems
 ) => `
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff;">
+
 <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width: 100%; margin: 0 auto; padding: 20px 0 48px; width: 660px;">
 <tbody>
 <tr>
