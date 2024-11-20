@@ -283,6 +283,7 @@ export const captureOrder = async (req, res) => {
   }
 };
 
+
 export const getPayments = async (req, res) => {
   try {
     const userId = req.id;
