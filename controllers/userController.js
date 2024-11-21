@@ -634,3 +634,18 @@ export const getPendingVsPaidSummary = async (req, res) => {
     });
   }
 };
+
+export const contactAdmin = async (req, res) => {
+  try {
+    const {email, message, name} = req.body;
+    
+
+
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching the monthly order summary",
+      error: error.message,
+    });
+  }
+};
