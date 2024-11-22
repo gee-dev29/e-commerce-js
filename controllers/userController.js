@@ -352,12 +352,13 @@ export const forgotPassword = async (req, res) => {
       email: formattedEmail,
     });
 
-    if (otpUser) {
+    if (otpUser[0]) {
       const payload = {
         token: otp,
       };
 
       await entity.updateDataById(otpUser[0]._id, payload, tokenModel);
+      
     } else {
       const userToken = new tokenModel({
         email: formattedEmail,

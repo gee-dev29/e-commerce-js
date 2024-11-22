@@ -23,7 +23,6 @@ router.route("/login").post(findUserByEmail, loginUser);
 router.get("/login/success", googleLogin);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
-
 router.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -32,12 +31,9 @@ router.get(
   })
 );
 router.get("/google", passport.authenticate("google", ["profile", "email"]));
-
 router.route("/logout").get(googleLogout);
 router.route("/admin").post(findUserByEmail, loginAdmin);
-router
-  .route("/registerAdmin")
-  .post(jwtVerify, checkUser, superAdminRoleCheck, registerAdmin);
+router.route("/registerAdmin").post(jwtVerify, checkUser, superAdminRoleCheck, registerAdmin);
 router.route("/verify-otp").post(findUserByEmail, verifyOTP);
 
 export default router;
