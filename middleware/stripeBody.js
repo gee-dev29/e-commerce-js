@@ -5,7 +5,6 @@ export const stripeData = (req, res, next) => {
   req.setEncoding("utf-8");
 
   req.on("data", (chunk) => {
-    console.log(chunk);
     
     dataStream += chunk; // Accumulate data chunks
   });
@@ -13,7 +12,6 @@ export const stripeData = (req, res, next) => {
   
   req.on("end", () => {
     req.rawBody = dataStream; // Store the raw body in req.rawBody
-    console.log(dataStream);
     next(); // Call the next middleware
   });
 

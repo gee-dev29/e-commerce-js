@@ -8,8 +8,9 @@ import {
   updateField,
   verifyOTPField,
 } from "../utils/inputFields.js";
-import resetPasswordTemplate, {
+import {
   welcomeTemplate,
+  resetPasswordTemplate,
 } from "../emailService/template/template.js";
 import { sendEmail } from "../emailService/email.js";
 import { messages } from "../message/messageEnum.js";
@@ -79,7 +80,6 @@ export const loginUser = async (req, res) => {
       });
     }
     const user = req.user;
-    console.log(req.password);
 
     if (!req.password) {
       return res.status(400).json({
@@ -112,7 +112,6 @@ export const loginUser = async (req, res) => {
 };
 
 export const googleLogin = async (req, res) => {
-  console.log(req);
   if (req.user) {
     const user = await userModel
       .findOne({ email: req.user.email })
@@ -358,7 +357,6 @@ export const forgotPassword = async (req, res) => {
       };
 
       await entity.updateDataById(otpUser[0]._id, payload, tokenModel);
-      
     } else {
       const userToken = new tokenModel({
         email: formattedEmail,
@@ -410,7 +408,9 @@ export const resetPassword = async (req, res) => {
       const emailMessage = {
         recieverEmail: email,
         subject: "Password Reset Successful",
-        text: `Hello ${user[0].firstName + " " + user[0].lastName}, your password reset was successfully.`,
+        text: `Hello ${
+          user[0].firstName + " " + user[0].lastName
+        }, your password reset was successfully.`,
       };
 
       sendEmail(emailMessage);
@@ -421,7 +421,6 @@ export const resetPassword = async (req, res) => {
     return res.status(400).json({
       message: "token is incorrect",
     });
-
   } catch (error) {
     return res.status(500).json({
       message: error.message,
@@ -442,7 +441,6 @@ export const verifyOTP = async (req, res) => {
       });
     }
     const _doc = req.user;
-    console.log(_doc);
     if (otp !== _doc.otp.otp) {
       return res.status(400).json({
         message: "Invalid OTP",
@@ -638,11 +636,7 @@ export const getPendingVsPaidSummary = async (req, res) => {
 
 export const contactAdmin = async (req, res) => {
   try {
-    const {email, message, name} = req.body;
-    
-
-
-
+    const { email, message, name } = req.body;
   } catch (error) {
     return res.status(500).json({
       message: "Error fetching the monthly order summary",

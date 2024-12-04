@@ -17,19 +17,18 @@ import deliveryRoute from "./route/deliveryRoute.js";
 import stripeRoute from "./route/stripeRoute.js";
 import colorsRoute from "./route/colorsRoute.js";
 import countriesRoute from "./route/countryRoute.js";
+import currencyRateRoute from "./route/currencyRoute.js";
 import reviewRoute from "./route/reviewRoute.js";
 import dbConnection from "./connection/dbConnection.js";
 import passport from "passport";
 import cookieSession from "cookie-session";
 import paypalRoute from "./route/paypalRoute.js";
 import * as passportMain from "./passportSetup.js";
-// import { swaggerApi } from "./swaggerDoc.js";
+import cron from "node-cron";
+import { fetchCurrencyRates } from "./controllers/countryController.js";
 
 const app = express();
 
-// const options = {
-//     swaggerOptions
-// }
 
 dotenv.config();
 
@@ -41,7 +40,8 @@ app.use(
       "https://knclosets.com",
       "https://admin.knclosets.com",
       "https://ecommerce-dashboard-hazel-kappa.vercel.app",
-      "http://localhost:5173", "http://localhost:5174",
+      "http://localhost:5173",
+      "http://localhost:5174",
     ],
     methods: "GET,POST,PUT,DELETE ",
     credentials: true,
@@ -92,9 +92,14 @@ app.use("/api/v1/countries", countriesRoute);
 app.use("/api/v1/stripe", stripeRoute);
 app.use("/api/v1/paypal", paypalRoute);
 app.use("/api/v1/review", reviewRoute);
+app.use("/api/v1/rate", currencyRateRoute);
 app.use("/api/v1/ping", (req, res) => {
   res.send("welcome to kncloset");
 });
+
+
+
+cron.schedule("0 0 * * *", fetchCurrencyRates);
 
 app.listen(process.env.PORT || 8920, () => {
   consola.success({

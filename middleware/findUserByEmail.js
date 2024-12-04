@@ -6,7 +6,6 @@ export const findUserByEmail = async (req, res, next) => {
         const { email } = req.body;
         
         const checkFields = entity.checkMissingFieldsInput(["email"], req.body);
-        console.log(checkFields);
         if (!checkFields.result) {
             return res.status(400).json({
                 message: checkFields.message,

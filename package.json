@@ -20,6 +20,7 @@
     "homepage": "https://github.com/gee-dev29/ecommerce#readme",
     "dependencies": {
         "@paypal/checkout-server-sdk": "^1.0.3",
+        "axios": "^1.7.8",
         "bcrypt": "^5.1.1",
         "body-parser": "^1.20.2",
         "cloudinary": "^2.4.0",
@@ -32,6 +33,7 @@
         "jsonwebtoken": "^9.0.2",
         "moment": "^2.30.1",
         "mongoose": "^8.5.4",
+        "node-cron": "^3.0.3",
         "nodemailer": "^6.9.15",
         "nodemon": "^3.1.4",
         "passport": "0.5.3",
