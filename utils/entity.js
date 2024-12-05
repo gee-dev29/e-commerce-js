@@ -184,7 +184,7 @@ const getPaginatedDataWithPopulate = async (
         .limit(limit)
         .skip(skip);
 
-    const totalRecords = await model.countDocuments();
+    const totalRecords = await model.countDocuments(filter);
     return { data, totalRecords };
 };
 const getPaginatedDataWithMultiplePopulate = async (
@@ -206,7 +206,7 @@ const getPaginatedDataWithMultiplePopulate = async (
         .limit(limit)
         .skip(skip);
 
-    const totalRecords = await model.countDocuments();
+    const totalRecords = await model.countDocuments(filter);
     return { data, totalRecords };
 };
 const getDataWithPopulate = async (model, filter, path, selectedModel) => {
@@ -215,7 +215,7 @@ const getDataWithPopulate = async (model, filter, path, selectedModel) => {
         model: selectedModel,
     });
 
-    const totalRecords = await model.countDocuments();
+    const totalRecords = await model.countDocuments(filter);
     return { data, totalRecords };
 };
 const getDataWithMultiplePopulate = async (
@@ -231,7 +231,7 @@ const getDataWithMultiplePopulate = async (
         }))
     );
 
-    const totalRecords = await model.countDocuments();
+    const totalRecords = await model.countDocuments(filter);
     return { data, totalRecords };
 };
 
