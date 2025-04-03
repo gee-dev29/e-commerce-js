@@ -8,4 +8,4 @@ const router = express.Router();
 router.route("/").get(getAllColors);
 router.route
 
-export default router;
+export default router; 

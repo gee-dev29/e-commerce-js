@@ -16,7 +16,7 @@ export const addCategory = async (req, res) => {
             return res.status(400).json({
                 message: checkFields.message,
             });
-        }
+        } 
         if (isValidObjectId(_id)) {
             if (image.includes("https")) {
                 entity.updateDataById(_id, req.body, categoryModel);

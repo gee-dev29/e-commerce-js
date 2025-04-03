@@ -6,4 +6,4 @@ const router = express.Router();
 router.route("/").get(getAllCountries);
 router.route
 
-export default router;
+export default router; 

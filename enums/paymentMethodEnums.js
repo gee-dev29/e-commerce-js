@@ -3,3 +3,4 @@ export const PaymentMethod = {
     PAYPAL: "paypal",
     STRIPE: "stripe",
 };
+ 

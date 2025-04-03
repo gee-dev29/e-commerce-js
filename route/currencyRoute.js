@@ -5,3 +5,4 @@ const router = express.Router();
 router.route("/").get(getCurrencyRate);
 
 export default router;
+ 

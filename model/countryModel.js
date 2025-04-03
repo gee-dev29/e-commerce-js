@@ -30,7 +30,7 @@ const countrySchema = new mongoose.Schema({
     required: true,
   },
   currency_name: {
-    type: String,
+    type: String, 
     required: true,
   },
   currency_symbol: {

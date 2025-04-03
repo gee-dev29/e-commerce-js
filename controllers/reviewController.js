@@ -28,7 +28,7 @@ export const createReview = async (req, res) => {
 
     if (!orderedItem) {
       return res.status(400).json({
-        message: "This product cannot be reviewed or is not part of the order",
+        message: "This product cannot be reviewed or is not part  of the order",
       });
     }
 

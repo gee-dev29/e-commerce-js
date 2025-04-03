@@ -20,3 +20,4 @@ router
   .route("/all")
   .get(jwtVerify, checkUser, superAdminRoleCheck, getAllReviews);
 export default router;
+ 

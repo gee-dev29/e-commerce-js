@@ -12,7 +12,7 @@ const dbConnection = () => {
                 message: "Unable to connect to database.",
                 badge: true,
             })
-        );
+        ); 
 };
 
 export default dbConnection;

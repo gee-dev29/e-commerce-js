@@ -35,3 +35,4 @@ router
 // .get(jwtVerify, checkUser, superAdminRoleCheck, viewSingleUser);
 
 export default router;
+ 

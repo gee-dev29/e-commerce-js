@@ -376,7 +376,7 @@ export const forgotPassword = async (req, res) => {
       text: forgotPasswordEmail,
     };
     sendEmail(emailMessage);
-    res.status(200).json({
+    res.status(200).json({ 
       message: "An email has been sent to your mailbox",
     });
   } catch (error) {

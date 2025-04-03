@@ -17,3 +17,4 @@ export const currencyRateModel = mongoose.model(
   "currencyRates",
   currencySchema
 );
+ 

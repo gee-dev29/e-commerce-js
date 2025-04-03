@@ -124,4 +124,4 @@ export const deleteShippingRate = async (req, res) => {
       message: error.message,
     });
   }
-};
+}; 

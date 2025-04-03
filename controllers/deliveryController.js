@@ -21,7 +21,7 @@ export const createDeliveryAddress = async (req, res) => {
       await entity.updateDataById(_id, req.body, deliveryModel)
       return res.status(200).json({
         message: 'Updated successfully'
-      })
+      }) 
     }
 
     const delivery = new deliveryModel({

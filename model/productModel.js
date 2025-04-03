@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema(
             type: Array,
             required: true,
         },
-        productImages: {
+        productImages: { 
             type: Array,
             required: true,
         },

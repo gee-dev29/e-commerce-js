@@ -34,7 +34,7 @@ const deliveryField = [
     "country",
     "zipCode",
     "phone",
-];
+]; 
 
 const shippingField = [
     "shippingRate",

@@ -80,7 +80,7 @@ export const createOrderItem = async (req, res) => {
       populatedOrderedItems
     );
 
-    const emailService = {
+    const emailService = { 
       recieverEmail: email,
       subject: "Your Order Receipt",
       text: orderEmail,

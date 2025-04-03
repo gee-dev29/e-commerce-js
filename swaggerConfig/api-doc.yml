@@ -25,24 +25,24 @@ paths:
       summary: user Log in
       description: Log in a user
       operationId: logInUser
-    requestBody:
-      content:
-        application/json:
-          schema:
-            - $ref: "#/components/schemas/Login"
-    responses:
-      "200":
-        description: OK
+      requestBody:
         content:
           application/json:
             schema:
-              - $ref: "#/components/schemas/AuthToken"
-      "400":
-        description: Bad request
-        content:
-          application/json:
-            schema:
-              - $ref: "#/components/responses/BadRequest"
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthToken"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
 
 components:
   securitySchemes:

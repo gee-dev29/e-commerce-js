@@ -37,3 +37,4 @@ router.route("/registerAdmin").post(jwtVerify, checkUser, superAdminRoleCheck, r
 router.route("/verify-otp").post(findUserByEmail, verifyOTP);
 
 export default router;
+ 

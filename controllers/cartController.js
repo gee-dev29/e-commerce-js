@@ -160,7 +160,7 @@ export const getCart = async (req, res) => {
   }
 };
 
-const deleteCart = async (req, res) => {
+const deleteCart = async (req, res) => { 
   try {
     const { productId, size, color } = req.body;
     const filter = { creatorId: req.id };

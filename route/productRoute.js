@@ -32,3 +32,4 @@ router.route("/subcategories").get(getProductBySubcategory);
 router.route("/detail/:productId").get(checkProduct, viewProduct);
 
 export default router;
+ 

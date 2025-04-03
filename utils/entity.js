@@ -47,7 +47,7 @@ function decryptData(encryptedText, key) {
 
     return decrypted;
 }
-
+ 
 // // Decrypt function
 // function decryptData(encryptedText, key) {
 //     const decipher = crypto.createDecipher("aes-256-cbc", key);

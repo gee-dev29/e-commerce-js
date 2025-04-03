@@ -28,4 +28,4 @@ export const getProfilePic = async (id) => {
     const profilePic = await entity.getAllFilteredData(documentModel, filter);
     return profilePic;
   } catch (error) {}
-};
+}; 

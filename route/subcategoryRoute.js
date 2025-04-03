@@ -15,3 +15,4 @@ router
     .delete(jwtVerify, checkUser, superAdminRoleCheck, deleteSubCategory);
 
 export default router;
+ 

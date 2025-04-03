@@ -9,3 +9,4 @@ const environment = new paypal.core.LiveEnvironment(
 );
 const client = new paypal.core.PayPalHttpClient(environment);
 export default client;
+ 

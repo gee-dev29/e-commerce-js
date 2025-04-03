@@ -29,3 +29,4 @@ const paymentSchema = new mongoose.Schema({
 });
 
 export const paymentModel = mongoose.model("payment", paymentSchema);
+ 

@@ -34,3 +34,4 @@ const uploadSchema = new mongoose.Schema({
 });
 
 export const uploadModel = mongoose.model("upload", uploadSchema);
+ 

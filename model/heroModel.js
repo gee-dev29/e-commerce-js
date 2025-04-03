@@ -15,4 +15,4 @@ const heroSchema = new mongoose.Schema({
     }
 })
 
-export const heroModel = mongoose.model("hero", heroSchema)
+export const heroModel = mongoose.model("hero", heroSchema) 

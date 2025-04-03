@@ -15,3 +15,4 @@ router
   .delete(jwtVerify, deleteWishList);
 
 export default router;
+ 

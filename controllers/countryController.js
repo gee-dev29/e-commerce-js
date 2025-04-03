@@ -22,7 +22,7 @@ export const getCurrencyRate = async (req, res) => {
     
     const latestCurrencyData = await currencyRateModel
       .findOne()
-      .sort({ date: -1 })
+      .sort({ date: -1 }) 
       .limit(1);
     
     if (!latestCurrencyData) {

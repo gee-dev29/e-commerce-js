@@ -25,7 +25,7 @@ const deliverySchema = new mongoose.Schema(
         },
         country: {
             type: Object,
-            required: true,
+            required: true, 
         },
         phone: {
             type: String,

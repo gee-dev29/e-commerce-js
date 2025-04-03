@@ -30,7 +30,7 @@ export const addItemToWishList = async (req, res) => {
     if (existingProduct) {
       return res.status(400).json({
         message: "wishlist aleady exists",
-      });
+      }); 
     }
 
     wishlist.productIds.push({

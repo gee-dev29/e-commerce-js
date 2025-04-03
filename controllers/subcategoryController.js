@@ -26,7 +26,7 @@ export const addSubCategory = async (req, res) => {
             } else {
                 const result = await uploadDocument(image, "");
                 const payload = {
-                    name: req.body.name,
+                    name: req.body.name, 
                     image: result.documentLink,
                 };
                 entity.updateDataById(_id, payload, subCategoryModel);

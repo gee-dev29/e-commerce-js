@@ -21,3 +21,4 @@ const shippingSchema = new mongoose.Schema(
 );
 
 export const shippingModel = mongoose.model("shipping", shippingSchema);
+ 

@@ -44,7 +44,7 @@ export const checkProducts = async (req, res, next) => {
 //           color: item.color,
 //           size: item.size,
 //         },
-//       });
+//       }); 
 //     })
 //   );
   req.products = productIds;

@@ -272,7 +272,7 @@ export const contactTemplate = (email, name, message) => {
           <td><img alt="KNcloset" height="80" width="80"src="https://res.cloudinary.com/dzrrdkd7i/image/upload/v1732136066/zkc3dbnvdep7r5auonip.png" style="display:block;outline:none;border:none;text-decoration:none" width="40" />
             <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation">
               <tbody>
-                <tr>
+                <tr> 
                   <td>
                     <p style="font-size:16px;line-height:26px;margin:16px 0;font-family:&#x27;Open Sans&#x27;, &#x27;HelveticaNeue-Light&#x27;, &#x27;Helvetica Neue Light&#x27;, &#x27;Helvetica Neue&#x27;, Helvetica, Arial, &#x27;Lucida Grande&#x27;, sans-serif;font-weight:300;color:#404040">Hello Admin you have a new message from kncloset contact form, treat as urgent.</p>
              

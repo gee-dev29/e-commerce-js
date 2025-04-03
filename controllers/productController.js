@@ -165,7 +165,7 @@ export const searchProduct = async (req, res) => {
 
   const filter = {};
 
-  // Price range filter
+  // Price range filter 
   if (minPrice || maxPrice) {
     filter.productPrice = {};
     if (minPrice) {

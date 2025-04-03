@@ -14,3 +14,4 @@ const colorSchema = new mongoose.Schema(
 );
 
 export const colorModel = mongoose.model("color", colorSchema);
+ 

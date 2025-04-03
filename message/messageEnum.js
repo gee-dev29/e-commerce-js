@@ -16,3 +16,4 @@ export const messages = {
     RECIEVER_QUERY:
         "A query has been raised on your account. To resolve this please login to your account and check your queries for resolution. \n \n Thank you for choosing our Platform!",
 };
+ 
