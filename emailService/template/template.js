@@ -261,7 +261,7 @@ export const orderUpdateTemplate = (name, orderNumber, orderStatus, note) => {
   </body>
 `;
 };
- 
+
 
 export const contactTemplate = (email, name, message) => {
   return `
