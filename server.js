@@ -23,7 +23,7 @@ import dbConnection from "./connection/dbConnection.js";
 import passport from "passport";
 import cookieSession from "cookie-session";
 import paypalRoute from "./route/paypalRoute.js";
-import * as passportMain from "./passportSetup.js";
+// import * as passportMain from "./passportSetup.js";
 import cron from "node-cron";
 import { fetchCurrencyRates } from "./controllers/countryController.js";
 
