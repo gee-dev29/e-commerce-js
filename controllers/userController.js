@@ -174,7 +174,7 @@ export const loginAdmin = async (req, res) => {
         token: token,
         data: user,
       },
-    });
+    }); 
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({
