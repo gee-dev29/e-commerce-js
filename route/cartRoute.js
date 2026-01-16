@@ -1,0 +1,28 @@
+import {
+    addProductsToCart,
+    addProductToCart,
+    deleteCart,
+    getCart,
+    updateCart,
+} from "../controllers/cartController.js";
+import { checkCart } from "../middleware/checkCart.js";
+import { checkProduct, checkProducts } from "../middleware/checkProduct.js";
+import { jwtVerify } from "../middleware/jwtAuthentication.js";
+
+import express from "express";
+const router = express.Router();
+
+router
+    .route("/")
+    .post(jwtVerify, checkProducts, addProductToCart)
+    .get(jwtVerify, getCart);
+
+router.route('/bulk')
+    .post(jwtVerify, checkProducts, addProductsToCart)
+router
+    .route("/:cartId")
+    .patch(jwtVerify, checkCart, checkProduct, updateCart)
+    .post(jwtVerify, deleteCart);
+
+export default router;
+ 

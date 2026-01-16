@@ -1,0 +1,159 @@
+openapi: "3.0.0"
+info:
+  title: API for Ecommerce System
+  version: "1.0"
+servers:
+  - url: https://api.kncloset.com
+    description: local developement server
+tags:
+  - name: users
+    description: Apis for the users
+  - name: cart
+    description: Apis for the cart
+  - name: wishlist
+    description: Apis for the wishlist
+  - name: orders
+    description: Apis for the orders
+  - name: products
+    description: Apis for the products
+
+paths:
+  /login:
+    post:
+      tags:
+        - users
+      summary: user Log in
+      description: Log in a user
+      operationId: logInUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthToken"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: info@johndoe.com
+        password:
+          type: string
+          format: string
+          example: John1234
+
+    Register:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+          format: email
+          example: john
+        lastName:
+          type: string
+          format: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: info@johndoe.com
+        password:
+          type: string
+          format: string
+          example: John1234
+
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+          format: JWT
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      required:
+        - token
+
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        status:
+          type: number
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotAuthenticated:
+      description: Access token is missing/invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotAuthorized:
+      description: Access token can't access resource
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Conflict:
+      description: The specified resource has a conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Gone:
+      description: The specified resource is gone
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    RateLimited:
+      description: The specified resource is rate limited
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
